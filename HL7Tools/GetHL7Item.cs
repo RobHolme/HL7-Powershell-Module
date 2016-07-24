@@ -32,6 +32,7 @@ namespace HL7Tools
         private bool listFileName;
         private string[] paths;
         private bool expandWildcards = false;
+        private string[] filter;
 
         // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -56,7 +57,7 @@ namespace HL7Tools
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Path")
-   
+
         ]
         [ValidateNotNullOrEmpty]
         public string[] Path
@@ -95,11 +96,23 @@ namespace HL7Tools
         }
 
 
+        // Swtich to optionally filter the messages based on matching message contents
+        [Parameter(
+            HelpMessage = "Filter on message contents")]
+        public string[] Filter
+        {
+            get { return this.filter; }
+            set { this.filter = value; }
+        }
+
+
+
         /// <summary>
         /// get the HL7 item provided via the cmdlet parameter HL7ItemPossition
         /// </summary>
         protected override void ProcessRecord()
         {
+            WriteObject(this.filter);
             foreach (string path in paths)
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
@@ -152,6 +165,9 @@ namespace HL7Tools
                     {
                         string fileContents = File.ReadAllText(filePath);
                         HL7Message message = new HL7Message(fileContents);
+
+                        // TO DO: if the -Filter parameter is provided, then check the message matches all of the filters (ie AND).
+
                         string[] hl7Items = message.GetHL7Item(itemPosition);
                         // if the hlyItems array is  empty, the item was not found in the message
                         if (hl7Items.Length == 0)
@@ -234,5 +250,68 @@ namespace HL7Tools
             }
             return isFileSystem;
         }
+
+        /// <summary>
+        ///  Make sure the filter string matches the expected pattern for a filter
+        /// </summary>
+        /// <param name="filterString"></param>
+        /// <returns></returns>
+        private bool ValidateFilter(string filterString)
+        {
+            if (Regex.IsMatch(filterString, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?=", RegexOptions.IgnoreCase))
+            {
+                return true;
+            }
+            else // the value provided after the -filter switch did not match the expected format of a message trigger.
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// return the portion of the filter string that identifies the HL7 Item to filter on
+        /// </summary>
+        /// <param name="filterString"></param>
+        /// <returns></returns>
+        private string GetFilterItem(string filterString)
+        {
+            if (ValidateFilter(filterString))
+            {
+                string[] tempString = (filterString).Split('=');
+                return tempString[0]; 
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        /// <summary>
+        /// return the portion of the filter string that identifies the value to filter on
+        /// </summary>
+        /// <param name="filterString"></param>
+        /// <returns></returns>
+        private string GetFilterValue(string filterString)
+        {
+            if (ValidateFilter(filterString))
+            {
+                string[] tempString = (filterString.Split('=');
+                if (tempString.Length > 1)
+                {
+                    return tempString[1];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
     }
 }
