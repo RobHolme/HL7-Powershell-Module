@@ -67,7 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GetHL7Item.cs" />
+    <Compile Include="SelectHL7Item.cs" />
     <Compile Include="HL7Message.cs" />
     <Compile Include="RemoveHL7Identifiers.cs" />
     <Compile Include="SendHL7Message.cs" />

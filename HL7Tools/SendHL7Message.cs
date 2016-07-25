@@ -122,24 +122,39 @@ namespace HL7Tools
                 PSDriveInfo drive;
                 // this contains the paths to process for this iteration of the loop to resolve and optionally expand wildcards.
                 List<string> filePaths = new List<string>();
-                if (expandWildcards)
+                // if the path provided is a directory, expand the files in the directory and add these to the list.
+                if (Directory.Exists(path))
                 {
-                    // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged.
-                    filePaths.AddRange(this.GetResolvedProviderPathFromPSPath(path, out provider));
+                    filePaths.AddRange(Directory.GetFiles(path));
                 }
+                // not a directory, could be a wild-card or literal filepath 
                 else
                 {
-                    // no wildcards, so don't try to expand any * or ? symbols.                    
-                    filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                    // expand wild-cards. This assumes if the user listed a directory it is literal
+                    if (expandWildcards)
+                    {
+                        // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged. If the filepath expands into a directory ignore it.
+                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider))
+                        {
+                            if (!Directory.Exists(expandedFilePath))
+                            {
+                                filePaths.Add(expandedFilePath);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // no wildcards, so don't try to expand any * or ? symbols.                    
+                        filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                    }
+                    // ensure that this path (or set of paths after wildcard expansion)
+                    // is on the filesystem. A wildcard can never expand to span multiple providers.
+                    if (IsFileSystemPath(provider, path) == false)
+                    {
+                        // no, so skip to next path in paths.
+                        continue;
+                    }
                 }
-                // ensure that this path (or set of paths after wildcard expansion)
-                // is on the filesystem. A wildcard can never expand to span multiple providers.
-                if (IsFileSystemPath(provider, path) == false)
-                {
-                    // no, so skip to next path in paths.
-                    continue;
-                }
-
                 // At this point, we have a list of paths on the filesystem, send each file to the remote endpoint
                 foreach (string filePath in filePaths)
                 {
@@ -197,6 +212,7 @@ namespace HL7Tools
                                 }
                             }
                         }
+                        WriteObject("Closing TCP session\n");
                         tcpStream.Close();     
                     }
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
