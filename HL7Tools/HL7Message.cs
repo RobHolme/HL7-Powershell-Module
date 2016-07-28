@@ -9,14 +9,12 @@
  * 
  */
 
-// TO DO: Add range checking to GetHL7Item
-
 namespace HL7Tools
 {
     using System;
-    using System.Text;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
     
     /// <summary>
@@ -27,20 +25,20 @@ namespace HL7Tools
         private string subComponentValue;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="SubComponet"/> class.
+        /// Initializes a new instance of the <see cref="SubComponet"/> class.
         /// </summary>
-        /// <param name="SubComponentValue">The value to asign to the sub componet object</param>
+        /// <param name="SubComponentValue">The value to assign to the sub component object</param>
         public SubComponent(string SubComponentValue)
         {
             this.subComponentValue = SubComponentValue;
         }
 
         /// <summary>
-        /// Gets and sets the value of the sub component
+        /// Gets or sets the value of the sub component
         /// </summary>
         public string Value
         {
-            get { return subComponentValue; }
+            get { return this.subComponentValue; }
             set { this.subComponentValue = Value; }
         }
 
@@ -59,7 +57,8 @@ namespace HL7Tools
         /// <param name="maskCharacter">The character to use as the mask</param>
         public void Mask(char maskCharacter = '*')
         {
-            if (this.subComponentValue != "\"\"") // ignore null fields (deletes) - ""
+            // ignore null fields (""), nothing identifiable to mask.
+            if (this.subComponentValue != "\"\"") 
             {
                 string maskString = new string(maskCharacter, this.subComponentValue.Length);
                 this.subComponentValue = maskString;
@@ -79,16 +78,16 @@ namespace HL7Tools
         /// Initialises a new instance of the <see cref="Componet"/> class.
         /// </summary>
         /// <param name="ComponentValue"></param>
-        /// <param name="SubComponentDelimter">The charcter used as the delimiter for sub components. Defaults to '&'</param>
+        /// <param name="SubComponentDelimter">The charcter used as the delimiter for sub components. Defaults to "&"</param>
         public Component(string ComponentValue, char SubComponentDelimter = '&')
         {
             this.subComponentDelimter = SubComponentDelimter; // the character used to delimit sub components in the HL7 message
 
             // split the string into sub components, then save
-            string[] splitSubCompoents = ComponentValue.Split(subComponentDelimter);
+            string[] splitSubCompoents = ComponentValue.Split(this.subComponentDelimter);
             foreach (string subComponent in splitSubCompoents)
             {
-                subComponents.Add(new SubComponent(subComponent));
+                this.subComponents.Add(new SubComponent(subComponent));
             }
         }
 
@@ -101,7 +100,7 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// Gets and sets the list of SubComponents that make up a Component object.
+        /// Gets or sets the list of SubComponents that make up a Component object.
         /// </summary>
         public Component Value
         {
@@ -116,7 +115,7 @@ namespace HL7Tools
         /// <returns>Returns a SubComponent object</returns>
         public SubComponent GetSubComponent(int ID)
         {
-            if ((ID > 0) && (ID <= subComponents.Count))
+            if ((ID > 0) && (ID <= this.subComponents.Count))
             {
                 return this.subComponents[ID - 1];
             }
@@ -145,17 +144,17 @@ namespace HL7Tools
         /// <param name="SubComponentValue">The value to assign to the SubComponet</param>
         public void SetSubComponent(int ID, SubComponent SubComponentValue)
         {
-            if ((ID > 0) && (ID <= subComponents.Count))
+            if ((ID > 0) && (ID <= this.subComponents.Count))
             {
                 this.subComponents[ID - 1] = SubComponentValue;
             }
             
             // if the sub component is out of the range of current subcomponents, add in empty sub components until the range is large enough
-            if (ID > subComponents.Count)
+            if (ID > this.subComponents.Count)
             {
-                while (ID > subComponents.Count + 1)
+                while (ID > this.subComponents.Count + 1)
                 {
-                    this.subComponents.Add(new SubComponent(""));
+                    this.subComponents.Add(new SubComponent(string.Empty));
                 }
                 this.subComponents.Add(SubComponentValue);
             }
@@ -177,9 +176,9 @@ namespace HL7Tools
             // if the sub component is out of the range of current subcomponents, add in empty sub components until the range is large enough
             if (ID > this.subComponents.Count)
             {
-                while (ID > subComponents.Count + 1) 
+                while (ID > this.subComponents.Count + 1) 
                 {
-                    this.subComponents.Add(new SubComponent(""));
+                    this.subComponents.Add(new SubComponent(string.Empty));
                 }
                 this.subComponents.Add(new SubComponent(SubComponentStringValue));
             }
@@ -233,10 +232,10 @@ namespace HL7Tools
             this.subCompenentDelimeter = SubComponentDelimeter;
 
             // split the string into components, then add to component list
-            string[] splitSubCompoents = FieldValue.Split(componentDelimeter);
+            string[] splitSubCompoents = FieldValue.Split(this.componentDelimeter);
             foreach (string field in splitSubCompoents)
             {
-                components.Add(new Component(field, subCompenentDelimeter));
+                this.components.Add(new Component(field, this.subCompenentDelimeter));
             }
         }
 
@@ -249,7 +248,7 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// Gets and set the FieldItem value
+        /// Gets or set the FieldItem value
         /// </summary>
         public FieldItem Value
         {
@@ -265,7 +264,7 @@ namespace HL7Tools
         {
             if (this.components.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
             else if (this.components.Count == 1)
             {
@@ -276,7 +275,7 @@ namespace HL7Tools
                 string returnString = this.components[0].ToString();
                 for (int i = 1; i < this.components.Count; i++)
                 {
-                    returnString += componentDelimeter + this.components[i].ToString();
+                    returnString += this.componentDelimeter + this.components[i].ToString();
                 }
                 return returnString;
             }
@@ -300,30 +299,31 @@ namespace HL7Tools
     /// </summary>
     public class Field
     {
-
         private List<FieldItem> fieldItems = new List<FieldItem>();
         private char fieldRepeatDelimeter;
         private char compoenentDelimeter;
         private char subComponentDelimiter;
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="Field"/> class.
+        /// Initializes a new instance of the <see cref="Field"/> class.
         /// </summary>
-        /// <param name="FieldValue"></param>
-        /// <param name="FieldRepeatDelimeter"></param>
+        /// <param name="FieldValue">String containing the field value</param>
+        /// <param name="FieldRepeatDelimeter">The repeat delimiter, defaults to '~'</param>
+        /// <param name="ComponentDelimeter">The component delimiter, defaults to '^'</param>
+        /// <param name="SubComponentDelimter">The sub component  delimiter, defaults to '&'</param>
         public Field(string FieldValue, char FieldRepeatDelimeter = '~', char ComponentDelimeter = '^', char SubComponentDelimter = '&')
         {
             // set the HL7 delimeter characters
             this.fieldRepeatDelimeter = FieldRepeatDelimeter;
             this.compoenentDelimeter = ComponentDelimeter;
             this.subComponentDelimiter = SubComponentDelimter;
+
             // split repeating field values, add each value to the list of SinglField objects
             string[] splitFields = FieldValue.Split(fieldRepeatDelimeter);
             foreach (string fieldItem in splitFields)
             {
                 this.fieldItems.Add(new FieldItem(fieldItem, this.compoenentDelimeter, this.subComponentDelimiter));
             }
-
         }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace HL7Tools
         {
             if (this.fieldItems.Count == 0)
             {
-                return "";
+                return string.Empty;
             }
             else if (this.fieldItems.Count == 1)
             {
@@ -366,7 +366,6 @@ namespace HL7Tools
         public List<FieldItem> FieldItems
         {
             get { return this.fieldItems; }
-            //           set { this.field = Value; }
         }
 
         /// <summary>
@@ -734,6 +733,19 @@ namespace HL7Tools
             return returnString.ToArray();
         }
 
+        /// <summary>
+        /// Return the HL7 message with MLLP framing added
+        /// </summary>
+        /// <returns>Returns the message contents as a string framed in the MLLP control characters</returns>
+        public string GetMLLPFramedMessage()
+        {
+            StringBuilder mllpMessage = new StringBuilder();
+            mllpMessage.Append((char)0x0B);
+            mllpMessage.Append(this.ToString());
+            mllpMessage.Append((char)0x1C);
+            mllpMessage.Append((char)0x0D);
+            return mllpMessage.ToString();
+        }
 
         /// <summary>
         /// Returns a list of one or more subcomponent values based on the item location provided
@@ -945,8 +957,8 @@ namespace HL7Tools
         /// Returns a list of one or more field values based on the item location provided
         /// </summary>
         /// <param name="segmentItem">A list of one or more segments to search</param>
-        /// <param name="SegmentRepeat">Identifies a specific occurance of a repeating segment. Set to 0 to seacrh all occurances</param>
-        /// <param name="FieldRepeat">Identifies a specific occurance of a repeating field. Set to 0 to seacrh all occurances</param>
+        /// <param name="SegmentRepeat">Identifies a specific occurence of a repeating segment. Set to 0 to seacrh all occurences</param>
+        /// <param name="FieldRepeat">Identifies a specific occurence of a repeating field. Set to 0 to seacrh all occurences</param>
         /// <param name="FieldNumber">Identifies the index of the field to search (index starts from 1)</param>
         /// <returns>Returns a list of strings conatining the values of the Components matching the query</returns>
         private List<string> GetFieldValue(List<Segment> SegmentItemList, int SegmentRepeat, int FieldRepeat, int FieldNumber)
@@ -1031,8 +1043,8 @@ namespace HL7Tools
         /// <summary>
         /// Returns a list of one or more segment values based on the item location provided
         /// </summary>
-        /// <param name="segmentItem">A list of one or more segments to search</param>
-        /// <param name="SegmentRepeat">Identifies a specific occurance of a repeating segment. Set to 0 to seacrh all occurances</param>
+        /// <param name="SegmentItemList">A list of one or more segments to search</param>
+        /// <param name="SegmentRepeat">Identifies a specific occurance of a repeating segment. Set to 0 to seacrh all occurences</param>
         /// <returns>Returns a list of strings containing the values of the segments matching the query</returns>
         private List<string> GetSegmentValue(List<Segment> SegmentItemList, int SegmentRepeat)
         {
@@ -1056,21 +1068,8 @@ namespace HL7Tools
                     returnString.Add(segmentItem.ToString());
                 }
             }
-            return returnString;
-        }
 
-        /// <summary>
-        /// Return the HL7 message with MLLP framing added
-        /// </summary>
-        /// <returns>Returns the message contents as a string framed in the MLLP control characters</returns>
-        public string GetMLLPFramedMessage()
-        {
-            StringBuilder mllpMessage = new StringBuilder();
-            mllpMessage.Append((char)0x0B);
-            mllpMessage.Append(this.ToString());
-            mllpMessage.Append((char)0x1C);
-            mllpMessage.Append((char)0x0D);
-            return mllpMessage.ToString();
+            return returnString;
         }
     }
 }
