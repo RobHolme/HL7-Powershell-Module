@@ -13,12 +13,16 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.PowerShell.Commands; 
-using System.Collections.Generic;
+
 
 namespace HL7Tools
 {
+    /// <summary>
+    /// Class implementing the cmdlet Remove-HL7Identifiers
+    /// </summary>
     [Cmdlet(VerbsCommon.Remove, "HL7Identifiers")]
     public class RemoveHL7Identifiers : PSCmdlet
     {
@@ -26,6 +30,7 @@ namespace HL7Tools
         private bool overwriteFile = false;
         private string[] paths;
         private bool expandWildcards = false;
+        private string[] customItemsList;
 
         // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -50,17 +55,30 @@ namespace HL7Tools
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Path")
-
         ]
         [ValidateNotNullOrEmpty]
         public string[] Path
         {
-            get { return paths; }
+            get { return this.paths; }
             set
             {
                 this.expandWildcards = true;
                 this.paths = value;
             }
+        }
+
+        // A list of HL7 items to mask, supplied by the user
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = true,
+            ValueFromPipeline = true,
+            Position = 1,
+            HelpMessage = "User supplied list of items to mask"
+        )]
+        public string[] CustomItemsList
+        {
+            get { return this.customItemsList; }
+            set { this.customItemsList = value; }
         }
 
         // The mask character to use. Optional, defaults to '*'
@@ -89,7 +107,6 @@ namespace HL7Tools
             set { this.overwriteFile = value; }
         }
         
-
         /// <summary>
         /// get the HL7 item provided via the cmdlet parameter HL7ItemPossition
         /// </summary>
@@ -99,28 +116,47 @@ namespace HL7Tools
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
                 ProviderInfo provider;
+              
                 // This will be used by the method that processes literal paths
                 PSDriveInfo drive;
+                
                 // this contains the paths to process for this iteration of the loop to resolve and optionally expand wildcards.
                 List<string> filePaths = new List<string>();
-                if (expandWildcards)
+                
+                // if the path provided is a directory, expand the files in the directory and add these to the list.
+                if (Directory.Exists(path))
                 {
-                    // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged.
-                    filePaths.AddRange(this.GetResolvedProviderPathFromPSPath(path, out provider));
-                }
-                else
-                {
-                    // no wildcards, so don't try to expand any * or ? symbols.                    
-                    filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
-                }
-                // ensure that this path (or set of paths after wildcard expansion)
-                // is on the filesystem. A wildcard can never expand to span multiple providers.
-                if (IsFileSystemPath(provider, path) == false)
-                {
-                    // no, so skip to next path in paths.
-                    continue;
+                    filePaths.AddRange(Directory.GetFiles(path));
                 }
 
+                // not a directory, could be a wild-card or literal filepath 
+                else
+                {
+                    if (expandWildcards)
+                    {
+                        // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged. If the filepath expands into a directory ignore it.
+                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider))
+                        {
+                            if (!Directory.Exists(expandedFilePath))
+                            {
+                                filePaths.Add(expandedFilePath);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // no wildcards, so don't try to expand any * or ? symbols.                    
+                        filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                    }
+                    // ensure that this path (or set of paths after wildcard expansion)
+                    // is on the filesystem. A wildcard can never expand to span multiple providers.
+                    if (IsFileSystemPath(provider, path) == false)
+                    {
+                        // no, so skip to next path in paths.
+                        continue;
+                    }
+                }
+                
                 // At this point, we have a list of paths on the filesystem, process each file. 
                 foreach (string filePath in filePaths)
                 {
@@ -179,6 +215,5 @@ namespace HL7Tools
             }
             return isFileSystem;
         }
-
     }
 }

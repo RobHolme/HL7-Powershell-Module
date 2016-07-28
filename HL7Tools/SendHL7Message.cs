@@ -10,16 +10,16 @@
  * Notes:       Implements a cmdlet to send a HL7 v2 message via TCP (framed using MLLP).
  * 
  */
-using System;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
-using System.Management.Automation;
-using Microsoft.PowerShell.Commands;
-using System.Net.Sockets;
 
 namespace HL7Tools
 {
+    using System;
+    using System.IO;
+    using System.Text;
+    using System.Collections.Generic;
+    using System.Management.Automation;
+    using Microsoft.PowerShell.Commands;
+    using System.Net.Sockets;
 
     [Cmdlet("Send", "HL7Message")]
     public class SendHL7Message : PSCmdlet
@@ -107,7 +107,6 @@ namespace HL7Tools
             set { this.noACK = value; }
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -118,28 +117,48 @@ namespace HL7Tools
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
                 ProviderInfo provider;
+                
                 // This will be used by the method that processes literal paths
                 PSDriveInfo drive;
+                
                 // this contains the paths to process for this iteration of the loop to resolve and optionally expand wildcards.
                 List<string> filePaths = new List<string>();
-                if (expandWildcards)
+                
+                // if the path provided is a directory, expand the files in the directory and add these to the list.
+                if (Directory.Exists(path))
                 {
-                    // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged.
-                    filePaths.AddRange(this.GetResolvedProviderPathFromPSPath(path, out provider));
+                    filePaths.AddRange(Directory.GetFiles(path));
                 }
+                
+                // not a directory, could be a wild-card or literal filepath 
                 else
                 {
-                    // no wildcards, so don't try to expand any * or ? symbols.                    
-                    filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                    // expand wild-cards. This assumes if the user listed a directory it is literal
+                    if (expandWildcards)
+                    {
+                        // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged. If the filepath expands into a directory ignore it.
+                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider))
+                        {
+                            if (!Directory.Exists(expandedFilePath))
+                            {
+                                filePaths.Add(expandedFilePath);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // no wildcards, so don't try to expand any * or ? symbols.                    
+                        filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                    }
+                    // ensure that this path (or set of paths after wildcard expansion)
+                    // is on the filesystem. A wildcard can never expand to span multiple providers.
+                    if (IsFileSystemPath(provider, path) == false)
+                    {
+                        // no, so skip to next path in paths.
+                        continue;
+                    }
                 }
-                // ensure that this path (or set of paths after wildcard expansion)
-                // is on the filesystem. A wildcard can never expand to span multiple providers.
-                if (IsFileSystemPath(provider, path) == false)
-                {
-                    // no, so skip to next path in paths.
-                    continue;
-                }
-
+                
                 // At this point, we have a list of paths on the filesystem, send each file to the remote endpoint
                 foreach (string filePath in filePaths)
                 {
@@ -160,23 +179,28 @@ namespace HL7Tools
                     {
                         // get the contents of the file
                         string fileContents = File.ReadAllText(filePath);
+                        
                         // save the string as a HL7Message, this will validate the file is a HL7 v2 message.
                         HL7Message message = new HL7Message(fileContents);
-                        WriteObject("Connecting to " + this.hostname + ":" + this.port);
+                        WriteVerbose("Connecting to " + this.hostname + ":" + this.port);
+                        
                         // create a TCP socket connection to the reciever
                         tcpConnection.Connect(this.hostname, this.port);
                         NetworkStream tcpStream = tcpConnection.GetStream();
                         UTF8Encoding encoder = new UTF8Encoding();
                         Byte[] writeBuffer = new Byte[4096];
+                        
                         // get the message text with MLLP framing
                         writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
                         tcpStream.Write(writeBuffer, 0, writeBuffer.Length);
                         tcpStream.Flush();
-                        WriteObject("Message sent");
+                        WriteVerbose("Message sent");
+                        
                         // wait for ack unless the -NoACK switch was set
+                        string[] ackLines = null;
                         if (!this.noACK)
                         {
-                            WriteObject("Waiting for ACK ...");
+                            WriteVerbose("Waiting for ACK ...");
                             Byte[] readBuffer = new Byte[4096];
                             int bytesRead = tcpStream.Read(readBuffer, 0, 4096);
                             string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
@@ -189,14 +213,15 @@ namespace HL7Tools
                                 if (end > start)
                                 {
                                     // split the ACK message on <CR> character (segment delineter), output each segment of the ACK on a new line
-                                    string[] ackLines = (ackMessage.Substring(start + 1, end - 1)).Split((char)0x0D);
-                                    foreach (string line in ackLines)
-                                    {
-                                        WriteObject(line);
-                                    }
+                                    ackLines = (ackMessage.Substring(start + 1, end - 1)).Split((char)0x0D);
                                 }
                             }
                         }
+
+                        // output the result object
+                        SendHL7MessageResult result = new SendHL7MessageResult("Successfull", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath);
+                        WriteObject(result);
+                        WriteVerbose("Closing TCP session\n"); 
                         tcpStream.Close();     
                     }
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
@@ -204,7 +229,7 @@ namespace HL7Tools
                     {
                         ArgumentException argException = new ArgumentException("The file does not appear to be a valid HL7 v2 message", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
-                        WriteError(fileNotFoundError);
+                        WriteError(fileNotFoundError);       
                         return;
                     }
                     // catch failed TCP connections
@@ -222,7 +247,6 @@ namespace HL7Tools
             }
         }
 
-
         /// <summary>
         /// Check that this provider is the filesystem
         /// </summary>
@@ -238,10 +262,105 @@ namespace HL7Tools
                 ArgumentException ex = new ArgumentException(path + " does not resolve to a path on the FileSystem provider.");
                 ErrorRecord error = new ErrorRecord(ex, "InvalidProvider", ErrorCategory.InvalidArgument, path);
                 this.WriteError(error);
+                
                 // tell the caller that the item was not on the filesystem
                 isFileSystem = false;
             }
             return isFileSystem;
         }
+    }
+
+    /// <summary>
+    /// An object containing the results to be returned to the pipeline
+    /// </summary>
+    public class SendHL7MessageResult
+    {
+        private string status;
+        private string[] ackMessage;
+        private DateTime timeSent;
+        private string[] messageSent;
+        private string filename;
+        private string remoteHost;
+        private int port;
+
+        /// <summary>
+        /// The value of the HL7 item
+        /// </summary>
+        public string Status
+        {
+            get { return this.status; }
+            set { this.status = value; }
+        }
+
+        /// <summary>
+        /// The timestamp of when the message was sent
+        /// </summary>
+        public DateTime TimeSent
+        {
+            get { return this.timeSent; }
+            set { this.timeSent = value; }
+        }
+
+        /// <summary>
+        /// The ACK response received from the remote host
+        /// </summary>
+        public string[] ACKMessage
+        {
+            get { return this.ackMessage; }
+            set { this.ackMessage = value; }
+        }
+
+        /// <summary>
+        /// A copy of the HL7 message sent
+        /// </summary>
+        public string[] MessageSent
+        {
+            get { return this.messageSent; }
+            set { this.messageSent = value; }
+        }
+
+        /// <summary>
+        /// The remote host the message was sent to
+        /// </summary>
+        public string RemoteHost
+        {
+            get { return this.remoteHost; }
+            set { this.remoteHost = value; }
+        }
+
+        /// <summary>
+        /// The TCP port of the remote server
+        /// </summary>
+        public int Port
+        {
+            get { return this.port; }
+            set { this.port = value; }
+        }
+
+        /// <summary>
+        /// The filename containing the message sent
+        /// </summary>
+        public string Filename
+        {
+            get { return this.filename; }
+            set { this.filename = value; }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ItemValue"></param>
+        public SendHL7MessageResult(string Status, string[] Ack = null, DateTime? SendTime = null, string[] HL7Message = null, string RemoteHost = null, int? Port = null, string Filename = null)
+        {
+            // null-coalescing operator. Uses the SentTime value, unless it is null in which case DateTime.Now is assigned as the value.
+            this.timeSent = SendTime ?? DateTime.Now;
+            this.status = Status;
+            this.ackMessage = Ack;
+            this.messageSent = HL7Message;
+            this.remoteHost = RemoteHost;
+            this.port = Port ?? 0;
+            this.filename = Filename;
+        }
+
+
     }
 }
