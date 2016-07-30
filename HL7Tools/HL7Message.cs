@@ -4,6 +4,8 @@
  * 
  * Date:        07/03/2016 - Initial Version
  *              23/07/2016 - Added GetMLLPFramedMessage()
+ *              30/07/2016 - Refactored GetHL7Item() to remove a redundant code, improve range checking.
+ *                           Implemented base class HL7Item
  * 
  * Notes:       Implements a class to store and manipulate a HL7 v2 message.
  * 
@@ -44,19 +46,11 @@ namespace HL7Tools
         /// <summary>
         /// Gets or sets the value of the sub component
         /// </summary>
-  //      public string Value
-  //      {
-  //          get { return this.subComponentValue; }
-  //          set { this.subComponentValue = Value; }
-  //      }
-        /// <summary>
-        /// Gets or sets the value of the sub component
-        /// </summary>
-              public SubComponent Value
-              {
-                  get { return this; }
-                  set { this.subComponentValue = Value.subComponentValue; }
-              }
+        public SubComponent Value
+        {
+            get { return this; }
+            set { this.subComponentValue = Value.subComponentValue; }
+        }
 
         /// <summary>
         /// convert value to string
@@ -656,6 +650,155 @@ namespace HL7Tools
 
         }
 
+        /// <summary>
+        /// Return the segment name and indexes of the field, component and subcompnent based on a text string identifying the HL7 item (e.g. PID-3.1). If values are not specified they will be set to 0.
+        /// </summary>
+        /// <param name="HL7ItemPosition">A text string identifying the HL7 item (e.g. PID-3.1)</param>
+        /// <param name="Segment">The three letter segment name</param>
+        /// <param name="SegmentRepeat">The segment repeat number, set to 0 if no segment repeat requested</param>
+        /// <param name="Field">The field number</param>
+        /// <param name="FieldRepeat">The field repeat number, set to 0 if no specific repeat requested</param>
+        /// <param name="Component">The component number</param>
+        /// <param name="SubComponent">The subcomment number.</param>
+        private void GetItemPosition(string HL7LocationString, ref string SegmentName, ref int SegmentRepeatNumber, ref int FieldNumber, ref int FieldRepeatNumber, ref int ComponentNumber, ref int SubComponentNumber)
+        {
+            SegmentName = string.Empty;
+            FieldNumber = 0;
+            ComponentNumber = 0;
+            SubComponentNumber = 0;
+            SegmentRepeatNumber = 0;
+            FieldRepeatNumber = 0;
+
+            //  use regular expressions to determine if the item location string is valid.
+            if (Regex.IsMatch(HL7LocationString, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?$", RegexOptions.IgnoreCase)) // segment([repeat])? or segment([repeat)?-field([repeat])? or segment([repeat)?-field([repeat])?.component or segment([repeat)?-field([repeat])?.component.subcomponent 
+            {
+
+                // Obtain the segment repeat number if specified
+                Match checkRepeatingSegmentNumber = System.Text.RegularExpressions.Regex.Match(HL7LocationString, "^[A-Z]{2}([A-Z]|[0-9])[[][1-9]{1,3}[]]", RegexOptions.IgnoreCase);
+                if (checkRepeatingSegmentNumber.Success == true)
+                {
+                    string tmpStr = checkRepeatingSegmentNumber.Value.Split('[')[1];
+                    SegmentRepeatNumber = Int32.Parse(tmpStr.Split(']')[0]);
+
+                }
+
+                // Obtain the field repeat number if specified
+                Match checkRepeatingFieldNumber = System.Text.RegularExpressions.Regex.Match(HL7LocationString, "[-][0-9]{1,3}[[]([1-9]|[1-9][0-9])[]]", RegexOptions.IgnoreCase);
+                if (checkRepeatingFieldNumber.Success == true)
+                {
+                    string tmpStr = checkRepeatingFieldNumber.Value.Split('[')[1];
+                    FieldRepeatNumber = Int32.Parse(tmpStr.Split(']')[0]);
+                }
+
+                // retrieve the field, component and sub componnent values. If they don't exist, set to 0
+                string[] tempString = HL7LocationString.Split('-');
+                SegmentName = tempString[0].Substring(0, 3); // the segment name
+                if (tempString.Count() > 1) // confirm values other than the segment were provided.
+                {
+                    string[] tempString2 = tempString[1].Split('.');
+                    if (tempString2.Count() >= 1) // field exists, possibly more. Set the field value.
+                    {
+                        FieldNumber = Int32.Parse(tempString2[0].Split('[')[0]); // if the field contains a repeat number, ignore the repeat value and braces
+                    }
+                    if (tempString2.Count() >= 2) // field and component, possibly more. Set the component value
+                    {
+                        ComponentNumber = Int32.Parse(tempString2[1]);
+                    }
+                    if (tempString2.Count() == 3) // field, compoment and sub component exist. Set the value of thesub component.
+                    {
+                        SubComponentNumber = Int32.Parse(tempString2[2]);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the value of a specific HL7 Item. If it doesn't exist, then a new item is created
+        /// </summary>
+        /// <param name="HL7LocationString">A string representing the location on the item within the message. e.g. PID-3.1, MSH-4, PID-13[1].1</param>
+        /// <returns></returns>
+        public void SetHL7ItemValue(string HL7LocationString, string Value)
+        {
+
+            // get the indexes of the item being requested basedon the string provided by the caller
+            //      this.GetItemPosition(HL7LocationString, ref segmentName, ref segmentRepeatNumber, ref fieldNumber, ref fieldRepeatNumber, ref componentNumber, ref subcomponentNumber);
+
+            List<HL7Item> items = this.GetHL7Item(HL7LocationString);
+            foreach (HL7Item item in items)
+            {
+                //             item.Value = Value; TO DO: get this working !!!
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="HL7LocationString">A string representing the location on the item within the message. e.g. PID-3.1, MSH-4, PID-13[1].1</param>
+        /// <returns>Returns a copy of the nominated HL7 item as a string</returns>
+        public List<HL7Item> GetHL7Item(string HL7LocationString)
+        {
+            string segmentName = "";
+            int fieldNumber = 0;
+            int componentNumber = 0;
+            int subcomponentNumber = 0;
+            int segmentRepeatNumber = 0;
+            int fieldRepeatNumber = 0;
+            List<HL7Item> returnHL7Item = new List<HL7Item>();
+
+            // get the indexes of the item being requested basedon the string provided by the caller
+            this.GetItemPosition(HL7LocationString, ref segmentName, ref segmentRepeatNumber, ref fieldNumber, ref fieldRepeatNumber, ref componentNumber, ref subcomponentNumber);
+
+            // get the list of segments the item(s) belong to
+            List<Segment> segmentList = this.GetSegment(segmentName, segmentRepeatNumber);
+
+            // Subcomponent value requested
+            if (subcomponentNumber != 0)
+            {
+                List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
+                List<Component> componentItems = this.GetComponent(fieldItems, componentNumber);
+                List<SubComponent> subComponetItems = this.GetSubcomponent(componentItems, subcomponentNumber);
+                foreach (SubComponent item in subComponetItems)
+                {
+                    returnHL7Item.Add(item);
+                }
+
+            }
+
+            // Component value requested
+            else if (componentNumber != 0)
+            {
+                List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
+                List<Component> componentItems = this.GetComponent(fieldItems, componentNumber);
+                foreach (Component item in componentItems)
+                {
+                    returnHL7Item.Add(item);
+                }
+            }
+
+            // Field value requested
+            else if (fieldNumber != 0)
+            {
+                List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
+                foreach (FieldItem item in fieldItems)
+                {
+                    returnHL7Item.Add(item);
+                }
+            }
+
+            // Segment value requested
+            else if (segmentName != null)
+            {
+                foreach (Segment item in segmentList)
+                {
+                    returnHL7Item.Add(item);
+                }
+            }
+
+            // return the result to the caller
+            return returnHL7Item;
+        }
+
+
 
         /// <summary>
         /// Return the value for the corresponding HL7 item. HL7LocationString is formatted as Segment-Field.Componet.SubComponent eg PID-3 or PID-5.1.1
@@ -670,53 +813,13 @@ namespace HL7Tools
             int subcomponentNumber = 0;
             int segmentRepeatNumber = 0;
             int fieldRepeatNumber = 0;
-
-            //  use regular expressions to determine if the item location string is valid.
-            if (Regex.IsMatch(HL7LocationString, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?$", RegexOptions.IgnoreCase)) // segment([repeat])? or segment([repeat)?-field([repeat])? or segment([repeat)?-field([repeat])?.component or segment([repeat)?-field([repeat])?.component.subcomponent 
-            {
-                
-                // Obtain the segment repeat number if specified
-                Match checkRepeatingSegmentNumber = System.Text.RegularExpressions.Regex.Match(HL7LocationString, "^[A-Z]{2}([A-Z]|[0-9])[[][1-9]{1,3}[]]", RegexOptions.IgnoreCase);
-                if (checkRepeatingSegmentNumber.Success == true)
-                {
-                    string tmpStr = checkRepeatingSegmentNumber.Value.Split('[')[1];
-                    segmentRepeatNumber = Int32.Parse(tmpStr.Split(']')[0]);
-
-                }
-
-                // Obtain the field repeat number if specified
-                Match checkRepeatingFieldNumber = System.Text.RegularExpressions.Regex.Match(HL7LocationString, "[-][0-9]{1,3}[[]([1-9]|[1-9][0-9])[]]", RegexOptions.IgnoreCase);
-                if (checkRepeatingFieldNumber.Success == true)
-                {
-                    string tmpStr = checkRepeatingFieldNumber.Value.Split('[')[1];
-                    fieldRepeatNumber = Int32.Parse(tmpStr.Split(']')[0]);
-                }
-                
-                // retrieve the field, component and sub componnent values. If they don't exist, set to 0
-                string[] tempString = HL7LocationString.Split('-');
-                segmentName = tempString[0].Substring(0, 3); // the segment name
-                if (tempString.Count() > 1) // confirm values other than the segment were provided.
-                {
-                    string[] tempString2 = tempString[1].Split('.');
-                    if (tempString2.Count() >= 1) // field exists, possibly more. Set the field value.
-                    {
-                        fieldNumber = Int32.Parse(tempString2[0].Split('[')[0]); // if the field contains a repeat number, ignore the repeat value and braces
-                    }
-                    if (tempString2.Count() >= 2) // field and component, possibly more. Set the component value
-                    {
-                        componentNumber = Int32.Parse(tempString2[1]);
-                    }
-                    if (tempString2.Count() == 3) // field, compoment and sub component exist. Set the value of thesub component.
-                    {
-                        subcomponentNumber = Int32.Parse(tempString2[2]);
-                    }
-                }
-            }
-
-            List<Segment> segmentList = this.GetSegment(segmentName, segmentRepeatNumber);
-            
-           
             List<string> returnString = new List<string>();
+
+            // get the indexes of the item being requested basedon the string provided by the caller
+            this.GetItemPosition(HL7LocationString, ref segmentName, ref segmentRepeatNumber, ref fieldNumber, ref fieldRepeatNumber, ref componentNumber, ref subcomponentNumber);
+
+            // get the list of segments the item(s) belong to
+            List<Segment> segmentList = this.GetSegment(segmentName, segmentRepeatNumber); 
 
             // Subcomponent value requested
             if (subcomponentNumber != 0)
