@@ -211,7 +211,7 @@ namespace HL7Tools
                                 string filterItem = this.GetFilterItem(currentFilter);
                                 string filterValue = this.GetFilterValue(currentFilter);
                                 // for repeating fields, only one of the items returned has to match for the filter to be evaluated as true.
-                                foreach (string itemValue in message.GetHL7Item(filterItem))
+                                foreach (string itemValue in message.GetHL7ItemValue(filterItem))
                                 {
                                     if (itemValue == filterValue)
                                     {
@@ -229,7 +229,7 @@ namespace HL7Tools
                         // if the filter supplied matches this message (or no filter provided) then process the file to optain the HL7 item requested
                         if (filterConditionsMet)
                         {
-                            string[] hl7Items = message.GetHL7Item(itemPosition);
+                            string[] hl7Items = message.GetHL7ItemValue(itemPosition);
                             // if the hl7Items array is  empty, the item was not found in the message
                             if (hl7Items.Length == 0)
                             {

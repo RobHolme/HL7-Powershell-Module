@@ -162,6 +162,8 @@ namespace HL7Tools
                 // At this point, we have a list of paths on the filesystem, send each file to the remote endpoint
                 foreach (string filePath in filePaths)
                 {
+                    System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+                    
                     // confirm the file exists
                     if (!File.Exists(filePath))
                     {
@@ -170,7 +172,7 @@ namespace HL7Tools
                         WriteError(fileNotFoundError);
                         return;
                     }
-
+                     
                     // send the file to the endpoint using MLLP framing
                     TcpClient tcpConnection = new TcpClient();
                     tcpConnection.SendTimeout = 10000;
@@ -184,7 +186,8 @@ namespace HL7Tools
                         HL7Message message = new HL7Message(fileContents);
                         WriteVerbose("Connecting to " + this.hostname + ":" + this.port);
                         
-                        // create a TCP socket connection to the reciever
+                        // create a TCP socket connection to the reciever, start timing the elapsed time to deliver the message and receive the ACK
+                        timer.Start();
                         tcpConnection.Connect(this.hostname, this.port);
                         NetworkStream tcpStream = tcpConnection.GetStream();
                         UTF8Encoding encoder = new UTF8Encoding();
@@ -218,8 +221,9 @@ namespace HL7Tools
                             }
                         }
 
-                        // output the result object
-                        SendHL7MessageResult result = new SendHL7MessageResult("Successfull", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath);
+                        // stop timing the operation, output the result object
+                        timer.Stop();
+                        SendHL7MessageResult result = new SendHL7MessageResult("Successfull", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath, timer.Elapsed.TotalMilliseconds/1000);
                         WriteObject(result);
                         WriteVerbose("Closing TCP session\n"); 
                         tcpStream.Close();     
@@ -282,6 +286,7 @@ namespace HL7Tools
         private string filename;
         private string remoteHost;
         private int port;
+        private double elapsedSeconds;
 
         /// <summary>
         /// The value of the HL7 item
@@ -345,11 +350,21 @@ namespace HL7Tools
             get { return this.filename; }
             set { this.filename = value; }
         }
+
+        /// <summary>
+        /// The time elapsed in seconds to send the message
+        /// </summary>
+        public double ElapsedSeconds
+        {
+            get { return this.elapsedSeconds; }
+            set { this.elapsedSeconds = value; }
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="ItemValue"></param>
-        public SendHL7MessageResult(string Status, string[] Ack = null, DateTime? SendTime = null, string[] HL7Message = null, string RemoteHost = null, int? Port = null, string Filename = null)
+        public SendHL7MessageResult(string Status, string[] Ack = null, DateTime? SendTime = null, string[] HL7Message = null, string RemoteHost = null, int? Port = null, string Filename = null, double? ElapsedSeconds = null)
         {
             // null-coalescing operator. Uses the SentTime value, unless it is null in which case DateTime.Now is assigned as the value.
             this.timeSent = SendTime ?? DateTime.Now;
@@ -359,8 +374,7 @@ namespace HL7Tools
             this.remoteHost = RemoteHost;
             this.port = Port ?? 0;
             this.filename = Filename;
+            this.elapsedSeconds = ElapsedSeconds ?? 0;
         }
-
-
     }
 }
