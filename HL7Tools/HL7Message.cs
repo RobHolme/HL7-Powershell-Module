@@ -731,6 +731,20 @@ namespace HL7Tools
         }
 
         /// <summary>
+        /// Mask the nominated HL7Item
+        /// </summary>
+        /// <param name="HL7LocationString">A string identifying the location of the HL7 item e.g. PID-3.1</param>
+        /// <param name="MaskChar">The character to mask out the item with, defaults to '*'</param>
+        public void MaskHL7Item(string HL7LocationString, char MaskChar = '*')
+        {
+            List<HL7Item> items = this.GetHL7Item(HL7LocationString);
+            foreach (HL7Item item in items)
+            {
+                item.Mask();
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="HL7LocationString">A string representing the location on the item within the message. e.g. PID-3.1, MSH-4, PID-13[1].1</param>

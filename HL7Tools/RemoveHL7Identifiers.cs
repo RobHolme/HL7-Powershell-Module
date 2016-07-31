@@ -5,21 +5,23 @@
  *              Code to handle the Path and LiteralPath parameter sets, and expansion of wildcards is based
  *              on Oisin Grehan's post: http://www.nivot.org/blog/post/2008/11/19/Quickstart1ACmdletThatProcessesFilesAndDirectories
  * 
- * Date:        21/07/2016
+ * Date:        21/07/2016 - Intial version, masks predefined list of fields only.
+ *              31/07/2016 - Implemented custom list of items to mask.
  * 
  * Notes:       Implements the cmdlet to mask out personaly identifiable information from HL7 v2 Messages
  * 
  */
 
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Management.Automation;
-using Microsoft.PowerShell.Commands; 
-
 
 namespace HL7Tools
 {
+    using System;
+    using System.IO;
+    using System.Collections.Generic;
+    using System.Management.Automation;
+    using System.Text.RegularExpressions;
+    using Microsoft.PowerShell.Commands;
+
     /// <summary>
     /// Class implementing the cmdlet Remove-HL7Identifiers
     /// </summary>
@@ -112,6 +114,19 @@ namespace HL7Tools
         /// </summary>
         protected override void ProcessRecord()
         {
+            // validate the that the list of locations to mask is valid.
+            foreach (string item in this.customItemsList)
+            {
+                // confirm each filter is formatted correctly
+                if (!this.IsItemLocationValid(item))
+                {
+                    ArgumentException ex = new ArgumentException(item + " does not appear to be a valid HL7 location");
+                    ErrorRecord error = new ErrorRecord(ex, "InvalidFilter", ErrorCategory.InvalidArgument, item);
+                    this.WriteError(error);
+                    return;
+                }
+            }
+
             foreach (string path in paths)
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
@@ -172,9 +187,23 @@ namespace HL7Tools
                     {
                         string fileContents = File.ReadAllText(filePath);
                         HL7Message message = new HL7Message(fileContents);
-                        // mask out identifiable fields
-                        message.DeIdentify(this.maskChar);
+                        // if a custom list of items is provided, then mask out each nominated item
+                        if (customItemsList.Length > 0)
+                        {
+                            foreach (string item in customItemsList)
+                            {
+                                message.MaskHL7Item(item, this.maskChar);
+                             }
+                        }
+
+                        // otherwise mask out default items
+                        else
+                        {
+                            message.DeIdentify(this.maskChar);
+                        }
+
                         string newFilename = filePath.Substring(0, filePath.LastIndexOf("\\") + 1) + "MASKED_" + filePath.Substring(filePath.LastIndexOf("\\") + 1, filePath.Length - (filePath.LastIndexOf("\\") + 1));
+                        
                         // if the overwrite switch is set, then use the original file name.
                         if (this.overwriteFile)
                         {
@@ -183,6 +212,7 @@ namespace HL7Tools
                         System.IO.File.WriteAllText(newFilename, message.ToString());
                         WriteObject("Masked file saved as " + newFilename);
                     }
+
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
                     catch (System.ArgumentException)
                     {
@@ -214,6 +244,26 @@ namespace HL7Tools
                 isFileSystem = false;
             }
             return isFileSystem;
+        }
+
+        /// <summary>
+        /// Confirm that the HL7 item location string is in a valid format. It does not check to see if the item referenced exists or not.
+        /// </summary>
+        /// <param name="hl7ItemLocation"></param>
+        /// <returns></returns>
+        private bool IsItemLocationValid(string hl7ItemLocation)
+        {
+            // make sure the location requested mactches the regex of a valid location string. This does not check to see if segment names exit, or items are present in the message
+            if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?$", RegexOptions.IgnoreCase)) // regex to confirm the HL7 element location string is valid
+            {
+                // make sure field, component and subcomponent values are not 0
+                if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "([.]0)|([-]0)", RegexOptions.IgnoreCase))
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

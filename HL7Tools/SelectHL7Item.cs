@@ -12,18 +12,16 @@
  */
 
 // TO DO:   How to handle items that are not present in the message
-//          manifest file to format the output
-
-using System;
-using System.IO;
-using System.Management.Automation;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
-using Microsoft.PowerShell.Commands;
+// TO DO: create help XML file https://msdn.microsoft.com/en-us/library/bb525433(v=vs.85).aspx
 
 namespace HL7Tools
 {
-    // TO DO: create help XML file https://msdn.microsoft.com/en-us/library/bb525433(v=vs.85).aspx
+    using System;
+    using System.IO;
+    using System.Management.Automation;
+    using System.Text.RegularExpressions;
+    using System.Collections.Generic;
+    using Microsoft.PowerShell.Commands;
 
     // CmdLet: Select-HL7Item
     // Returns a specific item from the message based on the location
