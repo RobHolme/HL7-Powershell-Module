@@ -30,7 +30,7 @@ namespace HL7Tools
         private string itemPosition;
         private string[] paths;
         private bool expandWildcards = false;
-        private string[] filter;
+        private string[] filter = new string[] {};
         private bool filterConditionsMet = true;
 
         // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
@@ -108,21 +108,18 @@ namespace HL7Tools
             }
 
             // confirm the filter parameter is valid before processing any files
-            if (this.filter != null)
+            foreach (string currentFilter in this.filter)
             {
-                foreach (string currentFilter in this.filter)
+                // confirm each filter is formatted correctly
+                if (!this.IsFilterValid(currentFilter))
                 {
-                    // confirm each filter is formatted correctly
-                    if (!this.IsFilterValid(currentFilter))
-                    {
-                        ArgumentException ex = new ArgumentException(currentFilter + " does not appear to be a valid filter");
-                        ErrorRecord error = new ErrorRecord(ex, "InvalidFilter", ErrorCategory.InvalidArgument, currentFilter);
-                        this.WriteError(error);
-                        return;
-                    }
+                    ArgumentException ex = new ArgumentException(currentFilter + " does not appear to be a valid filter");
+                    ErrorRecord error = new ErrorRecord(ex, "InvalidFilter", ErrorCategory.InvalidArgument, currentFilter);
+                    this.WriteError(error);
+                    return;
                 }
             }
-
+ 
             // expand the file or directory information provided in the -Path or -LiteralPath parameters
             foreach (string path in paths)
             {
