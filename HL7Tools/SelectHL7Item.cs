@@ -11,7 +11,6 @@
  * 
  */
 
-// TO DO:   How to handle items that are not present in the message
 // TO DO: create help XML file https://msdn.microsoft.com/en-us/library/bb525433(v=vs.85).aspx
 
 namespace HL7Tools
@@ -44,7 +43,7 @@ namespace HL7Tools
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Literal")
         ]
-        [Alias("PSPath")]
+        [Alias("PSPath", "Name", "Filename")]
         [ValidateNotNullOrEmpty]
         public string[] LiteralPath
         {
@@ -73,8 +72,6 @@ namespace HL7Tools
         //  A parameter for position of the item to return
         [Parameter(
             Mandatory = true,
-            ValueFromPipelineByPropertyName = true,
-            ValueFromPipeline = true,
             Position = 1,
             HelpMessage = "Position of the item to return, e.g. PID-3.1"
         )]
@@ -86,6 +83,8 @@ namespace HL7Tools
 
         // Parameter to optionally filter the messages based on matching message contents
         [Parameter(
+            Mandatory = false,
+            Position = 2,
             HelpMessage = "Filter on message contents")]
         public string[] Filter
         {
@@ -104,7 +103,7 @@ namespace HL7Tools
                 ArgumentException ex = new ArgumentException(this.itemPosition + " does not appear to be a valid HL7 item");
                 ErrorRecord error = new ErrorRecord(ex, "InvalidElement", ErrorCategory.InvalidArgument, this.itemPosition);
                 this.WriteError(error);
-                return;
+                ;
             }
 
             // confirm the filter parameter is valid before processing any files
@@ -381,7 +380,7 @@ namespace HL7Tools
         /// <summary>
         /// The value of the HL7 item
         /// </summary>
-        public string[] HL7Item
+        public string[] ItemValue
         {
             get { return this.hl7Itemvalue; }
             set { this.hl7Itemvalue = value; }

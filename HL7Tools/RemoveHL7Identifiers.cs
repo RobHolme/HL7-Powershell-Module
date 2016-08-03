@@ -44,7 +44,7 @@ namespace HL7Tools
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Literal")
         ]
-        [Alias("PSPath")]
+        [Alias("PSPath", "Name", "Filename")]
         [ValidateNotNullOrEmpty]
         public string[] LiteralPath
         {
@@ -72,8 +72,6 @@ namespace HL7Tools
         // A list of HL7 items to mask, supplied by the user
         [Parameter(
             Mandatory = false,
-            ValueFromPipelineByPropertyName = true,
-            ValueFromPipeline = true,
             Position = 1,
             HelpMessage = "User supplied list of items to mask"
         )]
@@ -86,9 +84,7 @@ namespace HL7Tools
         // The mask character to use. Optional, defaults to '*'
         [Parameter(
             Mandatory = false,
-            ValueFromPipelineByPropertyName = true,
-            ValueFromPipeline = true,
-            Position = 1,
+            Position = 2,
             HelpMessage = "The mask character to use"
         )]
         public char MaskChar
@@ -100,7 +96,7 @@ namespace HL7Tools
         // Switch to overwrite the original file, instead of writing the masked data to a new file. Optional, defaults to false.
         [Parameter(
             Mandatory = false,
-            Position = 2,
+            Position = 3,
             HelpMessage = "Swtich to overwrite the original file"
         )]
         public SwitchParameter OverwriteFile

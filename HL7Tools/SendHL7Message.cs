@@ -1,4 +1,4 @@
-﻿/* Filename:    RemoveHL7Identifiers.cs
+﻿/* Filename:    SendHL7Message.cs
  * 
  * Author:      Rob Holme (rob@holme.com.au) 
  *
@@ -31,10 +31,9 @@ namespace HL7Tools
         private bool expandWildcards = false;
 
         // The remote IP address or Hostname to send the HL7 message to
+        [Alias("ComputerName", "Server", "IPAddress")]
         [Parameter(
             Mandatory = true,
-            ValueFromPipelineByPropertyName = true,
-            ValueFromPipeline = true,
             Position = 0,
             HelpMessage = "Remote Hostname or IP Address"
         )]
@@ -48,8 +47,6 @@ namespace HL7Tools
         // The port number of the remote listener to send the message to
         [Parameter(
             Mandatory = true,
-            ValueFromPipelineByPropertyName = true,
-            ValueFromPipeline = true,
             Position = 1,
             HelpMessage = "Remote listener port number"
         )]
@@ -69,22 +66,20 @@ namespace HL7Tools
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Literal")
         ]
-        [Alias("PSPath")]
+        [Alias("PSPath", "Name", "Filename")]
         [ValidateNotNullOrEmpty]
         public string[] LiteralPath
         {
             get { return this.paths; }
             set { this.paths = value; }
         }
+
         [Parameter(
             Position = 2,
             Mandatory = true,
-            ValueFromPipeline = true,
-            ValueFromPipelineByPropertyName = true,
             ParameterSetName = "Path")
 
         ]
-        [Alias("Filename")]
         [ValidateNotNullOrEmpty]
         public string[] Path
         {
@@ -108,7 +103,7 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// 
+        /// Send each of the files provided
         /// </summary>
         protected override void ProcessRecord()
         {

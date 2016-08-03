@@ -713,24 +713,6 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// Sets the value of a specific HL7 Item. If it doesn't exist, then a new item is created
-        /// </summary>
-        /// <param name="HL7LocationString">A string representing the location on the item within the message. e.g. PID-3.1, MSH-4, PID-13[1].1</param>
-        /// <returns></returns>
-        public void SetHL7ItemValue(string HL7LocationString, string Value)
-        {
-
-            // get the indexes of the item being requested basedon the string provided by the caller
-            //      this.GetItemPosition(HL7LocationString, ref segmentName, ref segmentRepeatNumber, ref fieldNumber, ref fieldRepeatNumber, ref componentNumber, ref subcomponentNumber);
-
-            List<HL7Item> items = this.GetHL7Item(HL7LocationString);
-            foreach (HL7Item item in items)
-            {
-                //             item.Value = Value; TO DO: get this working !!!
-            }
-        }
-
-        /// <summary>
         /// Mask the nominated HL7Item
         /// </summary>
         /// <param name="HL7LocationString">A string identifying the location of the HL7 item e.g. PID-3.1</param>
@@ -740,7 +722,7 @@ namespace HL7Tools
             List<HL7Item> items = this.GetHL7Item(HL7LocationString);
             foreach (HL7Item item in items)
             {
-                item.Mask();
+                item.Mask(MaskChar);
             }
         }
 
