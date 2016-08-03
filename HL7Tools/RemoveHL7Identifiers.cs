@@ -32,7 +32,7 @@ namespace HL7Tools
         private bool overwriteFile = false;
         private string[] paths;
         private bool expandWildcards = false;
-        private string[] customItemsList;
+        private string[] customItemsList = new string[] {};
 
         // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -122,7 +122,7 @@ namespace HL7Tools
                     return;
                 }
             }
-
+            
             foreach (string path in paths)
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
