@@ -75,6 +75,7 @@ namespace HL7Tools
             Position = 1,
             HelpMessage = "Position of the item to return, e.g. PID-3.1"
         )]
+        [Alias("Item")]
         public string ItemPosition
         {
             get { return this.itemPosition; }
