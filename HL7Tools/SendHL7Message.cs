@@ -211,14 +211,20 @@ namespace HL7Tools
                                 if (end > start)
                                 {
                                     // split the ACK message on <CR> character (segment delineter), output each segment of the ACK on a new line
-                                    ackLines = (ackMessage.Substring(start + 1, end - 1)).Split((char)0x0D);
+                                    // remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
+                                    string ackString = ackMessage.Substring(start + 1, end - 1);
+                                    if (ackString[ackString.Length - 1] == (char)0x0D)
+                                    {
+                                        ackString = ackString.Substring(0, ackString.Length - 1);
+                                    }
+                                    ackLines = ackString.Split((char)0x0D);
                                 }
                             }
                         }
 
                         // stop timing the operation, output the result object
                         timer.Stop();
-                        SendHL7MessageResult result = new SendHL7MessageResult("Successfull", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath, timer.Elapsed.TotalMilliseconds/1000);
+                        SendHL7MessageResult result = new SendHL7MessageResult("Successful", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath, timer.Elapsed.TotalMilliseconds / 1000);
                         WriteObject(result);
                         WriteVerbose("Closing TCP session\n"); 
                         tcpStream.Close();     

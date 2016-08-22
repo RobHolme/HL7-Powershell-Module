@@ -11,7 +11,7 @@
 		<TableControl>
 			<TableHeaders>
 				<TableColumnHeader>
-					<Label>Item Value</Label>
+					<Label>ItemValue</Label>
 				</TableColumnHeader>
 				<TableColumnHeader>
 					<Label>Filename</Label>
@@ -21,7 +21,7 @@
 				<TableRowEntry>
 					<TableColumnItems>
 						<TableColumnItem>
-							<ScriptBlock>If ($_.HL7Item.Count -eq 1){$_.HL7Item[0]}else{$_.HL7Item}</ScriptBlock>
+							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
 						</TableColumnItem>
 						<TableColumnItem>
 							<PropertyName>Filename</PropertyName>
@@ -42,8 +42,8 @@
 				<ListEntry>
 					<ListItems>
 						<ListItem>
-							<Label>Item Value</Label>
-							<ScriptBlock>If ($_.HL7Item.Count -eq 1){$_.HL7Item[0]}else{$_.HL7Item}</ScriptBlock>
+							<Label>ItemValue</Label>
+							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
 						</ListItem>
 						<ListItem>
 							<Label>Filename</Label>
