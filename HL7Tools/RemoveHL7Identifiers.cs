@@ -32,7 +32,7 @@ namespace HL7Tools
         private bool overwriteFile = false;
         private string[] paths;
         private bool expandWildcards = false;
-        private string[] customItemsList = new string[] {};
+        private string[] customItemsList = new string[] { };
 
         // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -104,7 +104,7 @@ namespace HL7Tools
             get { return this.overwriteFile; }
             set { this.overwriteFile = value; }
         }
-        
+
         /// <summary>
         /// get the HL7 item provided via the cmdlet parameter HL7ItemPossition
         /// </summary>
@@ -114,7 +114,7 @@ namespace HL7Tools
             foreach (string item in this.customItemsList)
             {
                 // confirm each filter is formatted correctly
-                if (!this.IsItemLocationValid(item))
+                if (!Common.IsItemLocationValid(item))
                 {
                     ArgumentException ex = new ArgumentException(item + " does not appear to be a valid HL7 location");
                     ErrorRecord error = new ErrorRecord(ex, "InvalidFilter", ErrorCategory.InvalidArgument, item);
@@ -122,18 +122,18 @@ namespace HL7Tools
                     return;
                 }
             }
-            
+
             foreach (string path in paths)
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
                 ProviderInfo provider;
-              
+
                 // This will be used by the method that processes literal paths
                 PSDriveInfo drive;
-                
+
                 // this contains the paths to process for this iteration of the loop to resolve and optionally expand wildcards.
                 List<string> filePaths = new List<string>();
-                
+
                 // if the path provided is a directory, expand the files in the directory and add these to the list.
                 if (Directory.Exists(path))
                 {
@@ -161,13 +161,13 @@ namespace HL7Tools
                     }
                     // ensure that this path (or set of paths after wildcard expansion)
                     // is on the filesystem. A wildcard can never expand to span multiple providers.
-                    if (IsFileSystemPath(provider, path) == false)
+                    if (Common.IsFileSystemPath(provider, path) == false)
                     {
                         // no, so skip to next path in paths.
                         continue;
                     }
                 }
-                
+
                 // At this point, we have a list of paths on the filesystem, process each file. 
                 foreach (string filePath in filePaths)
                 {
@@ -189,7 +189,7 @@ namespace HL7Tools
                             foreach (string item in customItemsList)
                             {
                                 message.MaskHL7Item(item, this.maskChar);
-                             }
+                            }
                         }
 
                         // otherwise mask out default items
@@ -199,7 +199,7 @@ namespace HL7Tools
                         }
 
                         string newFilename = filePath.Substring(0, filePath.LastIndexOf("\\") + 1) + "MASKED_" + filePath.Substring(filePath.LastIndexOf("\\") + 1, filePath.Length - (filePath.LastIndexOf("\\") + 1));
-                        
+
                         // if the overwrite switch is set, then use the original file name.
                         if (this.overwriteFile)
                         {
@@ -219,47 +219,6 @@ namespace HL7Tools
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Check that this provider is the filesystem
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private bool IsFileSystemPath(ProviderInfo provider, string path)
-        {
-            bool isFileSystem = true;
-            if (provider.ImplementingType != typeof(FileSystemProvider))
-            {
-                // create a .NET exception wrapping the error text
-                ArgumentException ex = new ArgumentException(path + " does not resolve to a path on the FileSystem provider.");
-                ErrorRecord error = new ErrorRecord(ex, "InvalidProvider", ErrorCategory.InvalidArgument, path);
-                this.WriteError(error);
-                // tell the caller that the item was not on the filesystem
-                isFileSystem = false;
-            }
-            return isFileSystem;
-        }
-
-        /// <summary>
-        /// Confirm that the HL7 item location string is in a valid format. It does not check to see if the item referenced exists or not.
-        /// </summary>
-        /// <param name="hl7ItemLocation"></param>
-        /// <returns></returns>
-        private bool IsItemLocationValid(string hl7ItemLocation)
-        {
-            // make sure the location requested mactches the regex of a valid location string. This does not check to see if segment names exit, or items are present in the message
-            if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?$", RegexOptions.IgnoreCase)) // regex to confirm the HL7 element location string is valid
-            {
-                // make sure field, component and subcomponent values are not 0
-                if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "([.]0)|([-]0)", RegexOptions.IgnoreCase))
-                {
-                    return false;
-                }
-                return true;
-            }
-            return false;
         }
     }
 }

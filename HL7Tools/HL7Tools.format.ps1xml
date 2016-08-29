@@ -11,7 +11,7 @@
 		<TableControl>
 			<TableHeaders>
 				<TableColumnHeader>
-					<Label>ItemValue</Label>
+					<Label>Item Value</Label>
 				</TableColumnHeader>
 				<TableColumnHeader>
 					<Label>Filename</Label>
@@ -21,7 +21,7 @@
 				<TableRowEntry>
 					<TableColumnItems>
 						<TableColumnItem>
-							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
+							<ScriptBlock>If ($_.HL7Item.Count -eq 1){$_.HL7Item[0]}else{$_.HL7Item}</ScriptBlock>
 						</TableColumnItem>
 						<TableColumnItem>
 							<PropertyName>Filename</PropertyName>
@@ -42,8 +42,8 @@
 				<ListEntry>
 					<ListItems>
 						<ListItem>
-							<Label>ItemValue</Label>
-							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
+							<Label>Item Value</Label>
+							<ScriptBlock>If ($_.HL7Item.Count -eq 1){$_.HL7Item[0]}else{$_.HL7Item}</ScriptBlock>
 						</ListItem>
 						<ListItem>
 							<Label>Filename</Label>
@@ -80,55 +80,11 @@
 							<Label>Filename</Label>
 							<PropertyName>Filename</PropertyName>
 						</ListItem>
-						<ListItem>
-							<Label>Elapsed time (secs)</Label>
-							<PropertyName>ElapsedSeconds</PropertyName>
-						</ListItem>
 					</ListItems>
 				</ListEntry>
 			</ListEntries>
 		</ListControl>
 	</View>
-	<!-- View definition for Set-HL7Item -->
-	<View> 
-		<Name>SetHL7ItemResult</Name>
-		<ViewSelectedBy>
-			<TypeName>HL7Tools.SetHL7ItemResult</TypeName>
-		</ViewSelectedBy>
-		<TableControl>
-			<TableHeaders>
-				<TableColumnHeader>
-					<Label>HL7Item</Label>
-				</TableColumnHeader>
-				<TableColumnHeader>
-					<Label>NewValue</Label>
-				</TableColumnHeader>
-				<TableColumnHeader>
-					<Label>OldValue</Label>
-				</TableColumnHeader>
-				<TableColumnHeader>
-					<Label>Filename</Label>
-				</TableColumnHeader>
-			</TableHeaders>
-			<TableRowEntries>
-				<TableRowEntry>
-					<TableColumnItems>
-						<TableColumnItem>
-							<PropertyName>HL7Item</PropertyName>
-						</TableColumnItem>
-						<TableColumnItem>
-							<PropertyName>NewValue</PropertyName>
-						</TableColumnItem>
-						<TableColumnItem>
-							<PropertyName>OldValue</PropertyName>
-						</TableColumnItem>						
-						<TableColumnItem>
-							<PropertyName>Filename</PropertyName>
-						</TableColumnItem>
-					</TableColumnItems>
-				</TableRowEntry>
-			</TableRowEntries>
-		</TableControl>
-	</View>
+	
 </ViewDefinitions>
 </Configuration>

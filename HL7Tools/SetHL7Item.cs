@@ -1,37 +1,36 @@
-﻿/* Filename:    SelectHl7Item.cs
+﻿/* Filename:    UpdateHL7Item.cs
  * 
  * Author:      Rob Holme (rob@holme.com.au) 
  *              
  * Credits:     Code to handle the Path and LiteralPath parameter sets, and expansion of wildcards is based
  *              on Oisin Grehan's post: http://www.nivot.org/blog/post/2008/11/19/Quickstart1ACmdletThatProcessesFilesAndDirectories
  * 
- * Date:        21/07/2016
+ * Date:        29/08/2016
  * 
- * Notes:       Implements the cmdlet to retrieve a specific item from a HL7 v2 message.
+ * Notes:       Implements the cmdlet to update the value of a specific item from a HL7 v2 message.
  * 
  */
-
-// TO DO: create help XML file https://msdn.microsoft.com/en-us/library/bb525433(v=vs.85).aspx
 
 namespace HL7Tools
 {
     using System;
-    using System.IO;
-    using System.Management.Automation;
-    using System.Text.RegularExpressions;
     using System.Collections.Generic;
-    using Microsoft.PowerShell.Commands;
-
-    // CmdLet: Select-HL7Item
-    // Returns a specific item from the message based on the location
-    [Cmdlet(VerbsCommon.Select, "HL7Item")]
-    public class SelectHL7Item : PSCmdlet
+    using System.IO;
+    using System.Linq;
+    using System.Management.Automation;
+    
+    // CmdLet: Update-HL7Item
+    // Replaces the value of a specific item from the message 
+    [Cmdlet(VerbsCommon.Set, "HL7Item")]
+    public class SetHL7Item : PSCmdlet
     {
         private string itemPosition;
         private string[] paths;
         private bool expandWildcards = false;
         private string[] filter = new string[] { };
         private bool filterConditionsMet = true;
+        private string newValue;
+        private bool allrepeats;
 
         // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -82,10 +81,21 @@ namespace HL7Tools
             set { this.itemPosition = value; }
         }
 
+        // Parameter to supply the value of the item to be changed to
+        [Parameter(
+            Mandatory = true,
+            Position = 2,
+            HelpMessage = "New value")]
+        public string Value
+        {
+            get { return this.newValue; }
+            set { this.newValue = value; }
+        }
+
         // Parameter to optionally filter the messages based on matching message contents
         [Parameter(
             Mandatory = false,
-            Position = 2,
+            Position = 3,
             HelpMessage = "Filter on message contents")]
         public string[] Filter
         {
@@ -93,6 +103,17 @@ namespace HL7Tools
             set { this.filter = value; }
         }
 
+        // Do not wait for ACKs responses if this switch is set
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Update all repeats of an item"
+         )]
+        public SwitchParameter UpdateAllRepeats
+        {
+            get { return this.allrepeats; }
+            set { this.allrepeats = value; }
+        }
+        
         /// <summary>
         /// get the HL7 item provided via the cmdlet parameter HL7ItemPosition
         /// </summary>
@@ -224,18 +245,35 @@ namespace HL7Tools
                         // if the filter supplied matches this message (or no filter provided) then process the file to optain the HL7 item requested
                         if (filterConditionsMet)
                         {
-                            string[] hl7Items = message.GetHL7ItemValue(itemPosition);
+                            List<HL7Item> hl7Items = message.GetHL7Item(itemPosition);
                             // if the hl7Items array is  empty, the item was not found in the message
-                            if (hl7Items.Length == 0)
+                            if (hl7Items.Count == 0)
                             {
                                 WriteWarning("Item " + this.itemPosition + " not found in the message " + filePath);
                             }
 
-                            //  items were returned
+                            //  items were located in the message, so proceed with replacing the original value with the new value.
                             else
                             {
-                                SelectHL7ItemResult result = new SelectHL7ItemResult(hl7Items, filePath);
-                                WriteObject(result);
+                                // update all repeats/occurances of the specified item
+                                if (this.allrepeats)
+                                {
+                                    foreach (HL7Item item in hl7Items)
+                                    {
+                                        SetHL7ItemResult result = new SetHL7ItemResult(this.newValue, item.ToString(), filePath, this.itemPosition);
+                                        item.SetValueFromString(this.newValue);
+                                        WriteObject(result);
+                                    }
+                                }
+                                // update only the first occurrance. This is the default action.
+                                else
+                                {
+                                    SetHL7ItemResult result = new SetHL7ItemResult(this.newValue, hl7Items.ElementAt(0).ToString(), filePath, this.itemPosition);
+                                    hl7Items.ElementAt(0).SetValueFromString(this.newValue);
+                                    WriteObject(result);
+                                }
+                                // save the changes back to the original file
+                                System.IO.File.WriteAllText(filePath, message.ToString());
                             }
                         }
                     }
@@ -254,20 +292,31 @@ namespace HL7Tools
     }
 
     /// <summary>
-    /// An object containing the results to be returned to the pipeline
+    /// An object containing the results to be returned to the pipeline. 
     /// </summary>
-    public class SelectHL7ItemResult
+    public class SetHL7ItemResult
     {
-        private string[] hl7Itemvalue;
+        private string newValue;
+        private string oldValue;
+        private string location;
         private string filename;
 
         /// <summary>
-        /// The value of the HL7 item
+        /// The new value of the HL7 item
         /// </summary>
-        public string[] ItemValue
+        public string NewValue
         {
-            get { return this.hl7Itemvalue; }
-            set { this.hl7Itemvalue = value; }
+            get { return this.newValue; }
+            set { this.newValue = value; }
+        }
+
+        /// <summary>
+        /// The previous value of the HL7 item
+        /// </summary>
+        public string OldValue
+        {
+            get { return this.oldValue; }
+            set { this.oldValue = value; }
         }
 
         /// <summary>
@@ -280,12 +329,12 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// 
+        /// The location of the HL7 item that was changed. e.g. PID-3.1
         /// </summary>
-        /// <param name="ItemValue"></param>
-        public SelectHL7ItemResult(string[] ItemValue)
+        public string HL7Item
         {
-            this.hl7Itemvalue = ItemValue;
+            get { return this.location.ToUpper(); }
+            set { this.location = value; }
         }
 
         /// <summary>
@@ -293,10 +342,13 @@ namespace HL7Tools
         /// </summary>
         /// <param name="ItemValue"></param>
         /// <param name="Filename"></param>
-        public SelectHL7ItemResult(string[] ItemValue, string Filename)
+        public SetHL7ItemResult(string NewValue, string OldValue, string Filename, string HL7Item)
         {
-            this.hl7Itemvalue = ItemValue;
+            this.newValue = NewValue;
+            this.oldValue = OldValue;
             this.filename = Filename;
+            this.location = HL7Item;
         }
     }
+
 }

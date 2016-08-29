@@ -25,6 +25,10 @@ namespace HL7Tools
         public virtual void Mask(char maskCharacter = '*')
         {
         }
+
+        public virtual void SetValueFromString(string value)
+        {
+        }
     }
 
     /// <summary>
@@ -41,6 +45,15 @@ namespace HL7Tools
         public SubComponent(string SubComponentValue)
         {
             this.subComponentValue = SubComponentValue;
+        }
+
+        /// <summary>
+        /// Set the subcomponent value based on a string provided. No checking to confirm the string is valid.
+        /// </summary>
+        /// <param name="value"></param>
+        public override void SetValueFromString(string value)
+        {
+            this.subComponentValue = value;
         }
 
         /// <summary>
@@ -115,7 +128,17 @@ namespace HL7Tools
         public Component Value
         {
             get { return this; }
-            set { this.subComponents = Value.SubComponents; }
+            set { this.subComponents = Value.subComponents; }
+        }
+
+        /// <summary>
+        /// Set the value of a Component based on the string provided. No checks are done to confirm if the string is valid.
+        /// </summary>
+        /// <param name="value"></param>
+        public override void SetValueFromString(string value)
+        {
+            Component newComponent = new Component(value, this.subComponentDelimter);
+            this.subComponents = newComponent.subComponents;
         }
 
         /// <summary>
@@ -263,7 +286,17 @@ namespace HL7Tools
         public FieldItem Value
         {
             get { return this; }
-            set { this.components = Value.Components; }
+            set { this.components = Value.components; }
+        }
+
+        /// <summary>
+        /// Set the value of a Component based on the string provided. No checks are done to confirm if the string is valid.
+        /// </summary>
+        /// <param name="value"></param>
+        public override void SetValueFromString(string value)
+        {
+            FieldItem newField = new FieldItem(value, this.componentDelimeter, this.subCompenentDelimeter);
+            this.components = newField.components;
         }
 
         /// <summary>
@@ -367,7 +400,17 @@ namespace HL7Tools
         public Field Value
         {
             get { return this; }
-            set { this.fieldItems = Value.FieldItems; }
+            set { this.fieldItems = Value.fieldItems; }
+        }
+
+        /// <summary>
+        /// Set the value of a Field object based on the string provided. No checks are done to confirm if the string is valid.
+        /// </summary>
+        /// <param name="value"></param>
+        public override void SetValueFromString(string value)
+        {
+            Field newField = new Field(value, this.fieldRepeatDelimeter, this.compoenentDelimeter, this.subComponentDelimiter);
+            this.fieldItems = newField.fieldItems;
         }
 
         /// <summary>
@@ -436,11 +479,22 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// Gets the value of the Segment
+        /// Gets or sets the value of the Segment
         /// </summary>
         public Segment Value
         {
             get { return this; }
+            set { this.fields = Value.fields; }
+        }
+
+        /// <summary>
+        /// Set the value of a Segment object based on the string provided. No checks are done to confirm if the string is valid.
+        /// </summary>
+        /// <param name="value"></param>
+        public override void SetValueFromString(string value)
+        {
+            Segment newSegment = new Segment(value, this.fieldDelimeter, this.fieldRepeatDelimter, this.compoenentDelimeter, this.subComponentDelimiter);
+            this.fields = newSegment.fields;
         }
 
         /// <summary>
@@ -564,7 +618,7 @@ namespace HL7Tools
         public HL7Message Value
         {
             get { return this; }
-            set { this.segments = Value.Segments; }
+            set { this.segments = Value.segments; }
         }
 
 
