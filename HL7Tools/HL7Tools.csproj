@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="RemoveHL7Item.cs" />
     <Compile Include="SelectHL7Item.cs" />
     <Compile Include="HL7Message.cs" />
     <Compile Include="RemoveHL7Identifiers.cs" />
