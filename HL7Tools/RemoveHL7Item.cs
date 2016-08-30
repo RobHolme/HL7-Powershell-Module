@@ -97,7 +97,7 @@ namespace HL7Tools
             Mandatory = false,
             HelpMessage = "Update all repeats of an item"
          )]
-        public SwitchParameter UpdateAllRepeats
+        public SwitchParameter RemoveAllRepeats
         {
             get { return this.allrepeats; }
             set { this.allrepeats = value; }
