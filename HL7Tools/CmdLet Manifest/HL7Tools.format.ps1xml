@@ -130,5 +130,40 @@
 			</TableRowEntries>
 		</TableControl>
 	</View>
+	<!-- View definition for Remove-HL7Item -->
+	<View> 
+		<Name>RemoveHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.RemoveHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>HL7Item</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>DeletedValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>HL7Item</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>DeletedValue</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
 </ViewDefinitions>
 </Configuration>
