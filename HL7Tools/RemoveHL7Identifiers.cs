@@ -34,11 +34,10 @@ namespace HL7Tools
         private bool expandWildcards = false;
         private string[] customItemsList = new string[] { };
 
-        // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
+        // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
         // to use the literaral file name instead of treating it as a wildcard search.
         [Parameter(
-            Position = 0,
             Mandatory = true,
             ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
@@ -51,6 +50,7 @@ namespace HL7Tools
             get { return this.paths; }
             set { this.paths = value; }
         }
+
         [Parameter(
             Position = 0,
             Mandatory = true,

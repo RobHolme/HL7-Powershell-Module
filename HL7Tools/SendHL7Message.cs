@@ -30,37 +30,10 @@ namespace HL7Tools
         private string[] paths;
         private bool expandWildcards = false;
 
-        // The remote IP address or Hostname to send the HL7 message to
-        [Alias("ComputerName", "Server", "IPAddress")]
-        [Parameter(
-            Mandatory = true,
-            Position = 0,
-            HelpMessage = "Remote Hostname or IP Address"
-        )]
-        public string HostName
-        {
-            get { return this.hostname; }
-            set { this.hostname = value; }
-        }
-
-
-        // The port number of the remote listener to send the message to
-        [Parameter(
-            Mandatory = true,
-            Position = 1,
-            HelpMessage = "Remote listener port number"
-        )]
-        public int Port
-        {
-            get { return this.port; }
-            set { this.port = value; }
-        }
-
-        // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
+        // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
         // to use the literaral file name instead of treating it as a wildcard search.
         [Parameter(
-            Position = 2,
             Mandatory = true,
             ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
@@ -75,7 +48,7 @@ namespace HL7Tools
         }
 
         [Parameter(
-            Position = 2,
+            Position = 0,
             Mandatory = true,
             ParameterSetName = "Path")
 
@@ -89,6 +62,32 @@ namespace HL7Tools
                 this.expandWildcards = true;
                 this.paths = value;
             }
+        }
+
+        // The remote IP address or Hostname to send the HL7 message to
+        [Alias("ComputerName", "Server", "IPAddress")]
+        [Parameter(
+            Mandatory = true,
+            Position = 1,
+            HelpMessage = "Remote Hostname or IP Address"
+        )]
+        public string HostName
+        {
+            get { return this.hostname; }
+            set { this.hostname = value; }
+        }
+
+
+        // The port number of the remote listener to send the message to
+        [Parameter(
+            Mandatory = true,
+            Position = 2,
+            HelpMessage = "Remote listener port number"
+        )]
+        public int Port
+        {
+            get { return this.port; }
+            set { this.port = value; }
         }
 
         // Do not wait for ACKs responses if this switch is set
