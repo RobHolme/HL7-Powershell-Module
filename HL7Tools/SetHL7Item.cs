@@ -30,7 +30,8 @@ namespace HL7Tools
         private string[] filter = new string[] { };
         private bool filterConditionsMet = true;
         private string newValue;
-        private bool allrepeats;
+        private bool allrepeats = false;
+        private bool appendValue = false;
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -113,7 +114,20 @@ namespace HL7Tools
             get { return this.allrepeats; }
             set { this.allrepeats = value; }
         }
+
+        // Append the user supplied value to the existing item value
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Append the value supplied to the existing value"
+         )]
+        [Alias("Append")]
+        public SwitchParameter AppendToExistingValue
+        {
+            get { return this.appendValue; }
+            set { this.appendValue = value; }
+        }
         
+
         /// <summary>
         /// get the HL7 item provided via the cmdlet parameter HL7ItemPosition
         /// </summary>
@@ -260,6 +274,11 @@ namespace HL7Tools
                                 {
                                     foreach (HL7Item item in hl7Items)
                                     {
+                                        // appeand the new value to the existing value of the item if -AppendToExistingValue switch is set
+                                        if (appendValue) {
+                                            this.newValue = item.ToString() + this.newValue;
+                                        }
+                                        // update the item value
                                         SetHL7ItemResult result = new SetHL7ItemResult(this.newValue, item.ToString(), filePath, this.itemPosition);
                                         item.SetValueFromString(this.newValue);
                                         WriteObject(result);
@@ -268,6 +287,11 @@ namespace HL7Tools
                                 // update only the first occurrance. This is the default action.
                                 else
                                 {
+                                    // appeand the new value to the existing value of the item if -AppendToExistingValue switch is set
+                                    if (appendValue) {
+                                        this.newValue = hl7Items.ElementAt(0).ToString() + this.newValue;
+                                    }
+                                    // update the item value
                                     SetHL7ItemResult result = new SetHL7ItemResult(this.newValue, hl7Items.ElementAt(0).ToString(), filePath, this.itemPosition);
                                     hl7Items.ElementAt(0).SetValueFromString(this.newValue);
                                     WriteObject(result);
