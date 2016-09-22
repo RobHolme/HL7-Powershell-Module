@@ -18,7 +18,6 @@ namespace HL7Tools
     using System.Text;
     using System.Collections.Generic;
     using System.Management.Automation;
-    using Microsoft.PowerShell.Commands;
     using System.Net.Sockets;
 
     [Cmdlet("Send", "HL7Message")]
@@ -30,37 +29,10 @@ namespace HL7Tools
         private string[] paths;
         private bool expandWildcards = false;
 
-        // The remote IP address or Hostname to send the HL7 message to
-        [Alias("ComputerName", "Server", "IPAddress")]
-        [Parameter(
-            Mandatory = true,
-            Position = 0,
-            HelpMessage = "Remote Hostname or IP Address"
-        )]
-        public string HostName
-        {
-            get { return this.hostname; }
-            set { this.hostname = value; }
-        }
-
-
-        // The port number of the remote listener to send the message to
-        [Parameter(
-            Mandatory = true,
-            Position = 1,
-            HelpMessage = "Remote listener port number"
-        )]
-        public int Port
-        {
-            get { return this.port; }
-            set { this.port = value; }
-        }
-
-        // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
+        // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
         // to use the literaral file name instead of treating it as a wildcard search.
         [Parameter(
-            Position = 2,
             Mandatory = true,
             ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
@@ -75,7 +47,7 @@ namespace HL7Tools
         }
 
         [Parameter(
-            Position = 2,
+            Position = 0,
             Mandatory = true,
             ParameterSetName = "Path")
 
@@ -89,6 +61,32 @@ namespace HL7Tools
                 this.expandWildcards = true;
                 this.paths = value;
             }
+        }
+
+        // The remote IP address or Hostname to send the HL7 message to
+        [Alias("ComputerName", "Server", "IPAddress")]
+        [Parameter(
+            Mandatory = true,
+            Position = 1,
+            HelpMessage = "Remote Hostname or IP Address"
+        )]
+        public string HostName
+        {
+            get { return this.hostname; }
+            set { this.hostname = value; }
+        }
+
+
+        // The port number of the remote listener to send the message to
+        [Parameter(
+            Mandatory = true,
+            Position = 2,
+            HelpMessage = "Remote listener port number"
+        )]
+        public int Port
+        {
+            get { return this.port; }
+            set { this.port = value; }
         }
 
         // Do not wait for ACKs responses if this switch is set
@@ -108,8 +106,7 @@ namespace HL7Tools
         protected override void ProcessRecord()
         {
 
-            foreach (string path in paths)
-            {
+            foreach (string path in paths) {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
                 ProviderInfo provider;
 
@@ -120,48 +117,39 @@ namespace HL7Tools
                 List<string> filePaths = new List<string>();
 
                 // if the path provided is a directory, expand the files in the directory and add these to the list.
-                if (Directory.Exists(path))
-                {
+                if (Directory.Exists(path)) {
                     filePaths.AddRange(Directory.GetFiles(path));
                 }
 
                 // not a directory, could be a wild-card or literal filepath 
-                else
-                {
+                else {
                     // expand wild-cards. This assumes if the user listed a directory it is literal
-                    if (expandWildcards)
-                    {
+                    if (expandWildcards) {
                         // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged. If the filepath expands into a directory ignore it.
-                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider))
-                        {
-                            if (!Directory.Exists(expandedFilePath))
-                            {
+                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider)) {
+                            if (!Directory.Exists(expandedFilePath)) {
                                 filePaths.Add(expandedFilePath);
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         // no wildcards, so don't try to expand any * or ? symbols.                    
                         filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
                     }
                     // ensure that this path (or set of paths after wildcard expansion)
                     // is on the filesystem. A wildcard can never expand to span multiple providers.
-                    if (Common.IsFileSystemPath(provider, path) == false)
-                    {
+                    if (Common.IsFileSystemPath(provider, path) == false) {
                         // no, so skip to next path in paths.
                         continue;
                     }
                 }
 
                 // At this point, we have a list of paths on the filesystem, send each file to the remote endpoint
-                foreach (string filePath in filePaths)
-                {
+                foreach (string filePath in filePaths) {
                     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 
                     // confirm the file exists
-                    if (!File.Exists(filePath))
-                    {
+                    if (!File.Exists(filePath)) {
                         FileNotFoundException fileException = new FileNotFoundException("File not found", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(fileException, "FileNotFound", ErrorCategory.ObjectNotFound, filePath);
                         WriteError(fileNotFoundError);
@@ -172,8 +160,7 @@ namespace HL7Tools
                     TcpClient tcpConnection = new TcpClient();
                     tcpConnection.SendTimeout = 10000;
                     tcpConnection.ReceiveTimeout = 10000;
-                    try
-                    {
+                    try {
                         // get the contents of the file
                         string fileContents = File.ReadAllText(filePath);
 
@@ -196,25 +183,21 @@ namespace HL7Tools
 
                         // wait for ack unless the -NoACK switch was set
                         string[] ackLines = null;
-                        if (!this.noACK)
-                        {
+                        if (!this.noACK) {
                             WriteVerbose("Waiting for ACK ...");
                             Byte[] readBuffer = new Byte[4096];
                             int bytesRead = tcpStream.Read(readBuffer, 0, 4096);
                             string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
                             // look for the start of the MLLP frame (VT control character)
                             int start = ackMessage.IndexOf((char)0x0B);
-                            if (start >= 0)
-                            {
+                            if (start >= 0) {
                                 // Search for the end of the MLLP frame (FS control character)
                                 int end = ackMessage.IndexOf((char)0x1C);
-                                if (end > start)
-                                {
+                                if (end > start) {
                                     // split the ACK message on <CR> character (segment delineter), output each segment of the ACK on a new line
                                     // remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
                                     string ackString = ackMessage.Substring(start + 1, end - 1);
-                                    if (ackString[ackString.Length - 1] == (char)0x0D)
-                                    {
+                                    if (ackString[ackString.Length - 1] == (char)0x0D) {
                                         ackString = ackString.Substring(0, ackString.Length - 1);
                                     }
                                     ackLines = ackString.Split((char)0x0D);
@@ -230,22 +213,19 @@ namespace HL7Tools
                         tcpStream.Close();
                     }
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
-                    catch (ArgumentException)
-                    {
+                    catch (ArgumentException) {
                         ArgumentException argException = new ArgumentException("The file does not appear to be a valid HL7 v2 message", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
                         WriteError(fileNotFoundError);
                         return;
                     }
                     // catch failed TCP connections
-                    catch (SocketException se)
-                    {
+                    catch (SocketException se) {
                         ErrorRecord SocketError = new ErrorRecord(se, "ConnectionError", ErrorCategory.ConnectionError, this.hostname + ":" + this.port);
                         WriteError(SocketError);
                         return;
                     }
-                    finally
-                    {
+                    finally {
                         tcpConnection.Close();
                     }
                 }

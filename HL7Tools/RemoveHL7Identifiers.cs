@@ -19,13 +19,11 @@ namespace HL7Tools
     using System.IO;
     using System.Collections.Generic;
     using System.Management.Automation;
-    using System.Text.RegularExpressions;
-    using Microsoft.PowerShell.Commands;
 
     /// <summary>
     /// Class implementing the cmdlet Remove-HL7Identifiers
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "HL7Identifiers")]
+    [Cmdlet(VerbsCommon.Remove, "HL7Identifiers", SupportsShouldProcess = true)]
     public class RemoveHL7Identifiers : PSCmdlet
     {
         private char maskChar = '*';
@@ -34,11 +32,10 @@ namespace HL7Tools
         private bool expandWildcards = false;
         private string[] customItemsList = new string[] { };
 
-        // Paremeter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
+        // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
         // to use the literaral file name instead of treating it as a wildcard search.
         [Parameter(
-            Position = 0,
             Mandatory = true,
             ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
@@ -51,6 +48,7 @@ namespace HL7Tools
             get { return this.paths; }
             set { this.paths = value; }
         }
+
         [Parameter(
             Position = 0,
             Mandatory = true,
@@ -111,11 +109,9 @@ namespace HL7Tools
         protected override void ProcessRecord()
         {
             // validate the that the list of locations to mask is valid.
-            foreach (string item in this.customItemsList)
-            {
+            foreach (string item in this.customItemsList) {
                 // confirm each filter is formatted correctly
-                if (!Common.IsItemLocationValid(item))
-                {
+                if (!Common.IsItemLocationValid(item)) {
                     ArgumentException ex = new ArgumentException(item + " does not appear to be a valid HL7 location");
                     ErrorRecord error = new ErrorRecord(ex, "InvalidFilter", ErrorCategory.InvalidArgument, item);
                     this.WriteError(error);
@@ -123,8 +119,7 @@ namespace HL7Tools
                 }
             }
 
-            foreach (string path in paths)
-            {
+            foreach (string path in paths) {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
                 ProviderInfo provider;
 
@@ -135,83 +130,71 @@ namespace HL7Tools
                 List<string> filePaths = new List<string>();
 
                 // if the path provided is a directory, expand the files in the directory and add these to the list.
-                if (Directory.Exists(path))
-                {
+                if (Directory.Exists(path)) {
                     filePaths.AddRange(Directory.GetFiles(path));
                 }
 
                 // not a directory, could be a wild-card or literal filepath 
-                else
-                {
-                    if (expandWildcards)
-                    {
+                else {
+                    if (expandWildcards) {
                         // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged. If the filepath expands into a directory ignore it.
-                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider))
-                        {
-                            if (!Directory.Exists(expandedFilePath))
-                            {
+                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider)) {
+                            if (!Directory.Exists(expandedFilePath)) {
                                 filePaths.Add(expandedFilePath);
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         // no wildcards, so don't try to expand any * or ? symbols.                    
                         filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
                     }
                     // ensure that this path (or set of paths after wildcard expansion)
                     // is on the filesystem. A wildcard can never expand to span multiple providers.
-                    if (Common.IsFileSystemPath(provider, path) == false)
-                    {
+                    if (Common.IsFileSystemPath(provider, path) == false) {
                         // no, so skip to next path in paths.
                         continue;
                     }
                 }
 
                 // At this point, we have a list of paths on the filesystem, process each file. 
-                foreach (string filePath in filePaths)
-                {
+                foreach (string filePath in filePaths) {
                     // If the file does not exist display an error and return.
-                    if (!File.Exists(filePath))
-                    {
+                    if (!File.Exists(filePath)) {
                         FileNotFoundException fileException = new FileNotFoundException("File not found", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(fileException, "FileNotFound", ErrorCategory.ObjectNotFound, filePath);
                         WriteError(fileNotFoundError);
                         return;
                     }
-                    try
-                    {
+                    try {
                         string fileContents = File.ReadAllText(filePath);
                         HL7Message message = new HL7Message(fileContents);
                         // if a custom list of items is provided, then mask out each nominated item
-                        if (customItemsList.Length > 0)
-                        {
-                            foreach (string item in customItemsList)
-                            {
+                        if (customItemsList.Length > 0) {
+                            foreach (string item in customItemsList) {
                                 message.MaskHL7Item(item, this.maskChar);
                             }
                         }
 
                         // otherwise mask out default items
-                        else
-                        {
+                        else {
                             message.DeIdentify(this.maskChar);
                         }
 
                         string newFilename = filePath.Substring(0, filePath.LastIndexOf("\\") + 1) + "MASKED_" + filePath.Substring(filePath.LastIndexOf("\\") + 1, filePath.Length - (filePath.LastIndexOf("\\") + 1));
 
                         // if the overwrite switch is set, then use the original file name.
-                        if (this.overwriteFile)
-                        {
+                        if (this.overwriteFile) {
                             newFilename = filePath;
                         }
-                        System.IO.File.WriteAllText(newFilename, message.ToString());
+                        // write changes to the file
+                        if (this.ShouldProcess(newFilename, "Saving changes to file")) {
+                            System.IO.File.WriteAllText(newFilename, message.ToString());
+                        }
                         WriteObject("Masked file saved as " + newFilename);
                     }
 
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
-                    catch (System.ArgumentException)
-                    {
+                    catch (System.ArgumentException) {
                         ArgumentException argException = new ArgumentException("The file does not appear to be a valid HL7 v2 message", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
                         WriteError(fileNotFoundError);

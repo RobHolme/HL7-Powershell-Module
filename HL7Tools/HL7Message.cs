@@ -4,8 +4,9 @@
  * 
  * Date:        07/03/2016 - Initial Version
  *              23/07/2016 - Added GetMLLPFramedMessage()
- *              30/07/2016 - Refactored GetHL7Item() to remove a redundant code, improve range checking.
+ *              30/07/2016 - Re-factored GetHL7Item() to remove a redundant code, improve range checking.
  *                           Implemented base class HL7Item
+ *				22/09/2016 - Fixed issue where HL7Message.ToString() was adding an additional blank line
  * 
  * Notes:       Implements a class to store and manipulate a HL7 v2 message.
  * 
@@ -81,8 +82,7 @@ namespace HL7Tools
         public override void Mask(char maskCharacter = '*')
         {
             // ignore null fields (""), nothing identifiable to mask.
-            if (this.subComponentValue != "\"\"") 
-            {
+            if (this.subComponentValue != "\"\"") {
                 string maskString = new string(maskCharacter, this.subComponentValue.Length);
                 this.subComponentValue = maskString;
             }
@@ -96,20 +96,19 @@ namespace HL7Tools
     {
         private List<SubComponent> subComponents = new List<SubComponent>();
         private char subComponentDelimter;
-        
+
         /// <summary>
         /// Initialises a new instance of the <see cref="Componet"/> class.
         /// </summary>
         /// <param name="ComponentValue"></param>
-        /// <param name="SubComponentDelimter">The charcter used as the delimiter for sub components. Defaults to "&"</param>
+        /// <param name="SubComponentDelimter">The character used as the delimiter for sub components. Defaults to "&"</param>
         public Component(string ComponentValue, char SubComponentDelimter = '&')
         {
             this.subComponentDelimter = SubComponentDelimter; // the character used to delimit sub components in the HL7 message
 
             // split the string into sub components, then save
             string[] splitSubCompoents = ComponentValue.Split(this.subComponentDelimter);
-            foreach (string subComponent in splitSubCompoents)
-            {
+            foreach (string subComponent in splitSubCompoents) {
                 this.subComponents.Add(new SubComponent(subComponent));
             }
         }
@@ -144,16 +143,14 @@ namespace HL7Tools
         /// <summary>
         /// Return the sub component if in range, else return null. Index starts at 1
         /// </summary>
-        /// <param name="ID">ID repesents the possition of a single SubComponet in the list of SubComponets (starts at 1)</param>
+        /// <param name="ID">ID represents the position of a single SubComponet in the list of SubComponets (starts at 1)</param>
         /// <returns>Returns a SubComponent object</returns>
         public SubComponent GetSubComponent(int ID)
         {
-            if ((ID > 0) && (ID <= this.subComponents.Count))
-            {
+            if ((ID > 0) && (ID <= this.subComponents.Count)) {
                 return this.subComponents[ID - 1];
             }
-            else
-            {
+            else {
                 return null;
             }
         }
@@ -164,29 +161,25 @@ namespace HL7Tools
         /// <param name="MaskCharacter">The character to use to as the mask</param>
         public override void Mask(char MaskCharacter = '*')
         {
-            foreach (SubComponent item in this.subComponents)
-            {
+            foreach (SubComponent item in this.subComponents) {
                 item.Mask(MaskCharacter);
             }
         }
 
         /// <summary>
-        /// Set the SubComponent value at a spcecific index
+        /// Set the SubComponent value at a specific index
         /// </summary>
-        /// <param name="ID">The index repesenting the item in the lis of SubComponents that is set</param>
+        /// <param name="ID">The index representing the item in the list of SubComponents that is set</param>
         /// <param name="SubComponentValue">The value to assign to the SubComponet</param>
         public void SetSubComponent(int ID, SubComponent SubComponentValue)
         {
-            if ((ID > 0) && (ID <= this.subComponents.Count))
-            {
+            if ((ID > 0) && (ID <= this.subComponents.Count)) {
                 this.subComponents[ID - 1] = SubComponentValue;
             }
-            
+
             // if the sub component is out of the range of current subcomponents, add in empty sub components until the range is large enough
-            if (ID > this.subComponents.Count)
-            {
-                while (ID > this.subComponents.Count + 1)
-                {
+            if (ID > this.subComponents.Count) {
+                while (ID > this.subComponents.Count + 1) {
                     this.subComponents.Add(new SubComponent(string.Empty));
                 }
                 this.subComponents.Add(SubComponentValue);
@@ -200,17 +193,14 @@ namespace HL7Tools
         /// <param name="SubComponentStringValue">The value to assign the SubComponent</param>
         public void SetSubComponent(int ID, string SubComponentStringValue)
         {
-            if ((ID > 0) && (ID <= this.subComponents.Count))
-            {
+            if ((ID > 0) && (ID <= this.subComponents.Count)) {
                 SubComponent tempSubComponent = new SubComponent(SubComponentStringValue);
                 this.subComponents[ID - 1] = tempSubComponent;
             }
 
             // if the sub component is out of the range of current subcomponents, add in empty sub components until the range is large enough
-            if (ID > this.subComponents.Count)
-            {
-                while (ID > this.subComponents.Count + 1) 
-                {
+            if (ID > this.subComponents.Count) {
+                while (ID > this.subComponents.Count + 1) {
                     this.subComponents.Add(new SubComponent(string.Empty));
                 }
                 this.subComponents.Add(new SubComponent(SubComponentStringValue));
@@ -223,19 +213,15 @@ namespace HL7Tools
         /// <returns>Returns a string containing the vale of the component</returns>
         public override string ToString()
         {
-            if (this.subComponents.Count == 0)
-            {
+            if (this.subComponents.Count == 0) {
                 return "";
             }
-            else if (this.subComponents.Count == 1)
-            {
+            else if (this.subComponents.Count == 1) {
                 return this.subComponents[0].ToString();
             }
-            else
-            {
+            else {
                 string returnString = this.subComponents[0].ToString();
-                for (int i = 1; i < this.subComponents.Count; i++)
-                {
+                for (int i = 1; i < this.subComponents.Count; i++) {
                     returnString += subComponentDelimter + this.subComponents[i].ToString();
                 }
                 return returnString;
@@ -266,8 +252,7 @@ namespace HL7Tools
 
             // split the string into components, then add to component list
             string[] splitSubCompoents = FieldValue.Split(this.componentDelimeter);
-            foreach (string field in splitSubCompoents)
-            {
+            foreach (string field in splitSubCompoents) {
                 this.components.Add(new Component(field, this.subCompenentDelimeter));
             }
         }
@@ -305,19 +290,15 @@ namespace HL7Tools
         /// <returns>Returns a string of the field value</returns>
         public override string ToString()
         {
-            if (this.components.Count == 0)
-            {
+            if (this.components.Count == 0) {
                 return string.Empty;
             }
-            else if (this.components.Count == 1)
-            {
+            else if (this.components.Count == 1) {
                 return this.components[0].ToString();
             }
-            else
-            {
+            else {
                 string returnString = this.components[0].ToString();
-                for (int i = 1; i < this.components.Count; i++)
-                {
+                for (int i = 1; i < this.components.Count; i++) {
                     returnString += this.componentDelimeter + this.components[i].ToString();
                 }
                 return returnString;
@@ -330,8 +311,7 @@ namespace HL7Tools
         /// <param name="MaskCharacter">This defines the character to use as a mask. Defaults to '*'</param>
         public override void Mask(char MaskCharacter = '*')
         {
-            foreach (Component item in this.Components)
-            {
+            foreach (Component item in this.Components) {
                 item.Mask(MaskCharacter);
             }
         }
@@ -363,8 +343,7 @@ namespace HL7Tools
 
             // split repeating field values, add each value to the list of SinglField objects
             string[] splitFields = FieldValue.Split(fieldRepeatDelimeter);
-            foreach (string fieldItem in splitFields)
-            {
+            foreach (string fieldItem in splitFields) {
                 this.fieldItems.Add(new FieldItem(fieldItem, this.compoenentDelimeter, this.subComponentDelimiter));
             }
         }
@@ -375,19 +354,15 @@ namespace HL7Tools
         /// <returns>Returns a the field value as a string</returns>
         public override string ToString()
         {
-            if (this.fieldItems.Count == 0)
-            {
+            if (this.fieldItems.Count == 0) {
                 return string.Empty;
             }
-            else if (this.fieldItems.Count == 1)
-            {
+            else if (this.fieldItems.Count == 1) {
                 return this.fieldItems[0].ToString();
             }
-            else
-            {
+            else {
                 string returnString = this.fieldItems[0].ToString();
-                for (int i = 1; i < this.fieldItems.Count; i++)
-                {
+                for (int i = 1; i < this.fieldItems.Count; i++) {
                     returnString += this.fieldRepeatDelimeter + this.fieldItems[i].ToString();
                 }
                 return returnString;
@@ -427,8 +402,7 @@ namespace HL7Tools
         /// <param name="MaskCharacter">The character to use as the mask, defaults to '*'</param>
         public override void Mask(char MaskCharacter = '*')
         {
-            foreach (FieldItem item in this.FieldItems)
-            {
+            foreach (FieldItem item in this.FieldItems) {
                 item.Mask(MaskCharacter);
             }
         }
@@ -465,15 +439,13 @@ namespace HL7Tools
             // split repeating field values, add each value to the list of SinglField objects
             string[] splitSegment = SegmentValue.Split(FieldDelimeter);
             this.segmentName = splitSegment[0];
-            // special case for message header, the field delimeter is MSH-1
-            if (this.segmentName == "MSH")
-            {
+            // special case for message header, the field delimiter is MSH-1
+            if (this.segmentName == "MSH") {
                 this.fields.Add(new Field(this.fieldDelimeter.ToString(), this.fieldRepeatDelimter, this.compoenentDelimeter, this.subComponentDelimiter));
 
             }
             // now add the remaining fields for all segment types
-            for (int i = 1; i < splitSegment.Length; i++)
-            {
+            for (int i = 1; i < splitSegment.Length; i++) {
                 this.fields.Add(new Field(splitSegment[i], this.fieldRepeatDelimter, this.compoenentDelimeter, this.subComponentDelimiter));
             }
         }
@@ -520,25 +492,20 @@ namespace HL7Tools
         /// <returns>Returns a copy of the segment value as a string</returns>
         public override string ToString()
         {
-            if (this.fields.Count == 0)
-            {
+            if (this.fields.Count == 0) {
                 return "";
             }
 
             string returnString = "";
             returnString = this.segmentName;
-            // the MSH segment is different because MSH-1 is the field delimeter
-            if (this.segmentName == "MSH")
-            {
-                for (int i = 1; i < this.fields.Count; i++)
-                {
+            // the MSH segment is different because MSH-1 is the field delimiter
+            if (this.segmentName == "MSH") {
+                for (int i = 1; i < this.fields.Count; i++) {
                     returnString += fieldDelimeter + this.fields[i].ToString();
                 }
             }
-            else
-            {
-                for (int i = 0; i < this.fields.Count; i++)
-                {
+            else {
+                for (int i = 0; i < this.fields.Count; i++) {
                     returnString += fieldDelimeter + this.fields[i].ToString();
                 }
             }
@@ -551,8 +518,7 @@ namespace HL7Tools
         /// <param name="MaskCharacter">The character to use as the mask, defaults to '*'</param>
         public override void Mask(char MaskCharacter = '*')
         {
-            foreach (Field item in this.Fields)
-            {
+            foreach (Field item in this.Fields) {
                 item.Mask(MaskCharacter);
             }
         }
@@ -569,10 +535,10 @@ namespace HL7Tools
         private char componentDelimeter;
         private char subComponentDelimeter;
 
-       /// <summary>
-       /// Initializes a new instance of the <see cref="HL7Message"/> class.
-       /// </summary>
-       /// <param name="Message">A string containing the full message text used to create the HL7Message object</param>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HL7Message"/> class.
+        /// </summary>
+        /// <param name="Message">A string containing the full message text used to create the HL7Message object</param>
         public HL7Message(string Message)
         {
             // If the file has been edited in a text editor, <CR><LF> may have been inserted at the end of each line. HL7 segments should only be delimited by <CR> characters, so replace <CR><LF> with <CR>
@@ -582,8 +548,7 @@ namespace HL7Tools
             string[] segmentStrings = Message.Split((char)0x0D);
             // set the field, component, sub component and repeat delimters
             int startPos = Message.IndexOf("MSH");
-            if (startPos >= 0)
-            {
+            if (startPos >= 0) {
                 startPos = startPos + 2;
                 this.fieldDelimeter = Message[startPos + 1];
                 this.componentDelimeter = Message[startPos + 2];
@@ -591,13 +556,11 @@ namespace HL7Tools
                 this.subComponentDelimeter = Message[startPos + 5];
             }
             // throw an exception if a MSH segment is not included in the message. 
-            else
-            {
+            else {
                 throw new ArgumentException("MSH segment not present.");
             }
             // add each segment
-            foreach (string segmentItem in segmentStrings)
-            {
+            foreach (string segmentItem in segmentStrings) {
                 this.segments.Add(new Segment(segmentItem, this.fieldDelimeter, this.fieldRepeatDelimeter, this.componentDelimeter, this.subComponentDelimeter));
             }
 
@@ -628,16 +591,16 @@ namespace HL7Tools
         /// <returns>returns a copy of the HL7Message as a string</returns>
         public override string ToString()
         {
-            if (this.segments.Count == 0)
-            {
+            if (this.segments.Count == 0) {
                 return "";
             }
-            else
-            {
+            else {
                 string returnString = "";
-                foreach (Segment item in this.segments)
-                {
-                    returnString += item.ToString() + (char)0x0D;
+                foreach (Segment item in this.segments) {
+                    // only add segments that contain content - ignore blank lines at the end of files etc.
+                    if (item.ToString().Length > 0) {
+                        returnString += item.ToString() + (char)0x0D;
+                    }
                 }
                 return returnString;
             }
@@ -659,45 +622,36 @@ namespace HL7Tools
             List<Segment> IN2Segments = this.GetSegment("IN2");
 
             // mask PID segments
-            foreach (Segment segmentItem in PIDSegments)
-            {
+            foreach (Segment segmentItem in PIDSegments) {
                 // ignore PID-1, PID-2, PID-3
-                for (int i = 3; i < segmentItem.Fields.Count; i++) 
-                {
+                for (int i = 3; i < segmentItem.Fields.Count; i++) {
                     segmentItem.Fields[i].Mask(MaskCharacter);
                 }
             }
 
             // mask NK1 segments
-            foreach (Segment segmentItem in NK1Segments)
-            {
+            foreach (Segment segmentItem in NK1Segments) {
                 // ignore NK1-1
-                for (int i = 1; i < segmentItem.Fields.Count; i++) 
-                {
+                for (int i = 1; i < segmentItem.Fields.Count; i++) {
                     // ignore NK-3
-                    if (i != 2) 
-                    {
+                    if (i != 2) {
                         segmentItem.Fields[i].Mask(MaskCharacter);
                     }
                 }
             }
 
             // mask IN1 segments
-            foreach (Segment segmentItem in IN1Segments)
-            {
+            foreach (Segment segmentItem in IN1Segments) {
                 // mask all fields
-                for (int i = 0; i < segmentItem.Fields.Count; i++) 
-                {
+                for (int i = 0; i < segmentItem.Fields.Count; i++) {
                     segmentItem.Fields[i].Mask(MaskCharacter);
                 }
             }
 
             // mask IN1 segments
-            foreach (Segment segmentItem in IN2Segments)
-            {
+            foreach (Segment segmentItem in IN2Segments) {
                 // mask all fields
-                for (int i = 0; i < segmentItem.Fields.Count; i++) 
-                {
+                for (int i = 0; i < segmentItem.Fields.Count; i++) {
                     segmentItem.Fields[i].Mask(MaskCharacter);
                 }
             }
@@ -705,7 +659,7 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// Return the segment name and indexes of the field, component and subcompnent based on a text string identifying the HL7 item (e.g. PID-3.1). If values are not specified they will be set to 0.
+        /// Return the segment name and indexes of the field, component and subcomponent based on a text string identifying the HL7 item (e.g. PID-3.1). If values are not specified they will be set to 0.
         /// </summary>
         /// <param name="HL7ItemPosition">A text string identifying the HL7 item (e.g. PID-3.1)</param>
         /// <param name="Segment">The three letter segment name</param>
@@ -713,7 +667,7 @@ namespace HL7Tools
         /// <param name="Field">The field number</param>
         /// <param name="FieldRepeat">The field repeat number, set to 0 if no specific repeat requested</param>
         /// <param name="Component">The component number</param>
-        /// <param name="SubComponent">The subcomment number.</param>
+        /// <param name="SubComponent">The subcomponent number.</param>
         private void GetItemPosition(string HL7LocationString, ref string SegmentName, ref int SegmentRepeatNumber, ref int FieldNumber, ref int FieldRepeatNumber, ref int ComponentNumber, ref int SubComponentNumber)
         {
             SegmentName = string.Empty;
@@ -729,8 +683,7 @@ namespace HL7Tools
 
                 // Obtain the segment repeat number if specified
                 Match checkRepeatingSegmentNumber = System.Text.RegularExpressions.Regex.Match(HL7LocationString, "^[A-Z]{2}([A-Z]|[0-9])[[][1-9]{1,3}[]]", RegexOptions.IgnoreCase);
-                if (checkRepeatingSegmentNumber.Success == true)
-                {
+                if (checkRepeatingSegmentNumber.Success == true) {
                     string tmpStr = checkRepeatingSegmentNumber.Value.Split('[')[1];
                     SegmentRepeatNumber = Int32.Parse(tmpStr.Split(']')[0]);
 
@@ -738,13 +691,12 @@ namespace HL7Tools
 
                 // Obtain the field repeat number if specified
                 Match checkRepeatingFieldNumber = System.Text.RegularExpressions.Regex.Match(HL7LocationString, "[-][0-9]{1,3}[[]([1-9]|[1-9][0-9])[]]", RegexOptions.IgnoreCase);
-                if (checkRepeatingFieldNumber.Success == true)
-                {
+                if (checkRepeatingFieldNumber.Success == true) {
                     string tmpStr = checkRepeatingFieldNumber.Value.Split('[')[1];
                     FieldRepeatNumber = Int32.Parse(tmpStr.Split(']')[0]);
                 }
 
-                // retrieve the field, component and sub componnent values. If they don't exist, set to 0
+                // retrieve the field, component and sub component values. If they don't exist, set to 0
                 string[] tempString = HL7LocationString.Split('-');
                 SegmentName = tempString[0].Substring(0, 3); // the segment name
                 if (tempString.Count() > 1) // confirm values other than the segment were provided.
@@ -758,7 +710,7 @@ namespace HL7Tools
                     {
                         ComponentNumber = Int32.Parse(tempString2[1]);
                     }
-                    if (tempString2.Count() == 3) // field, compoment and sub component exist. Set the value of thesub component.
+                    if (tempString2.Count() == 3) // field, component and sub component exist. Set the value of the subComponent.
                     {
                         SubComponentNumber = Int32.Parse(tempString2[2]);
                     }
@@ -774,8 +726,7 @@ namespace HL7Tools
         public void MaskHL7Item(string HL7LocationString, char MaskChar = '*')
         {
             List<HL7Item> items = this.GetHL7Item(HL7LocationString);
-            foreach (HL7Item item in items)
-            {
+            foreach (HL7Item item in items) {
                 item.Mask(MaskChar);
             }
         }
@@ -795,51 +746,43 @@ namespace HL7Tools
             int fieldRepeatNumber = 0;
             List<HL7Item> returnHL7Item = new List<HL7Item>();
 
-            // get the indexes of the item being requested basedon the string provided by the caller
+            // get the indexes of the item being requested based on the string provided by the caller
             this.GetItemPosition(HL7LocationString, ref segmentName, ref segmentRepeatNumber, ref fieldNumber, ref fieldRepeatNumber, ref componentNumber, ref subcomponentNumber);
 
             // get the list of segments the item(s) belong to
             List<Segment> segmentList = this.GetSegment(segmentName, segmentRepeatNumber);
 
             // Subcomponent value requested
-            if (subcomponentNumber != 0)
-            {
+            if (subcomponentNumber != 0) {
                 List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
                 List<Component> componentItems = this.GetComponent(fieldItems, componentNumber);
                 List<SubComponent> subComponetItems = this.GetSubcomponent(componentItems, subcomponentNumber);
-                foreach (SubComponent item in subComponetItems)
-                {
+                foreach (SubComponent item in subComponetItems) {
                     returnHL7Item.Add(item);
                 }
 
             }
 
             // Component value requested
-            else if (componentNumber != 0)
-            {
+            else if (componentNumber != 0) {
                 List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
                 List<Component> componentItems = this.GetComponent(fieldItems, componentNumber);
-                foreach (Component item in componentItems)
-                {
+                foreach (Component item in componentItems) {
                     returnHL7Item.Add(item);
                 }
             }
 
             // Field value requested
-            else if (fieldNumber != 0)
-            {
+            else if (fieldNumber != 0) {
                 List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
-                foreach (FieldItem item in fieldItems)
-                {
+                foreach (FieldItem item in fieldItems) {
                     returnHL7Item.Add(item);
                 }
             }
 
             // Segment value requested
-            else if (segmentName != null)
-            {
-                foreach (Segment item in segmentList)
-                {
+            else if (segmentName != null) {
+                foreach (Segment item in segmentList) {
                     returnHL7Item.Add(item);
                 }
             }
@@ -851,7 +794,7 @@ namespace HL7Tools
 
 
         /// <summary>
-        /// Return the value for the corresponding HL7 item. HL7LocationString is formatted as Segment-Field.Componet.SubComponent eg PID-3 or PID-5.1.1
+        /// Return the value for the corresponding HL7 item. HL7LocationString is formatted as Segment-Field.Component.SubComponent e.g. PID-3 or PID-5.1.1
         /// </summary>
         /// <param name="HL7LocationString">A string representing the location on the item within the message. e.g. PID-3.1, MSH-4, PID-13[1].1</param>
         /// <returns>Returns a copy of the nominated HL7 item as a string</returns>
@@ -865,51 +808,43 @@ namespace HL7Tools
             int fieldRepeatNumber = 0;
             List<string> returnString = new List<string>();
 
-            // get the indexes of the item being requested basedon the string provided by the caller
+            // get the indexes of the item being requested based on the string provided by the caller
             this.GetItemPosition(HL7LocationString, ref segmentName, ref segmentRepeatNumber, ref fieldNumber, ref fieldRepeatNumber, ref componentNumber, ref subcomponentNumber);
 
             // get the list of segments the item(s) belong to
-            List<Segment> segmentList = this.GetSegment(segmentName, segmentRepeatNumber); 
+            List<Segment> segmentList = this.GetSegment(segmentName, segmentRepeatNumber);
 
             // Subcomponent value requested
-            if (subcomponentNumber != 0)
-            {
+            if (subcomponentNumber != 0) {
                 List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
                 List<Component> componentItems = this.GetComponent(fieldItems, componentNumber);
                 List<SubComponent> subComponetItems = this.GetSubcomponent(componentItems, subcomponentNumber);
-                foreach (SubComponent item in subComponetItems)
-                {
+                foreach (SubComponent item in subComponetItems) {
                     returnString.Add(item.ToString());
                 }
-                
+
             }
 
             // Component value requested
-            else if (componentNumber != 0)
-            {
+            else if (componentNumber != 0) {
                 List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
                 List<Component> componentItems = this.GetComponent(fieldItems, componentNumber);
-                foreach (Component item in componentItems)
-                {
+                foreach (Component item in componentItems) {
                     returnString.Add(item.ToString());
                 }
             }
 
             // Field value requested
-            else if (fieldNumber != 0)
-            {
+            else if (fieldNumber != 0) {
                 List<FieldItem> fieldItems = this.GetField(segmentList, fieldRepeatNumber, fieldNumber);
-                foreach (FieldItem item in fieldItems)
-                {
+                foreach (FieldItem item in fieldItems) {
                     returnString.Add(item.ToString());
                 }
             }
 
             // Segment value requested
-            else if (segmentName != null)
-            {
-                foreach (Segment item in segmentList)
-                {
+            else if (segmentName != null) {
+                foreach (Segment item in segmentList) {
                     returnString.Add(item.ToString());
                 }
             }
@@ -937,81 +872,69 @@ namespace HL7Tools
         /// </summary>
         /// <param name="ComponentItemList">A list of one or more Components to search</param>
         /// <param name="SubcomponetNumber">Identifies the index of the subcomponent to retuen (index starts from 1)</param>
-        /// <returns>Returns a list of SubComponent objects conatining the Subcomponents matching the query</returns>
+        /// <returns>Returns a list of SubComponent objects containing the Subcomponents matching the query</returns>
         private List<SubComponent> GetSubcomponent(List<Component> ComponentItemList, int SubcomponentNumber)
         {
             List<SubComponent> subcomponentList = new List<SubComponent>();
 
-            // return the subcomonent from each component in the list
-            foreach (Component componentItem in ComponentItemList)
-            {
-                // confirm the subcomponent requested exists in the list of subcompoenent
-                if (SubcomponentNumber <= componentItem.SubComponents.Count())
-                {
-                    subcomponentList.Add(componentItem.SubComponents[SubcomponentNumber-1]);
+            // return the subcomponent from each component in the list
+            foreach (Component componentItem in ComponentItemList) {
+                // confirm the subcomponent requested exists in the list of subcomponent
+                if (SubcomponentNumber <= componentItem.SubComponents.Count()) {
+                    subcomponentList.Add(componentItem.SubComponents[SubcomponentNumber - 1]);
                 }
             }
             return subcomponentList;
         }
-       
+
         /// <summary>
         /// Returns a list of one or more component objects based on the item location provided
         /// </summary>
         /// <param name="FieldItemList">A list of one or more FieldItem objects to search</param>
         /// <param name="ComponentNumber">Identifies the index of the component to search (index starts from 1)</param>
-        /// <returns>Returns a list of Component objects conatining the Components matching the query</returns>
+        /// <returns>Returns a list of Component objects containing the Components matching the query</returns>
         private List<Component> GetComponent(List<FieldItem> FieldItemList, int ComponentNumber)
         {
             List<Component> returnComponents = new List<Component>();
 
-            foreach (FieldItem fieldItem in FieldItemList)
-            {
-                // confirm the compone requested is in range
-                if (ComponentNumber <= fieldItem.Components.Count())
-                {
-                    returnComponents.Add(fieldItem.Components[ComponentNumber-1]);
+            foreach (FieldItem fieldItem in FieldItemList) {
+                // confirm the component requested is in range
+                if (ComponentNumber <= fieldItem.Components.Count()) {
+                    returnComponents.Add(fieldItem.Components[ComponentNumber - 1]);
                 }
             }
             return returnComponents;
         }
-        
+
         /// <summary>
         /// Returns a list of one or more FieldItems objects based on the item location provided
         /// </summary>
         /// <param name="SegmentItemList">A list of one or more segments to search</param>
-        /// <param name="FieldRepeat">Identifies a specific occurence of a repeating field. Set to 0 to seacrh all field repeat occurences</param>
+        /// <param name="FieldRepeat">Identifies a specific occurrence of a repeating field. Set to 0 to search all field repeat occurrences</param>
         /// <param name="FieldNumber">Identifies the index of the field to search (index starts from 1)</param>
-        /// <returns>Returns a list of Field objects conatining the Fields matching the query</returns>
+        /// <returns>Returns a list of Field objects containing the Fields matching the query</returns>
         private List<FieldItem> GetField(List<Segment> SegmentItemList, int FieldRepeat, int FieldNumber)
         {
             List<FieldItem> returnFields = new List<FieldItem>();
 
-            // a specific field repeat was requested, only return macthing field values within the specific field occurance
-            if (FieldRepeat != 0)
-            {
-                foreach (Segment segmentItem in SegmentItemList)
-                {
-                    if (FieldNumber <= segmentItem.Fields.Count())
-                    {
-                        if (FieldRepeat <= segmentItem.Fields[FieldNumber-1].FieldItems.Count())
-                        {
+            // a specific field repeat was requested, only return matching field values within the specific field occurrence
+            if (FieldRepeat != 0) {
+                foreach (Segment segmentItem in SegmentItemList) {
+                    if (FieldNumber <= segmentItem.Fields.Count()) {
+                        if (FieldRepeat <= segmentItem.Fields[FieldNumber - 1].FieldItems.Count()) {
                             returnFields.Add(segmentItem.Fields[FieldNumber - 1].FieldItems[FieldRepeat - 1]);
                         }
                     }
                 }
             }
 
-            // no repeating field item specified, return matching field values from field occurances for this single segment
-            else
-            {
-                foreach (Segment segmentItem in SegmentItemList)
-                {
+            // no repeating field item specified, return matching field values from field occurrences for this single segment
+            else {
+                foreach (Segment segmentItem in SegmentItemList) {
                     // check the range of the FieldNumber index. 
-                    if (FieldNumber <= segmentItem.Fields.Count())
-                    {
-                        // return all repeats of the FieldItem requested (Fo
-                        foreach (FieldItem field in segmentItem.Fields[FieldNumber-1].FieldItems)
-                        {
+                    if (FieldNumber <= segmentItem.Fields.Count()) {
+                        // return all repeats of the FieldItem requested 
+                        foreach (FieldItem field in segmentItem.Fields[FieldNumber - 1].FieldItems) {
                             returnFields.Add(field);
                         }
                     }
@@ -1024,35 +947,30 @@ namespace HL7Tools
         /// Returns a list of one or more Segment objects based on the item location provided
         /// </summary>
         /// <param name="SegmentName">The three letter segment name</param>
-        /// <param name="SegmentRepeat">Identifies a specific occurance of a repeating segment. Set to 0 to seacrh all occurences</param>
-        /// <returns>Returns a list of Segment objects conatining the segments matching the query</returns>
+        /// <param name="SegmentRepeat">Identifies a specific occurrence of a repeating segment. Set to 0 to search all occurrences</param>
+        /// <returns>Returns a list of Segment objects containing the segments matching the query</returns>
         private List<Segment> GetSegment(string SegmentName, int SegmentRepeat = 0)
         {
             List<Segment> returnSegment = new List<Segment>();
             List<Segment> segmentList = new List<Segment>();
 
             // create a list of all Segments that match the name requested
-            foreach (Segment segmentItem in this.segments)
-            {
-                if (segmentItem.Name.ToUpper() == SegmentName.ToUpper())
-                {
+            foreach (Segment segmentItem in this.segments) {
+                if (segmentItem.Name.ToUpper() == SegmentName.ToUpper()) {
                     segmentList.Add(segmentItem);
                 }
             }
 
             // segment repeat identified, only return the single segment
-            if (SegmentRepeat != 0)
-            {
-                // make sure the segment repeat requested is in range (ie it is contained in the message)
-                if (SegmentRepeat <= segmentList.Count())
-                {
+            if (SegmentRepeat != 0) {
+                // make sure the segment repeat requested is in range (i.e. it is contained in the message)
+                if (SegmentRepeat <= segmentList.Count()) {
                     returnSegment.Add(segmentList[SegmentRepeat - 1]);
                 }
             }
 
             // no segment repeat identified, so return all matching segments.
-            else
-            {
+            else {
                 returnSegment = segmentList;
             }
 

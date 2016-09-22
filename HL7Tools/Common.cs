@@ -19,7 +19,7 @@ namespace HL7Tools
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Microsoft.PowerShell.Commands;
- 
+
     public static class Common
     {
         /// <summary>
@@ -33,8 +33,7 @@ namespace HL7Tools
             if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?$", RegexOptions.IgnoreCase)) // regex to confirm the HL7 element location string is valid
             {
                 // make sure field, component and subcomponent values are not 0
-                if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "([.]0)|([-]0)", RegexOptions.IgnoreCase))
-                {
+                if (System.Text.RegularExpressions.Regex.IsMatch(hl7ItemLocation, "([.]0)|([-]0)", RegexOptions.IgnoreCase)) {
                     return false;
                 }
                 return true;
@@ -49,14 +48,12 @@ namespace HL7Tools
         /// <returns></returns>
         public static bool IsFilterValid(string filterString)
         {
-            if (Regex.IsMatch(filterString, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?=", RegexOptions.IgnoreCase))
-            {
+            if (Regex.IsMatch(filterString, "^[A-Z]{2}([A-Z]|[0-9])([[]([1-9]|[1-9][0-9])[]])?(([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3}[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?[.][0-9]{1,3})|([-][0-9]{1,3}([[]([1-9]|[1-9][0-9])[]])?))?=", RegexOptions.IgnoreCase)) {
                 return true;
             }
 
             // the value provided after the -filter switch did not match the expected format of a message trigger.
-            else
-            {
+            else {
                 return false;
             }
         }
@@ -80,8 +77,7 @@ namespace HL7Tools
         public static bool IsFileSystemPath(ProviderInfo provider, string path)
         {
             bool isFileSystem = true;
-            if (provider.ImplementingType != typeof(FileSystemProvider))
-            {
+            if (provider.ImplementingType != typeof(FileSystemProvider)) {
                 // tell the caller that the item was not on the filesystem
                 isFileSystem = false;
             }
@@ -95,13 +91,11 @@ namespace HL7Tools
         /// <returns></returns>
         public static string GetFilterItem(string filterString)
         {
-            if (IsFilterValid(filterString))
-            {
+            if (IsFilterValid(filterString)) {
                 string[] tempString = (filterString).Split('=');
                 return tempString[0];
             }
-            else
-            {
+            else {
                 return null;
             }
         }
@@ -113,20 +107,16 @@ namespace HL7Tools
         /// <returns></returns>
         public static string GetFilterValue(string filterString)
         {
-            if (IsFilterValid(filterString))
-            {
+            if (IsFilterValid(filterString)) {
                 string[] tempString = (filterString.Split('='));
-                if (tempString.Length > 1)
-                {
+                if (tempString.Length > 1) {
                     return tempString[1];
                 }
-                else
-                {
+                else {
                     return null;
                 }
             }
-            else
-            {
+            else {
                 return null;
             }
 
