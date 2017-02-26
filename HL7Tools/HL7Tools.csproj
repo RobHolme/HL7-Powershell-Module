@@ -68,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="HL7TcpListener.cs" />
+    <Compile Include="ReceivedMessageResult.cs" />
+    <Compile Include="ReceiveHL7Message.cs" />
     <Compile Include="RemoveHL7Item.cs" />
     <Compile Include="SelectHL7Item.cs" />
     <Compile Include="HL7Message.cs" />
