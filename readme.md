@@ -22,9 +22,9 @@ This CmdLet returns the values of specific HL7 items from a file (or group of fi
 Output can be piped to other powershell CmdLets to refine the results. e.g. returning only the unique values across a range of files:
 
 ```
-Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] \<string\> [-Filter <string[]>] [<CommonParameters>]
+Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [<CommonParameters>]
 
-Select-HL7Item [-Path] <string[]> [-ItemPosition] \<string\> [-Filter <string[]>] [<CommonParameters>]
+Select-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [<CommonParameters>]
 ```
 Example:
 
@@ -65,9 +65,9 @@ Filter Examples:
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
 
 ```
-Send-HL7Message [-HostName] \<string\> [-Port] \<int\> [-LiteralPath] <string[]> [-NoACK]  [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK]  [<CommonParameters>]
 
-Send-HL7Message [-HostName] \<string\> [-Port] \<int\> [-Path] <string[]> [-NoACK]  [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK]  [<CommonParameters>]
 ```
 example:
 
@@ -128,9 +128,9 @@ __-OverwriteFile__: If this  switch is set, the original file is modified.
 This CmdLet changes the value of an existing HL7 item from a file (or group of files). Some basic filtering is available to only include specific messages within a large sample. By default only the first occurrence of an item will be changed unless the -UpdateAllRepeats switch is set.
 
 ```
-Set-HL7Item [-LiteralPath] <string[]> [-ItemPosition] \<string\> [-Value] \<string\> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
 
-Set-HL7Item [-Path] <string[]> [-ItemPosition] \<string\> [-Value] \<string\> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 examples:
 
@@ -213,7 +213,7 @@ __-OverwriteFile__: Don't warn when overwriting existing files
 Receives a HL7 v2.x message via a TCP connection (MLLP framing).
 
 ```
-Receive-HL7Message -Path \<string\> -Port \<int\> [-Timeout] \<int\> [<CommonParameters>]
+Receive-HL7Message -Path <string> -Port <int> [-Timeout] <int> [<CommonParameters>]
 ```
 
 ### Parameters
