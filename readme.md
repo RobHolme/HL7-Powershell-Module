@@ -58,7 +58,8 @@ Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
 
-> Note: Items that cannot be located in the message will display a warning. To suppress the warning messages use the `-WarningAction Ignore` common parameter.
+> Note: Items that cannot be located in the message will display a warning. 
+> To suppress the warning messages use the `-WarningAction Ignore` common parameter.
 
 ## Send-HL7Message
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
