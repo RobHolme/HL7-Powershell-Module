@@ -22,9 +22,9 @@ This CmdLet returns the values of specific HL7 items from a file (or group of fi
 Output can be piped to other powershell CmdLets to refine the results. e.g. returning only the unique values across a range of files:
 
 ```
-Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [<CommonParameters>]
+Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] \<string\> [-Filter <string[]>] [<CommonParameters>]
 
-Select-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [<CommonParameters>]
+Select-HL7Item [-Path] <string[]> [-ItemPosition] \<string\> [-Filter <string[]>] [<CommonParameters>]
 ```
 Example:
 
@@ -42,7 +42,7 @@ __-Path <string[]>__: The full or relative path a single HL7 file or directory. 
 
 __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
 
-__-ItemPosition <string>__: A string identifying the location of the item in the HL7 message you wish to retrieve the value for.
+__-ItemPosition \<string\>__: A string identifying the location of the item in the HL7 message you wish to retrieve the value for.
 
 ### Parameter Examples
 * `-ItemPosition PID`  All PID segments
@@ -61,20 +61,24 @@ __-ItemPosition <string>__: A string identifying the location of the item in the
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
 
 ```
-Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK]  [<CommonParameters>]
+Send-HL7Message [-HostName] \<string\> [-Port] \<int\> [-LiteralPath] <string[]> [-NoACK]  [<CommonParameters>]
 
-Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK]  [<CommonParameters>]
+Send-HL7Message [-HostName] \<string\> [-Port] \<int\> [-Path] <string[]> [-NoACK]  [<CommonParameters>]
 ```
 example:
 
 `Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\message1.hl7`
 
 ### Parameters
-* `-Hostname <string>`  The  IP Address or host name of the remote host to send the HL7 message to
-* `-Port <int>` The TCP port of the listener on the remote host to send the HL7 message to.
-* `-Path <string[]>` The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' (no spaces). 
-* `-LiteralPath <string[]>` Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
-* `-NoACK` This switch instructs the CmdLet not to wait for an ACK response from the remote host.
+__-Hostname \<string\>__:  The  IP Address or host name of the remote host to send the HL7 message to
+
+__-Port \<int\>__: The TCP port of the listener on the remote host to send the HL7 message to.
+
+__-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' (no spaces). 
+
+__-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
+
+__-NoACK__: This switch instructs the CmdLet not to wait for an ACK response from the remote host.
 
 ## Remove-HL7Identifiers
 Removes names, addresses and other personally identifiable details from a HL7 v2.x Message.  Note:  Identifier codes in {"PID-3"} remain. This masks the following fields from a HL7 v2.x file:
@@ -97,9 +101,12 @@ examples:
 `Remove-HL7Identifiers -Path c:\test\testfile.hl7 -CustomItemsList PID-3.1,NK1,DG1`
 
 ### Parameters
-* `-Path <string[]>` The full or relative path a single HL7 file or directory, or a list of files. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
-* `-LiteralPath <string[]>` Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
-* `-CustomItemsList <string[]>` A list of the HL7 items to mask instead of the default segments and fields. List each item in a comma separated list (no spaces). Items can include a mix of segments (e.g. PV1), Fields (e.g. PID-3), Components (e.g. {"PID-3.1"}) or Subcomponents (e.g. {"PV1-42.2.2"}).  For repeating segments and fields a specific repeat can be identified (index starts at 1). e.g. {"PID-3[1].1"} will mask out the first occurrence of {"PID-3.1"}, leaving other repeats of {"PID-3.1"} unchanged. Likewise {"IN1[2]"} will mask out the second occurrence of the IN1 segments only.
+__-Path <string[]>__: The full or relative path a single HL7 file or directory, or a list of files. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
+
+__-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
+
+__-CustomItemsList <string[]>__: A list of the HL7 items to mask instead of the default segments and fields. List each item in a comma separated list (no spaces). Items can include a mix of segments (e.g. PV1), Fields (e.g. PID-3), Components (e.g. {"PID-3.1"}) or Subcomponents (e.g. {"PV1-42.2.2"}).  For repeating segments and fields a specific repeat can be identified (index starts at 1). e.g. {"PID-3[1].1"} will mask out the first occurrence of {"PID-3.1"}, leaving other repeats of {"PID-3.1"} unchanged. Likewise {"IN1[2]"} will mask out the second occurrence of the IN1 segments only.
+
 ### Parameter Examples:
 * `-CustomItemsList PID-3.1,PID-5,PID-13,NK1`
 * `-MaskChar <char>` The character used  to mask the identifier fields,  Defaults to '*' if not supplied
@@ -110,9 +117,9 @@ examples:
 This CmdLet changes the value of an existing HL7 item from a file (or group of files). Some basic filtering is available to only include specific messages within a large sample. By default only the first occurrence of an item will be changed unless the -UpdateAllRepeats switch is set.
 
 ```
-Set-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-HL7Item [-LiteralPath] <string[]> [-ItemPosition] \<string\> [-Value] \<string\> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
 
-Set-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-HL7Item [-Path] <string[]> [-ItemPosition] \<string\> [-Value] \<string\> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 examples:
 
@@ -120,9 +127,11 @@ examples:
 `Set-HL7Item -Path c:\hl7files\*.hl7 -ItemPosition PV1-3.1 -Value A1234567 -Filter PV1-2=INPATIENT`
 
 ### Parameters
-* `-Path <string[]>` The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
-* `-LiteralPath <string[]>` Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
-* `-ItemPosition <string>` A string identifying the location of the item in the HL7 message you wish to  retrieve the value for. 
+__-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
+
+__-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
+
+__-ItemPosition \<string\>__: A string identifying the location of the item in the HL7 message you wish to  retrieve the value for. 
 
 ### Parameter Examples
 * `-ItemPosition PID` All PID segments
@@ -151,9 +160,11 @@ Remove-HL7Item [-Path] <string[]> [-ItemPosition] <string[]> [[-Filter] <string[
 ```
 
 ### Parameters
-* `-Path <string[]>` The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
-* `-LiteralPath <string[]>` Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
-* `-ItemPosition <string[]>` A string identifying the location of the item in the HL7 message you wish to  delete the value for. Provide a list of items to identify more than one location to delete. 
+__-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
+
+__-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
+
+__-ItemPosition <string[]>__: A string identifying the location of the item in the HL7 message you wish to  delete the value for. Provide a list of items to identify more than one location to delete. 
 
 ### Parameter Examples
 * `-ItemPosition PID` All PID segments
@@ -173,18 +184,22 @@ Split-HL7BatchFile [-Path] <string[]> [-OverwriteFile] [-WhatIf] [<CommonParamet
 ```
 
 ### Parameters
-* `-Path <string[]>` The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
-* `-LiteralPath <string[]>` Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
-* `-OverwriteFile` Don't warn when overwriting existing files
+__-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
+
+__-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
+
+__-OverwriteFile__: Don't warn when overwriting existing files
 
 ## Receive-HL7Message
 Receives a HL7 v2.x message via a TCP connection (MLLP framing).
 
 ```
-Receive-HL7Message -Path <string> -Port <int> [-Timeout] <int> [<CommonParameters>]
+Receive-HL7Message -Path \<string\> -Port \<int\> [-Timeout] \<int\> [<CommonParameters>]
 ```
 
 ### Parameters
-* `-Path <string>` The path to store the messages received.
-* `-Port <int>` The the TCP port to listen for messages on.
-* `-Timeout <int>` The timeout in seconds before idle connections are dropped (defaults to 60 seconds if not specified).
+__-Path \<string\>__: The path to store the messages received.
+
+__-Port \<int\>__: The the TCP port to listen for messages on.
+
+__-Timeout \<int\>__: The timeout in seconds before idle connections are dropped (defaults to 60 seconds if not specified).
