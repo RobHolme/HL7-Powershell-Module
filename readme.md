@@ -84,11 +84,13 @@ __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use
 __-NoACK__: This switch instructs the CmdLet not to wait for an ACK response from the remote host.
 
 ## Remove-HL7Identifiers
-Removes names, addresses and other personally identifiable details from a HL7 v2.x Message.  Note:  Identifier codes in {"PID-3"} remain. This masks the following fields from a HL7 v2.x file:
-* All PID fields except {"PID-1, PID-2, PID-3"}
-* All NK1 fields except {"NK1-1, NK1-3"}
-* All IN1 fields 
-* All IN2 fields 
+Removes names, addresses and other personally identifiable details from a HL7 v2.x Message.  
+
+> Note:  Identifier codes in {"PID-3"} remain. This masks the following fields from a HL7 v2.x file:
+> * All PID fields except {"PID-1, PID-2, PID-3"}
+> * All NK1 fields except {"NK1-1, NK1-3"}
+> * All IN1 fields 
+> * All IN2 fields 
 
 By default a new file is saved in the same location as the original file with "MASKED_" prefixed  to the file name. If the  optional "-OverwriteFile" switch is  set the original file will be modified.
 
