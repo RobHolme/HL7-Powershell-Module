@@ -103,7 +103,9 @@ Remove-HL7Identifiers [-Path] <string[]> [[-CustomItemsList] <string[]>] [[-Mask
 examples:
 
 `Remove-HL7Identifiers -Path c:\hl7files\*.hl7 -OverwriteFile`
+
 `Remove-Hl7Identifiers -Path c:\test.txt`
+
 `Remove-HL7Identifiers -Path c:\test\testfile.hl7 -CustomItemsList PID-3.1,NK1,DG1`
 
 ### Parameters
