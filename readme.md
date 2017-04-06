@@ -44,14 +44,17 @@ __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use
 
 __-ItemPosition \<string\>__: A string identifying the location of the item in the HL7 message you wish to retrieve the value for.
 
-### Parameter Examples
+ItemPosition Examples:
 * `-ItemPosition PID`  All PID segments
 * `-ItemPosition PID-3`  The value for the 3rd PID field. If this item is a list all PID-3 values in the list will be returned.
 * `-ItemPosition PID-3[1]`  The value of the 3rd PID field, but for only the first occurrence of PID-3 (assuming PID-3 is a list)
 * `-ItemPosition PID-3.1`  The value for the 1st component of the PID-3 field. If the component belongs  to a list  of fields, all PID-3.1 components will be returned. 
 * `-ItemPosition PID-3[2].1` The value for the 1st component of the second occurrence of the PID-3 field (assuming the field is a list).
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
-* `-Filter <string[]>` Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match all conditions to be included. 
+
+__-Filter <string[]>__: Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match all conditions to be included. 
+
+Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
 
@@ -107,10 +110,13 @@ __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use
 
 __-CustomItemsList <string[]>__: A list of the HL7 items to mask instead of the default segments and fields. List each item in a comma separated list (no spaces). Items can include a mix of segments (e.g. PV1), Fields (e.g. PID-3), Components (e.g. {"PID-3.1"}) or Subcomponents (e.g. {"PV1-42.2.2"}).  For repeating segments and fields a specific repeat can be identified (index starts at 1). e.g. {"PID-3[1].1"} will mask out the first occurrence of {"PID-3.1"}, leaving other repeats of {"PID-3.1"} unchanged. Likewise {"IN1[2]"} will mask out the second occurrence of the IN1 segments only.
 
-### Parameter Examples:
+CustomItemsList Examples:
 * `-CustomItemsList PID-3.1,PID-5,PID-13,NK1`
-* `-MaskChar <char>` The character used  to mask the identifier fields,  Defaults to '*' if not supplied
-* `-OverwriteFile` If this  switch is set, the original file is modified.
+
+
+__-MaskChar \<char\>__: The character used  to mask the identifier fields,  Defaults to '*' if not supplied
+
+__-OverwriteFile__: If this  switch is set, the original file is modified.
 
 ## Set-HL7Item
 
@@ -133,17 +139,23 @@ __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use
 
 __-ItemPosition \<string\>__: A string identifying the location of the item in the HL7 message you wish to  retrieve the value for. 
 
-### Parameter Examples
+ItemPosition Examples
 * `-ItemPosition PID` All PID segments
 * `-ItemPosition PID-3` The value for the 3rd PID field. If this item is a list all PID-3 values in the list will be returned.
 * `-ItemPosition PID-3[1]` The value of the 3rd PID field, but for only the first occurrence of PID-3 (assuming PID-3 is a list)
 * `-ItemPosition PID-3.1` The value for the 1st component of the PID-3 field. If the component belongs  to a list  of fields, all PID-3.1 components will be returned. 
 * `-ItemPosition PID-3[2].1` The value for the 1st component of the second occurrence of the PID-3 field (assuming the field is a list).
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
-* `-Value <string[]>` The new value to set the item to.
-* `-UpdateAllRepeats` Update all occurances  identified by -ItemPosition
-* `-AppendToExistingValue` The value supplied by the '-Value' parameter is appended to the original value in the message (instead of replacing it).
-* `-Filter <string[]>` Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
+
+__-Value <string[]>__: The new value to set the item to.
+
+__-UpdateAllRepeats__: Update all occurances  identified by -ItemPosition
+
+__-AppendToExistingValue__: The value supplied by the '-Value' parameter is appended to the original value in the message (instead of replacing it).
+
+___-Filter <string[]>___ Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
+
+Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
 
@@ -164,15 +176,16 @@ __-Path <string[]>__: The full or relative path a single HL7 file or directory. 
 
 __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
 
+__-RemoveAllRepeats__: Delete all repeats identified, Defaults to only deleting the first occurrence if this switch is not set.
+
 __-ItemPosition <string[]>__: A string identifying the location of the item in the HL7 message you wish to  delete the value for. Provide a list of items to identify more than one location to delete. 
 
-### Parameter Examples
+ItemPosition Examples:
 * `-ItemPosition PID` All PID segments
 * `-ItemPosition PID-3` The 3rd PID field. .
 * `-ItemPosition PID-3,PID-4,NK1-2` deletes the calues for PID-3, PID-4 and NK-2.
 * `-ItemPosition PID-3[1]` The value of the 3rd PID field, but for only the first occurrence of PID-3 (assuming PID-3 is a list)
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
-* `-RemoveAllRepeats` Delete all repeats identified, Defaults to only deleting the first occurrence if this switch is not set.
 
 ## Split-HL7BatchFile
 Splits a HL7 batch file into a speperate file per HL7 message
