@@ -135,6 +135,7 @@ Set-HL7Item [-Path] <string[]> [-ItemPosition] \<string\> [-Value] \<string\> [-
 examples:
 
 `Set-HL7Item -Path c:\hl7files\hl7file.txt -ItemPosition PID-3.1 -Value A1234567`
+
 `Set-HL7Item -Path c:\hl7files\*.hl7 -ItemPosition PV1-3.1 -Value A1234567 -Filter PV1-2=INPATIENT`
 
 ### Parameters
