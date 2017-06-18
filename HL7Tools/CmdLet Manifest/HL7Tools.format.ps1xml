@@ -130,6 +130,7 @@
 			</TableRowEntries>
 		</TableControl>
 	</View>
+
 	<!-- View definition for Remove-HL7Item -->
 	<View> 
 		<Name>RemoveHL7ItemResult</Name>
@@ -165,5 +166,82 @@
 			</TableRowEntries>
 		</TableControl>
 	</View>
+
+	<!-- View definition for Receive-HL7Message -->
+	<View> 
+		<Name>ReceivedMessageResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.ReceivedMessageResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>Trigger</Label>
+					<Width>20</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>RemoteConnection</Label>
+					<Width>22</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>Trigger</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>RemoteConnection</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View> 
+
+	<!-- View definition for Show-HL7MessageTimeline -->
+	<View> 
+		<Name>ShowHL7MessageTimelineResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.ShowHL7MessageTimelineResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>MessageTimestamp</Label>
+					<Width>30</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>MessageTrigger</Label>
+					<Width>20</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>MessageTimestamp</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>MessageTrigger</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View> 
+
 </ViewDefinitions>
 </Configuration>
