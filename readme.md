@@ -8,6 +8,7 @@ This PowerShell module is a small collection of CmdLets to manipulate HL7 v2.x f
 * __Remove-HL7Identifiers__: remove personal identifiers for patients and next of kin from HL7 files.
 * __Split-HL7BatchFile__: Split a batch file containing multiple messages into a separate file per message.
 * __Receive-HL7Message__: Receive a HL7 v2.x message via a TCP connection
+* __Show-HL7MessageTimeline__: List messages chronologically based on the header timestamp (MSH-7)
 
 # Installation Instructions
 
@@ -222,3 +223,15 @@ __-Path \<string\>__: The path to store the messages received.
 __-Port \<int\>__: The the TCP port to listen for messages on.
 
 __-Timeout \<int\>__: The timeout in seconds before idle connections are dropped (defaults to 60 seconds if not specified).
+
+
+## Show-HL7MessageTimeline
+Lists messages chronologically based on the message header receive date/time field (MSH-7)
+
+```
+Show-HL7MessageTimeline -Path <string> [-Descending] [<CommonParameters>]
+```
+
+### Parameters
+__-Path \<string\>__: The path to store the messages received.
+__-Descending__: Show messages in descending chronological order (defaults to ascending without this switch).
