@@ -78,6 +78,7 @@
     <Compile Include="SendHL7Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetHL7Item.cs" />
+    <Compile Include="ShowHL7MessageTimeline.cs" />
     <Compile Include="SplitHL7BatchFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

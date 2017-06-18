@@ -568,6 +568,38 @@ namespace HL7Tools
 
 
         /// <summary>
+        /// The filename containing the item returned
+        /// </summary>
+        public char ComponentDelimeter
+        {
+            get { return this.componentDelimeter; }
+        }
+
+        /// <summary>
+        /// The filename containing the item returned
+        /// </summary>
+        public char SubComponentDelimeter
+        {
+            get { return this.subComponentDelimeter; }
+        }
+
+        /// <summary>
+        /// The filename containing the item returned
+        /// </summary>
+        public char FieldDelimeter
+        {
+            get { return this.fieldDelimeter; }
+        }
+
+        /// <summary>
+        /// The filename containing the item returned
+        /// </summary>
+        public char FieldRepeatDelimeter
+        {
+            get { return this.fieldRepeatDelimeter; }
+        }
+
+        /// <summary>
         /// Gets a list of all Segments from the message
         /// </summary>
         public List<Segment> Segments
