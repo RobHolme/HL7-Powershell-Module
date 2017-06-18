@@ -234,4 +234,5 @@ Show-HL7MessageTimeline -Path <string> [-Descending] [<CommonParameters>]
 
 ### Parameters
 __-Path \<string\>__: The path to store the messages received.
+
 __-Descending__: Show messages in descending chronological order (defaults to ascending without this switch).
