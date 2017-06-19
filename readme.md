@@ -85,7 +85,7 @@ __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use
 
 __-NoACK__: This switch instructs the CmdLet not to wait for an ACK response from the remote host.
 
-__-Delay \<int\>__: Add a delay (in seconds) between sending each message.
+__-Delay \<int\>__: The delay (in seconds) between sending each message.
 
 
 ## Remove-HL7Identifiers
