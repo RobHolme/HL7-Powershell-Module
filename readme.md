@@ -66,9 +66,9 @@ Filter Examples:
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
 
 ```
-Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK]  [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK] [-Delay] <int> [<CommonParameters>]
 
-Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK]  [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK] [-Delay] <int> [<CommonParameters>]
 ```
 example:
 
@@ -84,6 +84,9 @@ __-Path <string[]>__: The full or relative path a single HL7 file or directory. 
 __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
 
 __-NoACK__: This switch instructs the CmdLet not to wait for an ACK response from the remote host.
+
+__-Delay \<int\>__: Add a delay (in seconds) between sending each message.
+
 
 ## Remove-HL7Identifiers
 Removes names, addresses and other personally identifiable details from a HL7 v2.x Message.  
