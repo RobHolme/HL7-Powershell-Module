@@ -25,6 +25,7 @@ namespace HL7Tools
     {
         private string hostname;
         private int port;
+        private int delayBetweenMessages;
         private bool noACK;
         private string[] paths;
         private bool expandWildcards = false;
@@ -83,6 +84,7 @@ namespace HL7Tools
             Position = 2,
             HelpMessage = "Remote listener port number"
         )]
+        [ValidateRange(1, 65535)]
         public int Port
         {
             get { return this.port; }
@@ -98,6 +100,19 @@ namespace HL7Tools
         {
             get { return this.noACK; }
             set { this.noACK = value; }
+        }
+
+        // The port number of the remote listener to send the message to
+        [Parameter(
+            Mandatory = false,
+            Position = 3,
+            HelpMessage = "Deley between seinding messages (seconds)"
+        )]
+        [ValidateRange(0,600)]
+        public int Delay
+        {
+            get { return this.delayBetweenMessages; }
+            set { this.delayBetweenMessages = value; }
         }
 
         /// <summary>
@@ -227,6 +242,11 @@ namespace HL7Tools
                     }
                     finally {
                         tcpConnection.Close();
+                    }
+
+                    // delay between sending messages
+                    if (this.delayBetweenMessages > 0) {
+                        System.Threading.Thread.Sleep(this.delayBetweenMessages * 1000);
                     }
                 }
             }
