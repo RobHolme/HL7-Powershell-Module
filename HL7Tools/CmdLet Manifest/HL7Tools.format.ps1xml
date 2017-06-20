@@ -215,11 +215,11 @@
 			<TableHeaders>
 				<TableColumnHeader>
 					<Label>MessageTimestamp</Label>
-					<Width>30</Width>
+					<Width>25</Width>
 				</TableColumnHeader>
 				<TableColumnHeader>
 					<Label>MessageTrigger</Label>
-					<Width>20</Width>
+					<Width>16</Width>
 				</TableColumnHeader>
 				<TableColumnHeader>
 					<Label>Filename</Label>
@@ -235,7 +235,7 @@
 							<PropertyName>MessageTrigger</PropertyName>
 						</TableColumnItem>
 						<TableColumnItem>
-							<PropertyName>Filename</PropertyName>
+							<ScriptBlock>$split=$_.Filename.Split("\");$split[$split.length -1]</ScriptBlock>
 						</TableColumnItem>
 					</TableColumnItems>
 				</TableRowEntry>
