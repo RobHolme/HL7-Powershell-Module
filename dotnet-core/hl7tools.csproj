@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="3.0.0-preview-01" />
+    <Compile Remove="HL7Tools\Properties\**" />
+  </ItemGroup>
+
+
+</Project>
