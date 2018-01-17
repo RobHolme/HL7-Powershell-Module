@@ -6,7 +6,7 @@
   
   <ItemGroup>
     <PackageReference Include="PowerShellStandard.Library" Version="3.0.0-preview-01"/>
-    <Compile Include="..\hl7tools\*.cs"> <!-- This will not include sub directories. If included, the assemblyinfo.cs in the properties subfolder will cause issues. The pattern ..\hl7tools\**\*.cs would include sub folders. -->
+    <Compile Include="..\hl7tools\**\*.cs"> 
       <Link>notimportant</Link>
     </Compile>
   </ItemGroup>

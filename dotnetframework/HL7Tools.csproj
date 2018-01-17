@@ -67,19 +67,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
-    <Compile Include="HL7TcpListener.cs" />
-    <Compile Include="ReceivedMessageResult.cs" />
-    <Compile Include="ReceiveHL7Message.cs" />
-    <Compile Include="RemoveHL7Item.cs" />
-    <Compile Include="SelectHL7Item.cs" />
-    <Compile Include="HL7Message.cs" />
-    <Compile Include="RemoveHL7Identifiers.cs" />
-    <Compile Include="SendHL7Message.cs" />
+    <Compile Include="..\hl7tools\Common.cs" />
+    <Compile Include="..\hl7tools\HL7TcpListener.cs" />
+    <Compile Include="..\hl7tools\ReceivedMessageResult.cs" />
+    <Compile Include="..\hl7tools\ReceiveHL7Message.cs" />
+    <Compile Include="..\hl7tools\RemoveHL7Item.cs" />
+    <Compile Include="..\hl7tools\SelectHL7Item.cs" />
+    <Compile Include="..\hl7tools\HL7Message.cs" />
+    <Compile Include="..\hl7tools\RemoveHL7Identifiers.cs" />
+    <Compile Include="..\hl7tools\SendHL7Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SetHL7Item.cs" />
-    <Compile Include="ShowHL7MessageTimeline.cs" />
-    <Compile Include="SplitHL7BatchFile.cs" />
+    <Compile Include="..\hl7tools\SetHL7Item.cs" />
+    <Compile Include="..\hl7tools\ShowHL7MessageTimeline.cs" />
+    <Compile Include="..\hl7tools\SplitHL7BatchFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
