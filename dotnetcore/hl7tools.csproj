@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="PowerShellStandard.Library" Version="3.0.0-preview-01"/>
+    <Compile Include="..\hl7tools\*.cs"> <!-- This will not include sub directories. If included, the assemblyinfo.cs in the properties subfolder will cause issues. The pattern ..\hl7tools\**\*.cs would include sub folders. -->
+      <Link>notimportant</Link>
+    </Compile>
+  </ItemGroup>
+
+</Project>
