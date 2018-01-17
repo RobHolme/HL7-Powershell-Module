@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+<ViewDefinitions>
+<!-- default table view for Select-HL7Item -->	
+	<View> 
+		<Name>SelectHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SelectHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>ItemValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
+	
+	<View> 
+		<Name>SelectHL7ItemResultList</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SelectHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<ListControl>
+			<ListEntries>
+				<ListEntry>
+					<ListItems>
+						<ListItem>
+							<Label>ItemValue</Label>
+							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
+						</ListItem>
+						<ListItem>
+							<Label>Filename</Label>
+							<PropertyName>FileName</PropertyName>
+						</ListItem>
+					</ListItems>
+				</ListEntry>
+			</ListEntries>
+		</ListControl>
+	</View>
+	
+	<View> 
+		<Name>SendHL7MessageResultList</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SendHL7MessageResult</TypeName>
+		</ViewSelectedBy>
+		<ListControl>
+			<ListEntries>
+				<ListEntry>
+					<ListItems>
+						<ListItem>
+							<Label>Status</Label>
+							<PropertyName>Status</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>Time Sent</Label>
+							<PropertyName>TimeSent</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>ACK Message</Label>
+							<PropertyName>ACKMessage</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>Filename</Label>
+							<PropertyName>Filename</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>Elapsed time (secs)</Label>
+							<PropertyName>ElapsedSeconds</PropertyName>
+						</ListItem>
+					</ListItems>
+				</ListEntry>
+			</ListEntries>
+		</ListControl>
+	</View>
+	<!-- View definition for Set-HL7Item -->
+	<View> 
+		<Name>SetHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SetHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>HL7Item</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>NewValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>OldValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>HL7Item</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>NewValue</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>OldValue</PropertyName>
+						</TableColumnItem>						
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
+
+	<!-- View definition for Remove-HL7Item -->
+	<View> 
+		<Name>RemoveHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.RemoveHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>HL7Item</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>DeletedValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>HL7Item</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>DeletedValue</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
+
+	<!-- View definition for Receive-HL7Message -->
+	<View> 
+		<Name>ReceivedMessageResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.ReceivedMessageResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>Trigger</Label>
+					<Width>20</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>RemoteConnection</Label>
+					<Width>22</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>Trigger</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>RemoteConnection</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View> 
+
+	<!-- View definition for Show-HL7MessageTimeline -->
+	<View> 
+		<Name>ShowHL7MessageTimelineResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.ShowHL7MessageTimelineResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>MessageTimestamp</Label>
+					<Width>25</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>MessageTrigger</Label>
+					<Width>16</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>MessageTimestamp</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>MessageTrigger</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<ScriptBlock>$split=$_.Filename.Split("\");$split[$split.length -1]</ScriptBlock>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View> 
+
+</ViewDefinitions>
+</Configuration>

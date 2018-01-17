@@ -1,0 +1,4 @@
+Copy these files to HL7tools folder in the powershell modules directory (query the path via $env:psmodulepath from powershell). 
+These format the list and table outputs from the CmdLets (ie not all attributes returned are displayed, this is to make display easier on the eyes).
+
+If not copied to the module path, use the import-module CmdLet to import the module for the current powershell session only.
