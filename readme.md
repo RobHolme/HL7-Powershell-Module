@@ -31,8 +31,8 @@ This requires Windows Powershell v3, v4, v5, or v5.1 to be installed.
 # Installation Instructions for prebuilt releases
 Follow these instructions if you plan on installing the module from a prebuilt release instead of building from source.
 1.  Download the version for your platform from from https://github.com/RobHolme/HL7-Powershell-Module/releases. 
-* `hl7tools-dotnet-core.zip` contains the module for Powershell Core (v6), supporting Windows, Linux, and MacOS. 
-* `hl7tools-dotnet-framework.zip` contains the module for Windows Powershell (v3 - v5.1). This is supported under Windows platforms only.
+* `hl7tools-powershell-core.zip` contains the module for Powershell Core (v6), supporting Windows, Linux, and MacOS. 
+* `hl7tools-windows-powershell.zip` contains the module for Windows Powershell (v3 - v5.1). This is supported under Windows platforms only.
 2.  Extract all files (hl7tools.dll, HL7Tools.Format.ps1xml, Hl7Tools.psd1) to a folder named `HL7Tools` in your PowerShell modules folder. You can confirm the location of your modules folder by running `$env:PSModulePath` from a PowerShell console. 
 2.  Run the PowerShell command `Unblock-File` against all files extracted from the download.
 3.  Open a powershell console, the module will be imported when the console opens and the CmdLets available to use. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
