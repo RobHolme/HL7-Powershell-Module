@@ -188,7 +188,8 @@ namespace HL7Tools
                                 string filterValue = Common.GetFilterValue(currentFilter);
                                 // for repeating fields, only one of the items returned has to match for the filter to be evaluated as true.
                                 foreach (string itemValue in message.GetHL7ItemValue(filterItem)) {
-                                    if (itemValue == filterValue) {
+                                    // convert both values to upper case for a case insentive match
+									if (itemValue.ToUpper() == filterValue.ToUpper()) { 
                                         anyItemMatch = true;
                                     }
                                 }
