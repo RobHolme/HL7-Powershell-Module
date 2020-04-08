@@ -82,7 +82,8 @@ namespace HL7Tools
         protected override void ProcessRecord()
         {
             // expand the file or directory information provided in the -Path or -LiteralPath parameters
-            foreach (string path in paths) {
+            foreach (string path in paths)
+            {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
                 ProviderInfo provider;
 
@@ -93,7 +94,8 @@ namespace HL7Tools
                 List<string> filePaths = new List<string>();
 
                 // if the path provided is a directory, return an error.
-                if (Directory.Exists(path)) {
+                if (Directory.Exists(path))
+                {
                     IOException fileException = new FileNotFoundException("The path provided is a directory, not a file", path);
                     ErrorRecord fileNotFoundError = new ErrorRecord(fileException, "SaveFailed", ErrorCategory.OpenError, path);
                     WriteError(fileNotFoundError);
@@ -101,32 +103,40 @@ namespace HL7Tools
                 }
 
                 // not a directory, could be a wildcard or literal filepath 
-                else {
+                else
+                {
                     // expand wildcards. This assumes if the user listed a directory it is literal
-                    if (expandWildcards) {
+                    if (expandWildcards)
+                    {
                         // Turn *.txt into foo.txt,foo2.txt etc. If path is just "foo.txt," it will return unchanged. If the filepath expands into a directory ignore it.
-                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider)) {
-                            if (!Directory.Exists(expandedFilePath)) {
+                        foreach (string expandedFilePath in this.GetResolvedProviderPathFromPSPath(path, out provider))
+                        {
+                            if (!Directory.Exists(expandedFilePath))
+                            {
                                 filePaths.Add(expandedFilePath);
                             }
                         }
                     }
-                    else {
+                    else
+                    {
                         // no wildcards, so don't try to expand any * or ? symbols.                    
                         filePaths.Add(this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
                     }
                     // ensure that this path (or set of paths after wildcard expansion)
                     // is on the filesystem. A wildcard can never expand to span multiple providers.
-                    if (Common.IsFileSystemPath(provider, path) == false) {
+                    if (Common.IsFileSystemPath(provider, path) == false)
+                    {
                         // no, so skip to next path in paths.
                         continue;
                     }
                 }
 
                 // At this point, we have a list of paths on the filesystem, process each file. 
-                foreach (string filePath in filePaths) {
+                foreach (string filePath in filePaths)
+                {
                     // If the file does not exist display an error and return.
-                    if (!File.Exists(filePath)) {
+                    if (!File.Exists(filePath))
+                    {
                         FileNotFoundException fileException = new FileNotFoundException("File not found", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(fileException, "FileNotFound", ErrorCategory.ObjectNotFound, filePath);
                         WriteError(fileNotFoundError);
@@ -136,39 +146,49 @@ namespace HL7Tools
                     // process the message
                     int fileCount = 0;
                     string newFilePath;
-                    
+
                     string tempHL7Message = string.Empty;
 
                     // get the file contents, split on carriage return to return each line. If the file contains <CR><LF> end of line characters, the convert to <CR> only (as per HL7 spec).
                     string[] fileContents = File.ReadAllText(filePath).Replace("\r\n", "\r").Split('\r');
-                    foreach (string currentLine in fileContents) {
+                    foreach (string currentLine in fileContents)
+                    {
                         // ignore the file and batch headers/footers
-                        if ((Regex.IsMatch(currentLine, "^FHS", RegexOptions.IgnoreCase)) || (Regex.IsMatch(currentLine, "^BHS", RegexOptions.IgnoreCase)) || (Regex.IsMatch(currentLine, "^BTS", RegexOptions.IgnoreCase)) || (Regex.IsMatch(currentLine, "^FTS", RegexOptions.IgnoreCase))) {
+                        if ((Regex.IsMatch(currentLine, "^FHS", RegexOptions.IgnoreCase)) || (Regex.IsMatch(currentLine, "^BHS", RegexOptions.IgnoreCase)) || (Regex.IsMatch(currentLine, "^BTS", RegexOptions.IgnoreCase)) || (Regex.IsMatch(currentLine, "^FTS", RegexOptions.IgnoreCase)))
+                        {
                             WriteVerbose("Batch file header/footer detected");
                         }
-                        else {
-                            if (Regex.IsMatch(currentLine, "^MSH", RegexOptions.IgnoreCase)) {
+                        else
+                        {
+                            if (Regex.IsMatch(currentLine, "^MSH", RegexOptions.IgnoreCase))
+                            {
                                 // special  case for the first MSH segment
-                                if (fileCount == 0) {
+                                if (fileCount == 0)
+                                {
                                     tempHL7Message = currentLine;
                                     fileCount++;
                                 }
-                                else {
-                                    // save the changes to a new file (append unique id to original filename)
-                                    newFilePath = AppendFilenameSuffix(filePath, fileCount.ToString());
+                                else
+                                {
+                                    // save the changes to a new file (append unique id and message details to original filename)
+                                    string msgDetails = ConstructMessageDetails(tempHL7Message);
+                                    newFilePath = AppendFilenameSuffix(filePath, fileCount.ToString() + msgDetails);
                                     this.SaveFile(newFilePath, tempHL7Message);
                                     // start storing the next message
                                     fileCount++;
                                     tempHL7Message = currentLine;
                                 }
                             }
-                            else {
+                            else
+                            {
                                 tempHL7Message += "\r" + currentLine;
                             }
                         }
                     }
                     // save the last message
-                    newFilePath = AppendFilenameSuffix(filePath, fileCount.ToString());
+                    // save the changes to a new file (append unique id and message details to original filename)
+                    string lastMsgDetails = ConstructMessageDetails(tempHL7Message);
+                    newFilePath = AppendFilenameSuffix(filePath, fileCount.ToString() + lastMsgDetails);
                     this.SaveFile(newFilePath, tempHL7Message);
                 }
             }
@@ -182,27 +202,33 @@ namespace HL7Tools
         private void SaveFile(string Filename, string Hl7Message)
         {
             SplitHL7BatchFileResult result;
-            
+
             // if the -WhatIf switch is supplied don't commit changes to file
-            if (this.ShouldProcess(Filename, "Saving HL7 message to file")) {
-                try {
+            if (this.ShouldProcess(Filename, "Saving HL7 message to file"))
+            {
+                try
+                {
                     // prompt the user to overwrite the file if it exists (and the -OverwriteFile switch is not set)
-                    if (!this.overwriteFile && File.Exists(Filename)) {
-                        if (this.ShouldContinue("File " + Filename + " exists.  Are you sure you want to overwrite the file?", "Overwrite file", ref this.yesToAll, ref this.noToAll)) {
+                    if (!this.overwriteFile && File.Exists(Filename))
+                    {
+                        if (this.ShouldContinue("File " + Filename + " exists.  Are you sure you want to overwrite the file?", "Overwrite file", ref this.yesToAll, ref this.noToAll))
+                        {
                             System.IO.File.WriteAllText(Filename, Hl7Message);
                             result = new SplitHL7BatchFileResult(Filename);
                             WriteObject(result);
                         }
                     }
-                    else {
+                    else
+                    {
                         System.IO.File.WriteAllText(Filename, Hl7Message);
                         result = new SplitHL7BatchFileResult(Filename);
                         WriteObject(result);
                     }
-             
+
                 }
                 // write error if any exceptions raised when saving the file
-                catch {
+                catch
+                {
                     IOException fileException = new FileNotFoundException("File not found", Filename);
                     ErrorRecord fileNotFoundError = new ErrorRecord(fileException, "SaveFailed", ErrorCategory.WriteError, Filename);
                     WriteError(fileNotFoundError);
@@ -224,10 +250,32 @@ namespace HL7Tools
             string fileExtension = System.IO.Path.GetExtension(FilePath);
 
             newFilePath = System.IO.Path.Combine(pathName, fileName + "_" + fileSuffix);
-            if (fileExtension.Length > 0) {
+            if (fileExtension.Length > 0)
+            {
                 newFilePath = newFilePath + fileExtension;
             }
             return newFilePath;
+        }
+
+        private string ConstructMessageDetails(string Hl7Message)
+        {
+            HL7Message message = new HL7Message(Hl7Message);
+            string[] msgID = message.GetHL7ItemValue("MSH-10");
+            string[] msgType = message.GetHL7ItemValue("MSH-9.1");
+            string[] msgTrigger = message.GetHL7ItemValue("MSH-9.2");
+            string msgDetailString = "";
+
+            // construct the strings if the elements exist in the message
+            if (!((msgID == null) || (msgID.Length == 0))) {
+                msgDetailString += "_" + msgID[0];
+            }
+            if (!((msgType == null) || (msgType.Length == 0))) {
+                msgDetailString += "_" + msgType[0];
+            }
+            if (!((msgTrigger == null) || (msgTrigger.Length == 0))) {
+                msgDetailString += "_" + msgTrigger[0];
+            }
+            return msgDetailString;
         }
     }
 
@@ -237,7 +285,7 @@ namespace HL7Tools
     public class SplitHL7BatchFileResult
     {
         private string newFilename;
-    
+
         /// <summary>
         /// The location of the HL7 item that was changed. e.g. PID-3.1
         /// </summary>
@@ -258,5 +306,5 @@ namespace HL7Tools
         }
     }
 }
-                   
-           
+
+
