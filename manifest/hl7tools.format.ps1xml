@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+<ViewDefinitions>
+<!-- default table view for Select-HL7Item -->	
+	<View> 
+		<Name>SelectHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SelectHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>ItemValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
+	
+	<View> 
+		<Name>SelectHL7ItemResultList</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SelectHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<ListControl>
+			<ListEntries>
+				<ListEntry>
+					<ListItems>
+						<ListItem>
+							<Label>ItemValue</Label>
+							<ScriptBlock>If ($_.ItemValue.Count -eq 1){$_.ItemValue[0]}else{$_.ItemValue}</ScriptBlock>
+						</ListItem>
+						<ListItem>
+							<Label>Filename</Label>
+							<PropertyName>FileName</PropertyName>
+						</ListItem>
+					</ListItems>
+				</ListEntry>
+			</ListEntries>
+		</ListControl>
+	</View>
+	
+	<View> 
+		<Name>SendHL7MessageResultList</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SendHL7MessageResult</TypeName>
+		</ViewSelectedBy>
+		<ListControl>
+			<ListEntries>
+				<ListEntry>
+					<ListItems>
+						<ListItem>
+							<Label>Status</Label>
+							<PropertyName>Status</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>Time Sent</Label>
+							<PropertyName>TimeSent</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>ACK Message</Label>
+							<PropertyName>ACKMessage</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>Filename</Label>
+							<PropertyName>Filename</PropertyName>
+						</ListItem>
+						<ListItem>
+							<Label>Elapsed time (secs)</Label>
+							<PropertyName>ElapsedSeconds</PropertyName>
+						</ListItem>
+					</ListItems>
+				</ListEntry>
+			</ListEntries>
+		</ListControl>
+	</View>
+	<!-- View definition for Set-HL7Item -->
+	<View> 
+		<Name>SetHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.SetHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>HL7Item</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>NewValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>OldValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>HL7Item</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>NewValue</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>OldValue</PropertyName>
+						</TableColumnItem>						
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
+
+	<!-- View definition for Remove-HL7Item -->
+	<View> 
+		<Name>RemoveHL7ItemResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.RemoveHL7ItemResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>HL7Item</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>DeletedValue</Label>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>HL7Item</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>DeletedValue</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View>
+
+	<!-- View definition for Receive-HL7Message -->
+	<View> 
+		<Name>ReceivedMessageResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.ReceivedMessageResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>Trigger</Label>
+					<Width>20</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>RemoteConnection</Label>
+					<Width>22</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>Trigger</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>RemoteConnection</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Filename</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View> 
+
+	<!-- View definition for Show-HL7MessageTimeline -->
+	<View> 
+		<Name>ShowHL7MessageTimelineResult</Name>
+		<ViewSelectedBy>
+			<TypeName>HL7Tools.ShowHL7MessageTimelineResult</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>MessageTimestamp</Label>
+					<Width>25</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>MessageTrigger</Label>
+					<Width>16</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Filename</Label>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>MessageTimestamp</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>MessageTrigger</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<ScriptBlock>$split=$_.Filename.Split("\");$split[$split.length -1]</ScriptBlock>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+	</View> 
+
+</ViewDefinitions>
+</Configuration>
+
+<!-- SIG # Begin signature block -->
+<!-- MIIFrAYJKoZIhvcNAQcCoIIFnTCCBZkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB -->
+<!-- gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR -->
+<!-- AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUL/Dv2LjWd1YJ4Rw2eT/qGs2a -->
+<!-- YeqgggMyMIIDLjCCAhagAwIBAgIQINA0nIX3+rpEKhtmvgiUxzANBgkqhkiG9w0B -->
+<!-- AQsFADAvMS0wKwYDVQQDDCRSb2IgSG9sbWUgQ29kZSBTaWduaW5nIChTZWxmIFNp -->
+<!-- Z25lZCkwHhcNMTkwOTE3MDAzODQ3WhcNMjkwOTE3MDA0NjM0WjAvMS0wKwYDVQQD -->
+<!-- DCRSb2IgSG9sbWUgQ29kZSBTaWduaW5nIChTZWxmIFNpZ25lZCkwggEiMA0GCSqG -->
+<!-- SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCufvdnhvHAAvNYc+A6bynp4ySGTt4Rv0AU -->
+<!-- owO25Yl0IypzvV4PW2PW/r7HDafK/DjGT84Yr5PaFEYBgZGHhqZoBFcIHgUrnbBn -->
+<!-- Forr5Ko2+Nckfdcw+wslXc46TJIGab3IW8HLx3NHzuYOIH9f+9InEatRcMD+FZof -->
+<!-- WBkC4nkQ+bP1n7yx1WSOEFA23/nfXBgFbRCWpjQ+mFCW8PEgG5U91+89TJqK3+09 -->
+<!-- 5637JRStXTwZlNZS73eM5wiq+BG0n0DDfdXmDrAOvYZtbiYzKOR4m2OH8hFK8b22 -->
+<!-- 02QjGDMkZgN2vK3JDEy64S1WkN6TNJV76zi7qt3EZVO9PGku0HjRAgMBAAGjRjBE -->
+<!-- MA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDAzAdBgNVHQ4EFgQU -->
+<!-- ZSwaA+sUVQ872xk65xAvqtJ83kcwDQYJKoZIhvcNAQELBQADggEBAKRRSbA7xPCp -->
+<!-- ZuHxV/NnYG6I+GGG0LS1XdXixlL86wR5IwbbsdiPfKqx8nBB8U0D8rLXhMiaqhtE -->
+<!-- nUpR3xBBQO58ogENkZUBvQbvnu0Iq+VCqrJoPXZldMgLpphEdTcUgr553ekAq71t -->
+<!-- AJEvQtWIuuM/Wc2hWGsxbFMQ3+GFIeneyDlSu4B6IjxP1nz8LVX5oi0Vf1K9bPGp -->
+<!-- 1sHyv9UEpif5Pb9ws4IAVCZP6RuRe32W8pOsz6+srlOmuKHv0hZ6s9QrkaiQVjcb -->
+<!-- GFjCXSpVs9PNGj9eRicZJBM0+OSWYLfmHMaDO0zXhtwwLwU4xCxSRLSx2q2U4j4z -->
+<!-- ghSqIS4s3ukxggHkMIIB4AIBATBDMC8xLTArBgNVBAMMJFJvYiBIb2xtZSBDb2Rl -->
+<!-- IFNpZ25pbmcgKFNlbGYgU2lnbmVkKQIQINA0nIX3+rpEKhtmvgiUxzAJBgUrDgMC -->
+<!-- GgUAoHgwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYK -->
+<!-- KwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG -->
+<!-- 9w0BCQQxFgQUc22E4E+hVdqyt0zz5/ZqNFmV4/4wDQYJKoZIhvcNAQEBBQAEggEA -->
+<!-- HkCoqYwX42qdVHu1xQ25lUogFNlogpjKVHQpzP9Gi2QFx114k3cGA8Hcte2xVubu -->
+<!-- Ijxeqc/6EK2o8S1XURLJF/O/r8J8lQpc7p/uo6Vdjl7YU1ZIEhDvAOsUkV/aPh63 -->
+<!-- J+EieTboFwmUcSoWrzTDGE/E6rspP8WGQDE6xieoQhUt9RMh1IaFOR806MglymsN -->
+<!-- tm8cVYQR+qHz+ZFabrfLC17qjfoq0B3xKBK+uWcoYMDaMT1axQXpqquVynPpYOfN -->
+<!-- ddSqxujQFtRBZJyWnwjr0s2L6LJRvHLgXBTAwXZuaH1vh2OckOw2ez2PDmRw7idM -->
+<!-- qZOqRsYw87IbQOUL5uf9Qg== -->
+<!-- SIG # End signature block -->
