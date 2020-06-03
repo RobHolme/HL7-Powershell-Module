@@ -544,8 +544,13 @@ namespace HL7Tools
             // If the file has been edited in a text editor, <CR><LF> may have been inserted at the end of each line. HL7 segments should only be delimited by <CR> characters, so replace <CR><LF> with <CR>
             string crlf = ((char)0x0D).ToString() + ((char)0x0A).ToString();
             string cr = ((char)0x0D).ToString();
+			string lf = ((char)0x0A).ToString();
+
+			// strip windows style or linux style line endings, replace with CRLF or LF with CR only.
             Message = Message.Replace(crlf, cr);
-            string[] segmentStrings = Message.Split((char)0x0D);
+			Message = Message.Replace(lf, cr);
+            
+			string[] segmentStrings = Message.Split((char)0x0D);
             // set the field, component, sub component and repeat delimters
             int startPos = Message.IndexOf("MSH");
             if (startPos >= 0) {
