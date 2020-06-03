@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-	<Version>1.6.5</Version>
+	<Version>1.6.6</Version>
 	<Authors>Rob Holme</Authors>
 	<Product>HL7Tools Module for Powershell Core</Product>
-    <FileVersion>1.6.5.0</FileVersion>
+    <FileVersion>1.6.6.0</FileVersion>
     <Description>Powershell Core module for working with HL7 2.x files</Description>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="PowerShellStandard.Library" Version="3.0.0-preview-01"/>
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0"/>
     <Compile Include="..\hl7tools\**\*.cs"> 
       <Link>notimportant</Link>
     </Compile>
