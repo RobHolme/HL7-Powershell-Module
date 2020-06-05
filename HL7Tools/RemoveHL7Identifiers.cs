@@ -180,7 +180,8 @@ namespace HL7Tools
                             message.DeIdentify(this.maskChar);
                         }
 
-                        string newFilename = filePath.Substring(0, filePath.LastIndexOf("\\") + 1) + "MASKED_" + filePath.Substring(filePath.LastIndexOf("\\") + 1, filePath.Length - (filePath.LastIndexOf("\\") + 1));
+						char pathSeparator = System.IO.Path.DirectorySeparatorChar;
+						string newFilename = filePath.Substring(0, filePath.LastIndexOf(pathSeparator) + 1) + "MASKED_" + filePath.Substring(filePath.LastIndexOf(pathSeparator) + 1, filePath.Length - (filePath.LastIndexOf(pathSeparator) + 1));
 
                         // if the overwrite switch is set, then use the original file name.
                         if (this.overwriteFile) {
