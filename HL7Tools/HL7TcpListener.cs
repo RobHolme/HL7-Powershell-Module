@@ -193,7 +193,7 @@ namespace HL7Tools
             try {
                 LogDebug("Received message. Saving to file " + filename);
                 System.IO.StreamWriter file = new System.IO.StreamWriter(filename);
-                file.Write(message);
+                file.Write(message.Replace(cr,newline));
                 file.Close();
             }
             catch (Exception e) {
