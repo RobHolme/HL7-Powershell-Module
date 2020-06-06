@@ -187,9 +187,11 @@ namespace HL7Tools
                         if (this.overwriteFile) {
                             newFilename = filePath;
                         }
-                        // write changes to the file
+                        // Write changes to the file. Replace the segment delimeter <CR> with the system newline string as this is being written to a file.
+						string cr = ((char)0x0D).ToString();
+						string newline = System.Environment.NewLine;
                         if (this.ShouldProcess(newFilename, "Saving changes to file")) {
-                            System.IO.File.WriteAllText(newFilename, message.ToString());
+                            System.IO.File.WriteAllText(newFilename, message.ToString().Replace(cr,newline));
                         }
                         WriteObject("Masked file saved as " + newFilename);
                     }

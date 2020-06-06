@@ -261,7 +261,7 @@ namespace HL7Tools
                                 }
                                 // update only the first occurrance. This is the default action.
                                 else {
-                                    // appeand the new value to the existing value of the item if -AppendToExistingValue switch is set
+                                    // append the new value to the existing value of the item if -AppendToExistingValue switch is set
                                     if (appendValue) {
                                         this.newValue = hl7Items.ElementAt(0).ToString() + this.newValue;
                                     }
@@ -270,9 +270,11 @@ namespace HL7Tools
                                     hl7Items.ElementAt(0).SetValueFromString(this.newValue);
                                     WriteObject(result);
                                 }
-                                // save the changes back to the original file
+                                // Write changes to the file. Replace the segment delimeter <CR> with the system newline string as this is being written to a file.
+								string cr = ((char)0x0D).ToString();
+								string newline = System.Environment.NewLine;
                                 if (this.ShouldProcess(filePath, "Saving changes to file")) {
-                                    System.IO.File.WriteAllText(filePath, message.ToString());
+                                    System.IO.File.WriteAllText(filePath, message.ToString().Replace(cr, newline));
                                 }
                             }
                         }

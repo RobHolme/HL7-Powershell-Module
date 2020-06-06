@@ -26,7 +26,7 @@ namespace HL7Tools
 
 
         /// <summary>
-        /// Constructor, includes wreferences to return warnings and result objects
+        /// Constructor, includes references to return warnings and result objects
         /// </summary>
         public HL7TCPListener(int port, ref ConcurrentQueue<ReceivedMessageResult> messageQueueRef, ref ConcurrentQueue<string> warningQueueRef, ref ConcurrentQueue<string> verboseQueueRef, int TimeOut = 30000)
         {
@@ -42,7 +42,7 @@ namespace HL7Tools
         /// </summary>
         public bool Start()
         {
-            // start a new thread to listen for new TCP conmections
+            // start a new thread to listen for new TCP connections
             this.tcpListener = new TcpListener(IPAddress.Any, this.listernerPort);
             this.tcpListenerThread = new Thread(new ThreadStart(StartListener));
             this.tcpListenerThread.Start();
@@ -113,7 +113,7 @@ namespace HL7Tools
                     break;
                 }
                 if (bytesRead == 0) {
-                    // The client has disconected
+                    // The client has disconnected
                     LogDebug("The client " + tcpClient.Client.RemoteEndPoint + " has disconnected");
                     break;
                 }
@@ -131,7 +131,7 @@ namespace HL7Tools
                             if (passthruHost != null) {
                                 messageQueue.Enqueue(messageData.Substring(start + 1, end - (start + 1)));
                             }
-                            // create a HL7message object from the message recieved. Use this to access elements needed to populate the ACK message and file name of the archived message
+                            // create a HL7message object from the message received. Use this to access elements needed to populate the ACK message and file name of the archived message
                             HL7Message message = new HL7Message(messageData.Substring(start + 1, end - (start + 1)));
                             messageData = ""; // reset the message data string for the next message
                             string messageTrigger = message.GetHL7ItemValue("MSH-9")[0];
@@ -180,13 +180,16 @@ namespace HL7Tools
 
         /// <summary>
         /// /// <summary>
-        /// Write the HL7 message recieved to file. Optionally provide the file path, otherwise use the working directory.     
+        /// Write the HL7 message received to file. Optionally provide the file path, otherwise use the working directory.     
         /// </summary>
         /// <param name="message"></param>
         /// <param name="filePath"></param>
         private void WriteMessagetoFile(string message, string filename)
         {
-            // write the HL7 message to file
+			string cr = ((char)0x0D).ToString();
+			string newline = System.Environment.NewLine;
+				
+            // write the HL7 message to file. replace <CR> segment delimeter with system newline char(s) since writing to file.
             try {
                 LogDebug("Received message. Saving to file " + filename);
                 System.IO.StreamWriter file = new System.IO.StreamWriter(filename);
@@ -231,7 +234,7 @@ namespace HL7Tools
         }
 
         /// <summary>
-        /// Set and get the values of the SendACK option. This can be used to overide sending of ACK messages. 
+        /// Set and get the values of the SendACK option. This can be used to override sending of ACK messages. 
         /// </summary>
         public bool SendACK
         {
@@ -251,7 +254,7 @@ namespace HL7Tools
 
 
         /// <summary>
-        /// The PassthruPort property identies the remote port to pass the messages thought to.
+        /// The PassthruPort property identifies the remote port to pass the messages thought to.
         /// </summary>
         public int PassthruPort
         {
