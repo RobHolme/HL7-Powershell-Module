@@ -126,7 +126,7 @@ namespace HL7Tools
                 // this contains the paths to process for this iteration of the loop to resolve and optionally expand wildcards.
                 List<string> filePaths = new List<string>();
 
-                // if the path provided is a directory, expand the files in the directy and add these to the list.
+                // if the path provided is a directory, expand the files in the directory and add these to the list.
                 if (Directory.Exists(path)) {
                     filePaths.AddRange(Directory.GetFiles(path));
                 }
