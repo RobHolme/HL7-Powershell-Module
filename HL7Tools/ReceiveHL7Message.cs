@@ -30,7 +30,7 @@ namespace HL7Tools
 
         [Parameter(
             Position = 0,
-            HelpMessage = "The path to save revieved messages to",
+            HelpMessage = "The path to save received messages to",
             Mandatory = true)
 
         ]
@@ -57,7 +57,7 @@ namespace HL7Tools
             set { this.port = value; }
         }
 
-        // The timeout to terminate idel TCP connections in seconds (stored in millisconds)
+        // The timeout to terminate idle TCP connections in seconds (stored in milliseconds)
         [Parameter(
             Mandatory = false,
             Position = 2,
@@ -88,9 +88,13 @@ namespace HL7Tools
         protected override void BeginProcessing()
         {
             if (!Directory.Exists(this.path)) {
-                WriteWarning("The path " + this.path + " does nto exist, or could not be accessed.");
+                WriteWarning("The path " + this.path + " does not exist, or could not be accessed.");
                 this.abortProcessing = true;
             }
+			else {
+				// expand the path
+				this.path = System.IO.Path.GetFullPath(this.path);
+			}
         }
 
         /// <summary>
@@ -104,7 +108,7 @@ namespace HL7Tools
             }
             WriteWarning("Listening for MLLP framed messages on port " + this.port + ". Close powershell console to exit.");
             
-            // create a new instance of HL7TCPListener. Set optional properties to rturn ACKs, passthru messages, archive locaiton. Start the listener.
+            // create a new instance of HL7TCPListener. Set optional properties to return ACKs, passthru messages, archive location. Start the listener.
             HL7TCPListener listener = new HL7TCPListener(port, ref objectQueue, ref warningQueue, ref verboseQueue, this.timeout);
             if (noACK) {
                 listener.SendACK = false;
@@ -114,6 +118,7 @@ namespace HL7Tools
             }
             if (path != null) {
                 listener.FilePath = path;
+				WriteVerbose("Saving received files to " + listener.FilePath);
             }
             if (!listener.Start()) {
                 WriteWarning("Failed to start TCP Listener");
