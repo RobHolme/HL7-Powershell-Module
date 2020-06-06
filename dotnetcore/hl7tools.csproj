@@ -8,7 +8,9 @@
     <FileVersion>1.7.0.0</FileVersion>
     <Description>Powershell Core module for working with HL7 2.x files</Description>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
+    <PostBuildEvent>XCOPY /Y "$(TargetDir)hl7tools.dll" "$(ProjectDir)..\..\..\..\module\hl7tools\netcore\"</PostBuildEvent>
   </PropertyGroup>
+  
   
   <ItemGroup>
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0"/>
