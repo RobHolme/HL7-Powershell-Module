@@ -11,6 +11,11 @@ This PowerShell module is a small collection of CmdLets to manipulate HL7 v2.x f
 * __Show-HL7MessageTimeline__: List messages chronologically based on the header timestamp (MSH-7)
 
 # Installation Instructions for prebuilt releases
+### Install from Powershell Gallery
+```
+Install-Module -Name hl7tools
+```
+### Install from GitHub releases
 Follow these instructions if you plan on installing the module from a prebuilt release instead of building from source.
 1.  Download the zip file from https://github.com/RobHolme/HL7-Powershell-Module/releases. Recent releases support both Powershell Core and Windows Powershell. 
 2.  Extract the 'hl7tools' folder from the archive to your PowerShell modules folder. You can confirm the location of your modules folder by running `$env:PSModulePath` from a PowerShell console. 
