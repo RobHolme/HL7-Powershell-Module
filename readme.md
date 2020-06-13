@@ -183,11 +183,11 @@ ItemPosition Examples
 
 __-Value <string[]>__: The new value to set the item to.
 
-__-UpdateAllRepeats__: Update all occurances  identified by -ItemPosition
+__-UpdateAllRepeats__: Update all occurrences identified by -ItemPosition
 
 __-AppendToExistingValue__: The value supplied by the '-Value' parameter is appended to the original value in the message (instead of replacing it).
 
-___-Filter <string[]>___ Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
+__-Filter <string[]>__ Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
 
 Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
@@ -217,12 +217,18 @@ __-ItemPosition <string[]>__: A string identifying the location of the item in t
 ItemPosition Examples:
 * `-ItemPosition PID` All PID segments
 * `-ItemPosition PID-3` The 3rd PID field. .
-* `-ItemPosition PID-3,PID-4,NK1-2` deletes the calues for PID-3, PID-4 and NK-2.
+* `-ItemPosition PID-3,PID-4,NK1-2` deletes the values for PID-3, PID-4 and NK-2.
 * `-ItemPosition PID-3[1]` The value of the 3rd PID field, but for only the first occurrence of PID-3 (assuming PID-3 is a list)
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
 
+__-Filter <string[]>__ Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
+
+Filter Examples:
+* `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
+* `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
+
 ## Split-HL7BatchFile
-Splits a HL7 batch file into a speperate file per HL7 message
+Splits a HL7 batch file into a separate file per HL7 message
 
 ```
 Split-HL7BatchFile -LiteralPath <string[]> [-OverwriteFile] [-WhatIf] [<CommonParameters>]
@@ -245,7 +251,7 @@ Receive-HL7Message -Path <string> -Port <int> [-Timeout] <int> [<CommonParameter
 ```
 
 ### Parameters
-__-Path \<string\>__: The path to store the messages received.
+__-Path \<string\>__: The path to store the messages received. Must be literal path.
 
 __-Port \<int\>__: The the TCP port to listen for messages on.
 
@@ -260,6 +266,6 @@ Show-HL7MessageTimeline -Path <string> [-Descending] [<CommonParameters>]
 ```
 
 ### Parameters
-__-Path \<string\>__: The path to store the messages received.
+__-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' 
 
-__-Descending__: Show messages in descending chronological order (defaults to ascending without this switch).
+__-Descending__: Switch to show messages in descending chronological order (defaults to ascending without this switch).
