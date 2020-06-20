@@ -108,7 +108,6 @@ namespace HL7Tools
 				this.path = System.IO.Path.GetFullPath(this.path);
 
 			}
-			WriteVerbose("Encoding: " + encoder.EncodingName);
         }
 
         /// <summary>
