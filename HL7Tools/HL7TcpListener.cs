@@ -13,11 +13,12 @@ namespace HL7Tools
         int TCP_TIMEOUT; // timeout value for receiving TCP data in millseconds
         private TcpListener tcpListener;
         private Thread tcpListenerThread;
-        private int listernerPort;
+        private int listenerPort;
         private string archivePath = null;
         private bool sendACK = true;
         private string passthruHost = null;
         private int passthruPort;
+		private string encoding;
         private ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
         private bool runThread = true;
         private ConcurrentQueue<ReceivedMessageResult> objectQueue;
@@ -28,13 +29,14 @@ namespace HL7Tools
         /// <summary>
         /// Constructor, includes references to return warnings and result objects
         /// </summary>
-        public HL7TCPListener(int port, ref ConcurrentQueue<ReceivedMessageResult> messageQueueRef, ref ConcurrentQueue<string> warningQueueRef, ref ConcurrentQueue<string> verboseQueueRef, int TimeOut = 30000)
+        public HL7TCPListener(int port, ref ConcurrentQueue<ReceivedMessageResult> messageQueueRef, ref ConcurrentQueue<string> warningQueueRef, ref ConcurrentQueue<string> verboseQueueRef, int TimeOut = 30000, string MessageEncoding = "UTF-8") 
         {
-            this.listernerPort = port;
+            this.listenerPort = port;
             warningQueue = warningQueueRef;
             objectQueue = messageQueueRef;
             debugQueue = verboseQueueRef;
             TCP_TIMEOUT = TimeOut;
+			this.encoding = MessageEncoding;
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace HL7Tools
         public bool Start()
         {
             // start a new thread to listen for new TCP connections
-            this.tcpListener = new TcpListener(IPAddress.Any, this.listernerPort);
+            this.tcpListener = new TcpListener(IPAddress.Any, this.listenerPort);
             this.tcpListenerThread = new Thread(new ThreadStart(StartListener));
             this.tcpListenerThread.Start();
             return true;
@@ -75,7 +77,7 @@ namespace HL7Tools
                 }
             }
             catch (Exception e) {
-                LogWarning("An error occurred while attempting to start the listener on port " + this.listernerPort);
+                LogWarning("An error occurred while attempting to start the listener on port " + this.listenerPort);
                 LogWarning(e.Message);
                 LogWarning("HL7Listener exiting.");
             }
@@ -101,6 +103,9 @@ namespace HL7Tools
             String messageData = "";
             int messageCount = 0;
 
+			// set the text encoding
+			Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+			
             while (true) {
                 bytesRead = 0;
                 try {
@@ -118,7 +123,7 @@ namespace HL7Tools
                     break;
                 }
                 // Message buffer received successfully
-                messageData += Encoding.UTF8.GetString(messageBuffer, 0, bytesRead);
+				messageData += encoder.GetString(messageBuffer, 0, bytesRead);
                 // Find a VT character, this is the beginning of the MLLP frame
                 int start = messageData.IndexOf((char)0x0B);
                 if (start >= 0) {
@@ -149,7 +154,7 @@ namespace HL7Tools
                                 LogDebug("Sending ACK (Message Control ID: " + messageControlID + ")");
                                 // generate ACK Message and send in response to the message received
                                 string response = GenerateACK(message.ToString());  // TO DO: send ACKS if set in message header, or specified on command line
-                                byte[] encodedResponse = Encoding.UTF8.GetBytes(response);
+  								byte[] encodedResponse = encoder.GetBytes(response);
                                 // Send response
                                 try {
                                     clientStream.Write(encodedResponse, 0, encodedResponse.Length);
@@ -270,6 +275,15 @@ namespace HL7Tools
         {
             set { this.archivePath = value; }
             get { return this.archivePath; }
+        }
+
+		/// <summary>
+        /// The Encoding property contains the text encoding used for messages received
+        /// </summary>
+        public string Encoding
+        {
+            set { this.encoding = value; }
+            get { return this.encoding; }
         }
 
         /// <summary>

@@ -23,7 +23,7 @@ namespace HL7Tools
         private string path;
         private bool abortProcessing = false;
         private int timeout = 60000;  // default to  1 minute
-            
+		private string encoding = "UTF-8";
         private ConcurrentQueue<ReceivedMessageResult> objectQueue = new ConcurrentQueue<ReceivedMessageResult>();
         private ConcurrentQueue<string> warningQueue = new ConcurrentQueue<string>();
         private ConcurrentQueue<string> verboseQueue = new ConcurrentQueue<string>();
@@ -70,6 +70,18 @@ namespace HL7Tools
             set { this.timeout = (value*1000); }
         }
 
+        // The encoding used when receiving the message
+        [Parameter(
+            Mandatory = false,
+            Position = 3,
+            HelpMessage = "Message text encoding"
+        )]
+        [ValidateSet("UTF-8", "ISO-8859-1")]
+        public string Encoding
+        {
+            get { return this.encoding; }
+            set { this.encoding = value; }
+        }
 
         // Do not wait for ACKs responses if this switch is set
         [Parameter(
@@ -94,7 +106,9 @@ namespace HL7Tools
 			else {
 				// expand the path
 				this.path = System.IO.Path.GetFullPath(this.path);
+
 			}
+			WriteVerbose("Encoding: " + encoder.EncodingName);
         }
 
         /// <summary>
@@ -109,7 +123,7 @@ namespace HL7Tools
             WriteWarning("Listening for MLLP framed messages on port " + this.port + ". Close powershell console to exit.");
             
             // create a new instance of HL7TCPListener. Set optional properties to return ACKs, passthru messages, archive location. Start the listener.
-            HL7TCPListener listener = new HL7TCPListener(port, ref objectQueue, ref warningQueue, ref verboseQueue, this.timeout);
+            HL7TCPListener listener = new HL7TCPListener(port, ref objectQueue, ref warningQueue, ref verboseQueue, this.timeout, this.encoding);
             if (noACK) {
                 listener.SendACK = false;
             }
