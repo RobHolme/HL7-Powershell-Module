@@ -228,7 +228,7 @@ namespace HL7Tools
                                 // Search for the end of the MLLP frame (FS control character)
                                 int end = ackMessage.IndexOf((char)0x1C);
                                 if (end > start) {
-                                    // split the ACK message on <CR> character (segment delineter), output each segment of the ACK on a new line
+                                    // split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
                                     // remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
                                     string ackString = ackMessage.Substring(start + 1, end - 1);
                                     if (ackString[ackString.Length - 1] == (char)0x0D) {
