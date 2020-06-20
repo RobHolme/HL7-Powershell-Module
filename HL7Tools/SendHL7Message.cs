@@ -29,6 +29,7 @@ namespace HL7Tools
         private bool noACK;
         private string[] paths;
         private bool expandWildcards = false;
+		private string encoding = "UTF-8";
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -115,6 +116,21 @@ namespace HL7Tools
             set { this.delayBetweenMessages = value; }
         }
 
+        // The encoding used when sending the message
+        [Parameter(
+            Mandatory = false,
+            Position = 4,
+            HelpMessage = "Message text encoding"
+        )]
+        [ValidateSet("UTF-8", "ISO-8859-1")]
+        public string Encoding
+        {
+            get { return this.encoding; }
+            set { this.encoding = value; }
+        }
+
+
+
         /// <summary>
         /// Send each of the files provided
         /// </summary>
@@ -183,11 +199,14 @@ namespace HL7Tools
                         HL7Message message = new HL7Message(fileContents);
                         WriteVerbose("Connecting to " + this.hostname + ":" + this.port);
 
-                        // create a TCP socket connection to the reciever, start timing the elapsed time to deliver the message and receive the ACK
+						// set the text encoding
+						Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+						WriteVerbose("Encoding: " + encoder.EncodingName);
+	
+                        // create a TCP socket connection to the receiver, start timing the elapsed time to deliver the message and receive the ACK
                         timer.Start();
                         tcpConnection.Connect(this.hostname, this.port);
                         NetworkStream tcpStream = tcpConnection.GetStream();
-                        UTF8Encoding encoder = new UTF8Encoding();
                         Byte[] writeBuffer = new Byte[4096];
 
                         // get the message text with MLLP framing
