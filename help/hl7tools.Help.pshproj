@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ModuleObject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" fVersion="1.1" type="Binary" mclass="Module" useSupports="false">
   <Name>hl7tools</Name>
-  <Version>1.7.0</Version>
+  <Version>1.7.3</Version>
   <Description>Powershell module for analysing and editing HL7 v2.x files</Description>
   <HasManifest>true</HasManifest>
   <OverridePostCount>false</OverridePostCount>
@@ -21,10 +21,10 @@
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Path Port Timeout NoACK Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="__AllParameterSets" Params="Path Port Timeout Encoding NoACK Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
       <Syntax>
-        <string>Receive-HL7Message [-Path] &lt;String&gt; [-Port] &lt;Int32&gt; [[-Timeout] &lt;Int32&gt;] [-NoACK] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
+        <string>Receive-HL7Message [-Path] &lt;String&gt; [-Port] &lt;Int32&gt; [[-Timeout] &lt;Int32&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-NoACK] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String" varLen="false" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="0" globbing="false">
@@ -57,13 +57,23 @@
           <Description>The timeout in seconds before idle connections are dropped (defaults to 60 seconds if not specified).</Description>
           <DefaultValue>60</DefaultValue>
         </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="3" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Set the text encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.</Description>
+          <DefaultValue>UTF-8</DefaultValue>
+        </ParameterDescription>
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>NoACK</Name>
           <Attributes>
             <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases />
-          <Description />
+          <Description>Do not send an acknowledgement (ACK) message.</Description>
           <DefaultValue />
         </ParameterDescription>
         <ParameterDescription type="ActionPreference" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
@@ -81,8 +91,8 @@
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -191,8 +201,8 @@ By default a new file is saved in the same location as the original file with "M
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -204,8 +214,8 @@ By default a new file is saved in the same location as the original file with "M
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>WhatIf</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>wi</string>
@@ -216,8 +226,8 @@ By default a new file is saved in the same location as the original file with "M
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>Confirm</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>cf</string>
@@ -256,7 +266,12 @@ By default a new file is saved in the same location as the original file with "M
           <Output />
         </Example>
       </Examples>
-      <RelatedLinks />
+      <RelatedLinks>
+        <RelatedLink>
+          <LinkText>Online Help</LinkText>
+          <LinkUrl>https://github.com/RobHolme/HL7-Powershell-Module#remove-hl7identifiers</LinkUrl>
+        </RelatedLink>
+      </RelatedLinks>
       <SupportInformation ad="false" rsat="false" ps2="false" ps3="false" ps4="false" ps5="false" wxp="false" wv="false" w7="false" w8="false" w81="false" w10="false" w2k3s="false" w2k3e="false" w2k3d="false" w2k8s="false" w2k8e="false" w2k8d="false" w2k8r2s="false" w2k8r2e="false" w2k8r2d="false" w2k12s="false" w2k12d="false" w2k12r2s="false" w2k12r2d="false" />
       <Publish>false</Publish>
     </CmdletObject>
@@ -352,8 +367,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -365,8 +380,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>WhatIf</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>wi</string>
@@ -377,8 +392,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>Confirm</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>cf</string>
@@ -493,8 +508,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -563,12 +578,12 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath HostName Port NoACK Delay Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
-        <CommandParameterSetInfo2 Name="Path" Params="Path HostName Port NoACK Delay Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath HostName Port NoACK Delay Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="Path" Params="Path HostName Port NoACK Delay Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
       <Syntax>
-        <string>Send-HL7Message -LiteralPath &lt;String[]&gt; [-HostName] &lt;String&gt; [-Port] &lt;Int32&gt; [-NoACK] [[-Delay] &lt;Int32&gt;] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
-        <string>Send-HL7Message [-Path] &lt;String[]&gt; [-HostName] &lt;String&gt; [-Port] &lt;Int32&gt; [-NoACK] [[-Delay] &lt;Int32&gt;] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
+        <string>Send-HL7Message -LiteralPath &lt;String[]&gt; [-HostName] &lt;String&gt; [-Port] &lt;Int32&gt; [-NoACK] [[-Delay] &lt;Int32&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
+        <string>Send-HL7Message [-Path] &lt;String[]&gt; [-HostName] &lt;String&gt; [-Port] &lt;Int32&gt; [-NoACK] [[-Delay] &lt;Int32&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String[]" varLen="true" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="true" isPos="false" pos="named" globbing="false">
@@ -629,6 +644,16 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
           <Description>The delay (in seconds) between sending each message.</Description>
           <DefaultValue />
         </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="4" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Set the text encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.</Description>
+          <DefaultValue>UTF-8</DefaultValue>
+        </ParameterDescription>
         <ParameterDescription type="ActionPreference" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationAction</Name>
           <Attributes>
@@ -644,8 +669,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -670,6 +695,12 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
           <Name>Example 1</Name>
           <Cmd>Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\message1.hl7</Cmd>
           <Description />
+          <Output />
+        </Example>
+        <Example>
+          <Name>Example 2</Name>
+          <Cmd>Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\*.hl7 -Encoding ISO-8859-1</Cmd>
+          <Description>Send all .hl7 files in the c:\HL7Files folder. Use ISO-8859-1 (Wester European) text encoding. </Description>
           <Output />
         </Example>
       </Examples>
@@ -796,8 +827,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -809,8 +840,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>WhatIf</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>wi</string>
@@ -821,8 +852,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>Confirm</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>cf</string>
@@ -928,8 +959,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -1025,8 +1056,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>InformationVariable</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.Internal.CommonParameters+ValidateVariableName</string>
           </Attributes>
           <Aliases>
@@ -1038,8 +1069,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>WhatIf</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>wi</string>
@@ -1050,8 +1081,8 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ParameterDescription type="SwitchParameter" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="false" pos="named" globbing="false">
           <Name>Confirm</Name>
           <Attributes>
-            <string>System.Management.Automation.ParameterAttribute</string>
             <string>System.Management.Automation.AliasAttribute</string>
+            <string>System.Management.Automation.ParameterAttribute</string>
           </Attributes>
           <Aliases>
             <string>cf</string>
