@@ -90,13 +90,15 @@ Filter Examples:
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
 
 ```
-Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK] [-Delay] <int> [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>]  [<CommonParameters>]
 
-Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK] [-Delay] <int> [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>] [<CommonParameters>]
 ```
 example:
 
 `Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\message1.hl7`
+
+`Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\*.hl7 -Encoding ISO-8859-1`
 
 ### Parameters
 __-Hostname \<string\>__:  The  IP Address or host name of the remote host to send the HL7 message to
@@ -110,6 +112,8 @@ __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use
 __-NoACK__: This switch instructs the CmdLet not to wait for an ACK response from the remote host.
 
 __-Delay \<int\>__: The delay (in seconds) between sending each message.
+
+__-Encoding \<string\>__: The text encoding to use when sending the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
 
 ## Remove-HL7Identifiers
@@ -247,7 +251,7 @@ __-OverwriteFile__: Don't warn when overwriting existing files
 Receives a HL7 v2.x message via a TCP connection (MLLP framing).
 
 ```
-Receive-HL7Message -Path <string> -Port <int> [-Timeout] <int> [<CommonParameters>]
+Receive-HL7Message [-Path] <String> [-Port] <Int32> [[-Timeout] <Int32>] [[-Encoding] <String>] [-NoACK <SwitchParameter>] [-InformationAction <ActionPreference>] [-InformationVariable <String>] [<CommonParameters>]
 ```
 
 ### Parameters
@@ -256,6 +260,10 @@ __-Path \<string\>__: The path to store the messages received. Must be literal p
 __-Port \<int\>__: The the TCP port to listen for messages on.
 
 __-Timeout \<int\>__: The timeout in seconds before idle connections are dropped (defaults to 60 seconds if not specified).
+
+__-Encoding \<string\>__: The text encoding to use when receiving the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
+
+__-NoACK \<SwitchParameter\>__: Set this switch parameter to suppress acknowledgment (ACK) messages from being sent in reposne to messages received.
 
 
 ## Show-HL7MessageTimeline
