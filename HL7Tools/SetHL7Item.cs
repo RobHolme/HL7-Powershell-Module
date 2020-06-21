@@ -16,6 +16,7 @@ namespace HL7Tools
     using System;
     using System.Collections.Generic;
     using System.IO;
+	using System.Text;
     using System.Linq;
     using System.Management.Automation;
 
@@ -32,6 +33,7 @@ namespace HL7Tools
         private string newValue;
         private bool allrepeats = false;
         private bool appendValue = false;
+		private string encoding = "UTF-8";
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
