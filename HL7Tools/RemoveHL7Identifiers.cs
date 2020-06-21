@@ -95,7 +95,7 @@ namespace HL7Tools
         [Parameter(
             Mandatory = false,
             Position = 3,
-            HelpMessage = "Swtich to overwrite the original file"
+            HelpMessage = "Switch to overwrite the original file"
         )]
         public SwitchParameter OverwriteFile
         {
