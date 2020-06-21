@@ -93,7 +93,7 @@ namespace HL7Tools
             set { this.filter = value; }
         }
 
-        // Parameter to optionally filter the messages based on matching message contents
+        // Parameter to specify the message character encoding format
         [Parameter(
             Mandatory = false,
             Position = 3,
