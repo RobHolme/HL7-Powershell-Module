@@ -16,6 +16,7 @@
 namespace HL7Tools
 {
     using System;
+    using System.Text;
     using System.IO;
     using System.Management.Automation;
     using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace HL7Tools
         private bool expandWildcards = false;
         private string[] filter = new string[] { };
         private bool filterConditionsMet = true;
+        private string encoding = "UTF-8";
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -91,6 +93,18 @@ namespace HL7Tools
             set { this.filter = value; }
         }
 
+        // Parameter to optionally filter the messages based on matching message contents
+        [Parameter(
+            Mandatory = false,
+            Position = 3,
+            HelpMessage = "Text encoding ('UTF-8' | 'ISO-8859-1'")]
+        [ValidateSet("UTF-8", "ISO-8859-1")]
+        public string Encoding
+        {
+            get { return this.encoding; }
+            set { this.encoding = value; }
+        }
+
         /// <summary>
         /// get the HL7 item provided via the cmdlet parameter HL7ItemPosition
         /// </summary>
@@ -114,6 +128,10 @@ namespace HL7Tools
                     return;
                 }
             }
+
+            // set the text encoding
+            Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+            WriteVerbose("Encoding: " + encoder.EncodingName);
 
             // expand the file or directory information provided in the -Path or -LiteralPath parameters
             foreach (string path in paths) {
@@ -177,7 +195,7 @@ namespace HL7Tools
                         // assume the filter is true, until a failed match is found
                         this.filterConditionsMet = true;
                         // load the file into a HL7Message object for processing
-                        string fileContents = File.ReadAllText(filePath);
+                        string fileContents = File.ReadAllText(filePath, encoder);
                         HL7Message message = new HL7Message(fileContents);
                         // if a filter was supplied, evaluate if the file matches the filter condition
                         if (this.filter != null) {
