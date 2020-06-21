@@ -17,6 +17,7 @@ namespace HL7Tools
 {
     using System;
     using System.IO;
+	using System.Text;
     using System.Collections.Generic;
     using System.Management.Automation;
 
@@ -31,10 +32,11 @@ namespace HL7Tools
         private string[] paths;
         private bool expandWildcards = false;
         private string[] customItemsList = new string[] { };
+		private string encoding = "UTF-8";
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
-        // to use the literaral file name instead of treating it as a wildcard search.
+        // to use the literal file name instead of treating it as a wildcard search.
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = false,
@@ -103,8 +105,20 @@ namespace HL7Tools
             set { this.overwriteFile = value; }
         }
 
+        // Parameter to specify the message character encoding format
+        [Parameter(
+            Mandatory = false,
+            Position = 4,
+            HelpMessage = "Text encoding ('UTF-8' | 'ISO-8859-1'")]
+        [ValidateSet("UTF-8", "ISO-8859-1")]
+        public string Encoding
+        {
+            get { return this.encoding; }
+            set { this.encoding = value; }
+        }
+
         /// <summary>
-        /// get the HL7 item provided via the cmdlet parameter HL7ItemPossition
+        /// remove identifying fields
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -118,6 +132,10 @@ namespace HL7Tools
                     return;
                 }
             }
+
+			// set the text encoding
+            Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+            WriteVerbose("Encoding: " + encoder.EncodingName);
 
             foreach (string path in paths) {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
@@ -166,7 +184,7 @@ namespace HL7Tools
                         return;
                     }
                     try {
-                        string fileContents = File.ReadAllText(filePath);
+                        string fileContents = File.ReadAllText(filePath, encoder);
                         HL7Message message = new HL7Message(fileContents);
                         // if a custom list of items is provided, then mask out each nominated item
                         if (customItemsList.Length > 0) {
@@ -191,7 +209,7 @@ namespace HL7Tools
 						string cr = ((char)0x0D).ToString();
 						string newline = System.Environment.NewLine;
                         if (this.ShouldProcess(newFilename, "Saving changes to file")) {
-                            System.IO.File.WriteAllText(newFilename, message.ToString().Replace(cr,newline));
+                            System.IO.File.WriteAllText(newFilename, message.ToString().Replace(cr,newline), encoder);
                         }
                         WriteObject("Masked file saved as " + newFilename);
                     }
