@@ -1,0 +1,2 @@
+The project file is tied to the version of the module installed under Windows Powershell. 
+Currently this is tied to v1.7.3 of HL7Tools. If you temporarily change the module manifest of the *installed* version to v1.7.3 you will be able to import in new changes to the cmdlets.
