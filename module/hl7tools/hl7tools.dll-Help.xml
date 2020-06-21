@@ -252,6 +252,13 @@
 				</maml:description>
 				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
 			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="4">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
 				<maml:description>
@@ -311,6 +318,13 @@
 					<maml:para>If this switch is set, the original file is modified.</maml:para>
 				</maml:description>
 				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="4">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
@@ -451,6 +465,18 @@
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="4">
+			<maml:name>Encoding</maml:name>
+			<maml:description>
+				<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue>UTF-8</dev:defaultValue>
 		</command:parameter>
 	</command:parameters>
 	<command:inputTypes>
@@ -609,6 +635,13 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				</maml:description>
 				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
 			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="3">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
 				<maml:description>
@@ -674,6 +707,13 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 					<maml:para>Delete all repeats identified, Defaults to only deleting the first occurrence if this switch is not set.</maml:para>
 				</maml:description>
 				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="3">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
@@ -821,6 +861,18 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="3">
+			<maml:name>Encoding</maml:name>
+			<maml:description>
+				<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue>UTF-8</dev:defaultValue>
+		</command:parameter>
 	</command:parameters>
 	<command:inputTypes>
 		<command:inputType>
@@ -913,6 +965,13 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				</maml:description>
 				<command:parameterValue required="true" variableLength="true">String[]</command:parameterValue>
 			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="3">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
 				<maml:description>
@@ -958,6 +1017,13 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 					<maml:para>-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT   This filter would only include messages where both the MSH-9 field contained &quot;ADT^A04&quot; and the PV1-2 field contained &quot;OUTPATIENT&quot;</maml:para>
 				</maml:description>
 				<command:parameterValue required="true" variableLength="true">String[]</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="3">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
@@ -1055,6 +1121,18 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="3">
+			<maml:name>Encoding</maml:name>
+			<maml:description>
+				<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue>UTF-8</dev:defaultValue>
 		</command:parameter>
 	</command:parameters>
 	<command:inputTypes>
@@ -1561,6 +1639,13 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				</maml:description>
 				<command:parameterValue required="true" variableLength="true">String[]</command:parameterValue>
 			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="4">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>UpdateAllRepeats</maml:name>
 				<maml:description>
@@ -1640,6 +1725,13 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 					<maml:para>-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT   This filter would only include messages where both the MSH-9 field contained &quot;ADT^A04&quot; and the PV1-2 field contained &quot;OUTPATIENT&quot;</maml:para>
 				</maml:description>
 				<command:parameterValue required="true" variableLength="true">String[]</command:parameterValue>
+			</command:parameter>
+			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="4">
+				<maml:name>Encoding</maml:name>
+				<maml:description>
+					<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+				</maml:description>
+				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>UpdateAllRepeats</maml:name>
@@ -1824,6 +1916,18 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
+		</command:parameter>
+		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="4">
+			<maml:name>Encoding</maml:name>
+			<maml:description>
+				<maml:para>Specify the character encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
+			</maml:description>
+			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<dev:type>
+				<maml:name>String</maml:name>
+				<maml:uri/>
+			</dev:type>
+			<dev:defaultValue>UTF-8</dev:defaultValue>
 		</command:parameter>
 	</command:parameters>
 	<command:inputTypes>

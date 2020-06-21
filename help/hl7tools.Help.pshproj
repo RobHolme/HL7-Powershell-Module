@@ -134,12 +134,12 @@ By default a new file is saved in the same location as the original file with "M
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath CustomItemsList MaskChar OverwriteFile Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
-        <CommandParameterSetInfo2 Name="Path" Params="Path CustomItemsList MaskChar OverwriteFile Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath CustomItemsList MaskChar OverwriteFile Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="Path" Params="Path CustomItemsList MaskChar OverwriteFile Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
       </ParamSets>
       <Syntax>
-        <string>Remove-HL7Identifiers -LiteralPath &lt;String[]&gt; [[-CustomItemsList] &lt;String[]&gt;] [[-MaskChar] &lt;Char&gt;] [[-OverwriteFile] &lt;SwitchParameter&gt;] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
-        <string>Remove-HL7Identifiers [-Path] &lt;String[]&gt; [[-CustomItemsList] &lt;String[]&gt;] [[-MaskChar] &lt;Char&gt;] [[-OverwriteFile] &lt;SwitchParameter&gt;] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Remove-HL7Identifiers -LiteralPath &lt;String[]&gt; [[-CustomItemsList] &lt;String[]&gt;] [[-MaskChar] &lt;Char&gt;] [[-OverwriteFile] &lt;SwitchParameter&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Remove-HL7Identifiers [-Path] &lt;String[]&gt; [[-CustomItemsList] &lt;String[]&gt;] [[-MaskChar] &lt;Char&gt;] [[-OverwriteFile] &lt;SwitchParameter&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String[]" varLen="true" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="true" isPos="false" pos="named" globbing="false">
@@ -245,6 +245,16 @@ By default a new file is saved in the same location as the original file with "M
           <Description>The full or relative path a single HL7 file or directory, or a list of files. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't identified as a HL7 v2.x file. This parameter accepts a list of files, separate each file file with a ','.</Description>
           <DefaultValue />
         </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="4" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.</Description>
+          <DefaultValue>UTF-8</DefaultValue>
+        </ParameterDescription>
       </Parameters>
       <Examples>
         <Example>
@@ -289,12 +299,12 @@ By default a new file is saved in the same location as the original file with "M
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath ItemPosition Filter RemoveAllRepeats Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
-        <CommandParameterSetInfo2 Name="Path" Params="Path ItemPosition Filter RemoveAllRepeats Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath ItemPosition Filter RemoveAllRepeats Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="Path" Params="Path ItemPosition Filter RemoveAllRepeats Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
       </ParamSets>
       <Syntax>
-        <string>Remove-HL7Item -LiteralPath &lt;String[]&gt; [-ItemPosition] &lt;String[]&gt; [[-Filter] &lt;String[]&gt;] [-RemoveAllRepeats] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
-        <string>Remove-HL7Item [-Path] &lt;String[]&gt; [-ItemPosition] &lt;String[]&gt; [[-Filter] &lt;String[]&gt;] [-RemoveAllRepeats] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Remove-HL7Item -LiteralPath &lt;String[]&gt; [-ItemPosition] &lt;String[]&gt; [[-Filter] &lt;String[]&gt;] [-RemoveAllRepeats] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Remove-HL7Item [-Path] &lt;String[]&gt; [-ItemPosition] &lt;String[]&gt; [[-Filter] &lt;String[]&gt;] [-RemoveAllRepeats] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String[]" varLen="true" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="true" isPos="false" pos="named" globbing="false">
@@ -411,6 +421,16 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
           <Description>The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't identified as a HL7 v2.x file. This parameter accepts a list of files, separate each file file with a ','.</Description>
           <DefaultValue />
         </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="3" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.</Description>
+          <DefaultValue>UTF-8</DefaultValue>
+        </ParameterDescription>
       </Parameters>
       <Examples />
       <RelatedLinks>
@@ -438,12 +458,12 @@ Output can be piped to other PowerShell CmdLets to refine the results. e.g. retu
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath ItemPosition Filter Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
-        <CommandParameterSetInfo2 Name="Path" Params="Path ItemPosition Filter Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath ItemPosition Filter Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
+        <CommandParameterSetInfo2 Name="Path" Params="Path ItemPosition Filter Encoding Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable" />
       </ParamSets>
       <Syntax>
-        <string>Select-HL7Item -LiteralPath &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
-        <string>Select-HL7Item [-Path] &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
+        <string>Select-HL7Item -LiteralPath &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
+        <string>Select-HL7Item [-Path] &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String[]" varLen="true" required="true" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="true" isPos="false" pos="named" globbing="false">
@@ -527,6 +547,16 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
           <Aliases />
           <Description>The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provided, all files within the directory will be examined. Exceptions will be raised if a file isn't identified as a HL7 v2.x file. This parameter accepts a list of files, separate each file file with a ','.</Description>
           <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="3" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.</Description>
+          <DefaultValue>UTF-8</DefaultValue>
         </ParameterDescription>
       </Parameters>
       <Examples>
@@ -727,12 +757,12 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
         <ReturnTypeDescription />
       </GeneralHelp>
       <ParamSets>
-        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath ItemPosition Value Filter UpdateAllRepeats AppendToExistingValue Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
-        <CommandParameterSetInfo2 Name="Path" Params="Path ItemPosition Value Filter UpdateAllRepeats AppendToExistingValue Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="Literal" Params="LiteralPath ItemPosition Value Filter Encoding UpdateAllRepeats AppendToExistingValue Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
+        <CommandParameterSetInfo2 Name="Path" Params="Path ItemPosition Value Filter Encoding UpdateAllRepeats AppendToExistingValue Verbose Debug ErrorAction WarningAction InformationAction ErrorVariable WarningVariable InformationVariable OutVariable OutBuffer PipelineVariable WhatIf Confirm" />
       </ParamSets>
       <Syntax>
-        <string>Set-HL7Item -LiteralPath &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [-Value] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [-UpdateAllRepeats] [-AppendToExistingValue] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
-        <string>Set-HL7Item [-Path] &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [-Value] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [-UpdateAllRepeats] [-AppendToExistingValue] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Set-HL7Item -LiteralPath &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [-Value] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-UpdateAllRepeats] [-AppendToExistingValue] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
+        <string>Set-HL7Item [-Path] &lt;String[]&gt; [-ItemPosition] &lt;String&gt; [-Value] &lt;String&gt; [[-Filter] &lt;String[]&gt;] [[-Encoding] &lt;String&gt; {UTF-8 | ISO-8859-1} ] [-UpdateAllRepeats] [-AppendToExistingValue] [-InformationAction &lt;ActionPreference&gt;] [-InformationVariable &lt;String&gt;] [-WhatIf] [-Confirm]</string>
       </Syntax>
       <Parameters>
         <ParameterDescription type="String[]" varLen="true" required="true" dynamic="false" pipeRemaining="false" pipe="true" pipeProp="true" isPos="false" pos="named" globbing="false">
@@ -870,6 +900,16 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
           <Aliases />
           <Description>The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't identified as a HL7 v2.x file. This parameter accepts a list of files, separate each file file with a ','.</Description>
           <DefaultValue />
+        </ParameterDescription>
+        <ParameterDescription type="String" varLen="false" required="false" dynamic="false" pipeRemaining="false" pipe="false" pipeProp="false" isPos="true" pos="4" globbing="false">
+          <Name>Encoding</Name>
+          <Attributes>
+            <string>System.Management.Automation.ParameterAttribute</string>
+            <string>System.Management.Automation.ValidateSetAttribute</string>
+          </Attributes>
+          <Aliases />
+          <Description>Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.</Description>
+          <DefaultValue>UTF-8</DefaultValue>
         </ParameterDescription>
       </Parameters>
       <Examples>
