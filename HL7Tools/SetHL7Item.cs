@@ -106,7 +106,19 @@ namespace HL7Tools
             set { this.filter = value; }
         }
 
-        // Do not wait for ACKs responses if this switch is set
+        // Parameter to specify the message character encoding format
+        [Parameter(
+            Mandatory = false,
+            Position = 4,
+            HelpMessage = "Text encoding ('UTF-8' | 'ISO-8859-1'")]
+        [ValidateSet("UTF-8", "ISO-8859-1")]
+        public string Encoding
+        {
+            get { return this.encoding; }
+            set { this.encoding = value; }
+        }
+
+        // Update all repeating values for the specified element
         [Parameter(
             Mandatory = false,
             HelpMessage = "Update all repeats of an item"
@@ -153,6 +165,10 @@ namespace HL7Tools
                     return;
                 }
             }
+
+			// set the text encoding
+            Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+            WriteVerbose("Encoding: " + encoder.EncodingName);
 
             // expand the file or directory information provided in the -Path or -LiteralPath parameters
             foreach (string path in paths) {
@@ -216,7 +232,7 @@ namespace HL7Tools
                         // assume the filter is true, until a failed match is found
                         this.filterConditionsMet = true;
                         // load the file into a HL7Message object for processing
-                        string fileContents = File.ReadAllText(filePath);
+                        string fileContents = File.ReadAllText(filePath, encoder);
                         HL7Message message = new HL7Message(fileContents);
                         // if a filter was supplied, evaluate if the file matches the filter condition
                         if (this.filter != null) {
@@ -276,7 +292,7 @@ namespace HL7Tools
 								string cr = ((char)0x0D).ToString();
 								string newline = System.Environment.NewLine;
                                 if (this.ShouldProcess(filePath, "Saving changes to file")) {
-                                    System.IO.File.WriteAllText(filePath, message.ToString().Replace(cr, newline));
+                                    System.IO.File.WriteAllText(filePath, message.ToString().Replace(cr, newline), encoder);
                                 }
                             }
                         }
