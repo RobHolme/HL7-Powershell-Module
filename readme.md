@@ -47,9 +47,9 @@ This CmdLet returns the values of specific HL7 items from a file (or group of fi
 Output can be piped to other powershell CmdLets to refine the results. e.g. returning only the unique values across a range of files:
 
 ```
-Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [<CommonParameters>]
+Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [[-Encoding] <String>] [<CommonParameters>]
 
-Select-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [<CommonParameters>]
+Select-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [[-Encoding] <String>] [<CommonParameters>]
 ```
 Example:
 
@@ -83,6 +83,8 @@ Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
 
+__-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
+
 > Note: Items that cannot be located in the message will display a warning. 
 > To suppress the warning messages use the `-WarningAction Ignore` common parameter.
 
@@ -113,7 +115,7 @@ __-NoACK__: This switch instructs the CmdLet not to wait for an ACK response fro
 
 __-Delay \<int\>__: The delay (in seconds) between sending each message.
 
-__-Encoding \<string\>__: The text encoding to use when sending the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
+__-Encoding \<string\>__: Specify the character encoding used when sending the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
 
 ## Remove-HL7Identifiers
@@ -128,9 +130,9 @@ Removes names, addresses and other personally identifiable details from a HL7 v2
 By default a new file is saved in the same location as the original file with "MASKED_" prefixed  to the file name. If the  optional "-OverwriteFile" switch is  set the original file will be modified.
 
 ```
-Remove-HL7Identifiers [-LiteralPath] <string[]> [[-CustomItemsList] <string[]>] [[-MaskChar] <char>] [[-OverwriteFile]] [-WhatIf] [-Confirm] [<CommonParameters>]
+Remove-HL7Identifiers [-LiteralPath] <string[]> [[-CustomItemsList] <string[]>] [[-MaskChar] <char>] [[-OverwriteFile]] [[-Encoding] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 
-Remove-HL7Identifiers [-Path] <string[]> [[-CustomItemsList] <string[]>] [[-MaskChar] <char>] [[-OverwriteFile]] [-WhatIf] [-Confirm] [<CommonParameters>]
+Remove-HL7Identifiers [-Path] <string[]> [[-CustomItemsList] <string[]>] [[-MaskChar] <char>] [[-OverwriteFile]] [[-Encoding] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 examples:
 
@@ -155,14 +157,16 @@ __-MaskChar \<char\>__: The character used  to mask the identifier fields,  Defa
 
 __-OverwriteFile__: If this  switch is set, the original file is modified.
 
+__-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
+
 ## Set-HL7Item
 
 This CmdLet changes the value of an existing HL7 item from a file (or group of files). Some basic filtering is available to only include specific messages within a large sample. By default only the first occurrence of an item will be changed unless the -UpdateAllRepeats switch is set.
 
 ```
-Set-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [[-Encoding] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 
-Set-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [-WhatIf] [-Confirm] [<CommonParameters>]
+Set-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Value] <string> [-Filter <string[]>]  [-UpdateAllRepeats] [-AppendToExistingValue] [[-Encoding] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 examples:
 
@@ -197,6 +201,8 @@ Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
 
+__-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
+
 > Note: items that cannot be located in the message will display a warning. To suppress the warning messages use the "-WarningAction Ignore" common parameter.
 
 
@@ -204,9 +210,9 @@ Filter Examples:
 Deletes the value of specified items from the HL7 message. A list of items, or single item can be specified.
 
 ```
-Remove-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string[]> [[-Filter] <string[]>] [-RemoveAllRepeats] [-WhatIf] [-Confirm] [<CommonParameters>]
+Remove-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string[]> [[-Filter] <string[]>] [-RemoveAllRepeats] [[-Encoding] <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
 
-Remove-HL7Item [-Path] <string[]> [-ItemPosition] <string[]> [[-Filter] <string[]>] [-RemoveAllRepeats] [-WhatIf] [-Confirm] [<CommonParameters>] 
+Remove-HL7Item [-Path] <string[]> [-ItemPosition] <string[]> [[-Filter] <string[]>] [-RemoveAllRepeats] [[-Encoding] <String>] [-WhatIf] [-Confirm] [<CommonParameters>] 
 ```
 
 ### Parameters
@@ -230,6 +236,8 @@ __-Filter <string[]>__ Only includes messages where a HL7 item equals a  specifi
 Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
+
+__-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
 ## Split-HL7BatchFile
 Splits a HL7 batch file into a separate file per HL7 message
@@ -263,7 +271,7 @@ __-Timeout \<int\>__: The timeout in seconds before idle connections are dropped
 
 __-Encoding \<string\>__: The text encoding to use when receiving the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
-__-NoACK \<SwitchParameter\>__: Set this switch parameter to suppress acknowledgment (ACK) messages from being sent in reposne to messages received.
+__-NoACK \<SwitchParameter\>__: Set this switch parameter to suppress acknowledgement (ACK) messages from being sent in reposne to messages received.
 
 
 ## Show-HL7MessageTimeline
