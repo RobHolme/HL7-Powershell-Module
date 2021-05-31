@@ -79,9 +79,12 @@ ItemPosition Examples:
 
 __-Filter <string[]>__: Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match all conditions to be included. 
 
+If a filter references a repeating element, then a match is returned as successful if any of the repeats match the condition. A position within the repeating element can be nominated if the order is known. 
+
 Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
+* `-Filter PID-3[2].1=Z9999` This filter would only include messages with the second repeat of the PID-3 fields matching 'Z9999'
 
 __-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
