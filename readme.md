@@ -26,7 +26,7 @@ Follow these instructions if you plan on installing the module from a prebuilt r
 Follow these instructions to build and install the module. Alternatively you can install from pre-built releases.
 ## .NET Core / Powershell v6+ (Windows, MacOS, Linux)
 This requires Powershell Core v6 or later to be installed. 
-1. Install the .Net Core 2.x SDK. The build files expect v2.1.500 of the .Net Core SDK. If using a different version of the SDK, update the version reference in `\dotnetcore\global.json` accordingly. Install instructions for the SDK for each platform are available from:
+1. Install the .Net Core 3.1 SDK. The build files expect v3.1.412 of the .Net Core SDK. If using a different version of the SDK, update the version reference in `\dotnetcore\global.json` accordingly. Install instructions for the SDK for each platform are available from:
 * Linux: https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x
 * Windows: https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x
 * MacOS: https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x
