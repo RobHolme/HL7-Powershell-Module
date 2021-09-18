@@ -95,9 +95,9 @@ __-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "I
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
 
 ```
-Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>]  [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>] [-UseTLS] [<CommonParameters>]
 
-Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>] [<CommonParameters>]
+Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>] [-UseTLS] [<CommonParameters>]
 ```
 example:
 
@@ -120,6 +120,7 @@ __-Delay \<int\>__: The delay (in seconds) between sending each message.
 
 __-Encoding \<string\>__: Specify the character encoding used when sending the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
+__-UseTLS__: Secure the connection to the remote host via TLS. Requires the remote host to support TLS.
 
 ## Remove-HL7Identifiers
 Removes names, addresses and other personally identifiable details from a HL7 v2.x Message.  
