@@ -19,6 +19,9 @@ namespace HL7Tools
     using System.Collections.Generic;
     using System.Management.Automation;
     using System.Net.Sockets;
+	using System.Net.Security;
+	using System.Security.Authentication;
+	using System.Security.Cryptography.X509Certificates;
 
     [Cmdlet("Send", "HL7Message")]
     public class SendHL7Message : PSCmdlet
@@ -30,6 +33,7 @@ namespace HL7Tools
         private string[] paths;
         private bool expandWildcards = false;
 		private string encoding = "UTF-8";
+		private bool useTls;
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
@@ -103,11 +107,11 @@ namespace HL7Tools
             set { this.noACK = value; }
         }
 
-        // The port number of the remote listener to send the message to
+        // wait between sending messages
         [Parameter(
             Mandatory = false,
             Position = 3,
-            HelpMessage = "Deley between seinding messages (seconds)"
+            HelpMessage = "Delay between sending messages (seconds)"
         )]
         [ValidateRange(0,600)]
         public int Delay
@@ -128,6 +132,18 @@ namespace HL7Tools
             get { return this.encoding; }
             set { this.encoding = value; }
         }
+
+		[Parameter(
+			Mandatory=false,
+			Position = 5,
+			HelpMessage = "Use TLS to secure the conneciton (if supported by server)"
+		)]
+		public SwitchParameter UseTLS
+		{
+			get { return this.useTls; }
+			set { this.useTls = value; }
+		}
+		
 
 
 
@@ -206,45 +222,85 @@ namespace HL7Tools
                         // create a TCP socket connection to the receiver, start timing the elapsed time to deliver the message and receive the ACK
                         timer.Start();
                         tcpConnection.Connect(this.hostname, this.port);
-                        NetworkStream tcpStream = tcpConnection.GetStream();
-                        Byte[] writeBuffer = new Byte[4096];
 
-                        // get the message text with MLLP framing
-                        writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
-                        tcpStream.Write(writeBuffer, 0, writeBuffer.Length);
-                        tcpStream.Flush();
-                        WriteVerbose("Message sent");
+// TO DO: make separate functions for send message, reduce duplication	
+						string[] ackLines = null;					
+						// connect using TLS if -UseTLS switch supplied, otherwise use plain text
+						if (this.useTls) {
+							SslStream sslStream = new SslStream(tcpConnection.GetStream());
+							sslStream.AuthenticateAsClient(""); // supply SNI name as parameter here
+							// get the message text with MLLP framing
+							Byte[] writeBuffer = new Byte[4096];
+							writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
+							sslStream.Write(writeBuffer, 0, writeBuffer.Length);
+							sslStream.Flush();
+							WriteVerbose("Message sent");
 
-                        // wait for ack unless the -NoACK switch was set
-                        string[] ackLines = null;
-                        if (!this.noACK) {
-                            WriteVerbose("Waiting for ACK ...");
-                            Byte[] readBuffer = new Byte[4096];
-                            int bytesRead = tcpStream.Read(readBuffer, 0, 4096);
-                            string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
-                            // look for the start of the MLLP frame (VT control character)
-                            int start = ackMessage.IndexOf((char)0x0B);
-                            if (start >= 0) {
-                                // Search for the end of the MLLP frame (FS control character)
-                                int end = ackMessage.IndexOf((char)0x1C);
-                                if (end > start) {
-                                    // split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
-                                    // remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
-                                    string ackString = ackMessage.Substring(start + 1, end - 1);
-                                    if (ackString[ackString.Length - 1] == (char)0x0D) {
-                                        ackString = ackString.Substring(0, ackString.Length - 1);
-                                    }
-                                    ackLines = ackString.Split((char)0x0D);
-                                }
-                            }
-                        }
+							// wait for ack unless the -NoACK switch was set
+							//string[] ackLines = null;
+							if (!this.noACK) {
+								WriteVerbose("Waiting for ACK ...");
+								Byte[] readBuffer = new Byte[4096];
+								int bytesRead = sslStream.Read(readBuffer, 0, 4096);
+								string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
+								// look for the start of the MLLP frame (VT control character)
+								int start = ackMessage.IndexOf((char)0x0B);
+								if (start >= 0) {
+									// Search for the end of the MLLP frame (FS control character)
+									int end = ackMessage.IndexOf((char)0x1C);
+									if (end > start) {
+										// split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
+										// remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
+										string ackString = ackMessage.Substring(start + 1, end - 1);
+										if (ackString[ackString.Length - 1] == (char)0x0D) {
+											ackString = ackString.Substring(0, ackString.Length - 1);
+										}
+										ackLines = ackString.Split((char)0x0D);
+									}
+								}
+                        	}
+							sslStream.Close();
+						}
+						else {
+                        	NetworkStream tcpStream = tcpConnection.GetStream();
+							// get the message text with MLLP framing
+							Byte[] writeBuffer = new Byte[4096];
+							writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
+							tcpStream.Write(writeBuffer, 0, writeBuffer.Length);
+							tcpStream.Flush();
+							WriteVerbose("Message sent");
+
+							// wait for ack unless the -NoACK switch was set
+							
+							if (!this.noACK) {
+								WriteVerbose("Waiting for ACK ...");
+								Byte[] readBuffer = new Byte[4096];
+								int bytesRead = tcpStream.Read(readBuffer, 0, 4096);
+								string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
+								// look for the start of the MLLP frame (VT control character)
+								int start = ackMessage.IndexOf((char)0x0B);
+								if (start >= 0) {
+									// Search for the end of the MLLP frame (FS control character)
+									int end = ackMessage.IndexOf((char)0x1C);
+									if (end > start) {
+										// split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
+										// remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
+										string ackString = ackMessage.Substring(start + 1, end - 1);
+										if (ackString[ackString.Length - 1] == (char)0x0D) {
+											ackString = ackString.Substring(0, ackString.Length - 1);
+										}
+										ackLines = ackString.Split((char)0x0D);
+									}
+								}
+                        	}
+                        tcpStream.Close();
+						}
 
                         // stop timing the operation, output the result object
                         timer.Stop();
                         SendHL7MessageResult result = new SendHL7MessageResult("Successful", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath, timer.Elapsed.TotalMilliseconds / 1000);
                         WriteObject(result);
                         WriteVerbose("Closing TCP session\n");
-                        tcpStream.Close();
                     }
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
                     catch (ArgumentException) {
