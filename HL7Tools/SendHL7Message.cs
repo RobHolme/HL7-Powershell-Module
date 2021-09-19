@@ -230,7 +230,7 @@ namespace HL7Tools
 							WriteVerbose("Using TLS");
 							SslStream sslStream = new SslStream(tcpConnection.GetStream());
 
-							sslStream.AuthenticateAsClient(this.hostname); // supply SNI name as parameter here
+							sslStream.AuthenticateAsClient(this.hostname); 
 							// get the message text with MLLP framing
 							Byte[] writeBuffer = new Byte[4096];
 							writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
