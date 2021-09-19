@@ -227,8 +227,10 @@ namespace HL7Tools
 						string[] ackLines = null;					
 						// connect using TLS if -UseTLS switch supplied, otherwise use plain text
 						if (this.useTls) {
+							WriteVerbose("Using TLS");
 							SslStream sslStream = new SslStream(tcpConnection.GetStream());
-							sslStream.AuthenticateAsClient(""); // supply SNI name as parameter here
+
+							sslStream.AuthenticateAsClient(this.hostname); // supply SNI name as parameter here
 							// get the message text with MLLP framing
 							Byte[] writeBuffer = new Byte[4096];
 							writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
@@ -243,6 +245,7 @@ namespace HL7Tools
 								Byte[] readBuffer = new Byte[4096];
 								int bytesRead = sslStream.Read(readBuffer, 0, 4096);
 								string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
+								
 								// look for the start of the MLLP frame (VT control character)
 								int start = ackMessage.IndexOf((char)0x0B);
 								if (start >= 0) {
@@ -257,6 +260,9 @@ namespace HL7Tools
 										}
 										ackLines = ackString.Split((char)0x0D);
 									}
+								}
+								else {
+									WriteDebug($"Issue with ACK. Remote server response:`n{ackMessage}");
 								}
                         	}
 							sslStream.Close();
@@ -291,6 +297,9 @@ namespace HL7Tools
 										}
 										ackLines = ackString.Split((char)0x0D);
 									}
+								}
+								else {
+									WriteDebug($"Issue with ACK. Remote server response:`n{ackMessage}");
 								}
                         	}
                         tcpStream.Close();
