@@ -330,7 +330,7 @@ namespace HL7Tools
     	/// Strip the MLLP framing from the message string
     	/// </summary>
 		private string[] StripMLLPFrame(string MLLPFramedMessage) {
-			string[] ackLines = null;
+			string[] messageLines = null;
 			// look for the start of the MLLP frame (VT control character)
 			int start = MLLPFramedMessage.IndexOf((char)0x0B);
 			if (start >= 0) {
@@ -343,13 +343,13 @@ namespace HL7Tools
 					if (ackString[ackString.Length - 1] == (char)0x0D) {
 						ackString = ackString.Substring(0, ackString.Length - 1);
 					}
-					ackLines = ackString.Split((char)0x0D);
+					messageLines = ackString.Split((char)0x0D);
 				}
 			}
 			else {
 				WriteDebug($"Issue with ACK. Remote server response:`n{MLLPFramedMessage}");
 			}
-			return ackLines;
+			return messageLines;
 		}
 
 	}
