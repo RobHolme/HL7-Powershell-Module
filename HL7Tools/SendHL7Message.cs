@@ -214,95 +214,18 @@ namespace HL7Tools
                         // save the string as a HL7Message, this will validate the file is a HL7 v2 message.
                         HL7Message message = new HL7Message(fileContents);
                         WriteVerbose("Connecting to " + this.hostname + ":" + this.port);
-
-						// set the text encoding
-						Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
-						WriteVerbose("Encoding: " + encoder.EncodingName);
 	
                         // create a TCP socket connection to the receiver, start timing the elapsed time to deliver the message and receive the ACK
                         timer.Start();
                         tcpConnection.Connect(this.hostname, this.port);
 
-// TO DO: make separate functions for send message, reduce duplication	
 						string[] ackLines = null;					
 						// connect using TLS if -UseTLS switch supplied, otherwise use plain text
 						if (this.useTls) {
-							WriteVerbose("Using TLS");
-							SslStream sslStream = new SslStream(tcpConnection.GetStream());
-
-							sslStream.AuthenticateAsClient(this.hostname); 
-							// get the message text with MLLP framing
-							Byte[] writeBuffer = new Byte[4096];
-							writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
-							sslStream.Write(writeBuffer, 0, writeBuffer.Length);
-							sslStream.Flush();
-							WriteVerbose("Message sent");
-
-							// wait for ack unless the -NoACK switch was set
-							//string[] ackLines = null;
-							if (!this.noACK) {
-								WriteVerbose("Waiting for ACK ...");
-								Byte[] readBuffer = new Byte[4096];
-								int bytesRead = sslStream.Read(readBuffer, 0, 4096);
-								string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
-								
-								// look for the start of the MLLP frame (VT control character)
-								int start = ackMessage.IndexOf((char)0x0B);
-								if (start >= 0) {
-									// Search for the end of the MLLP frame (FS control character)
-									int end = ackMessage.IndexOf((char)0x1C);
-									if (end > start) {
-										// split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
-										// remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
-										string ackString = ackMessage.Substring(start + 1, end - 1);
-										if (ackString[ackString.Length - 1] == (char)0x0D) {
-											ackString = ackString.Substring(0, ackString.Length - 1);
-										}
-										ackLines = ackString.Split((char)0x0D);
-									}
-								}
-								else {
-									WriteDebug($"Issue with ACK. Remote server response:`n{ackMessage}");
-								}
-                        	}
-							sslStream.Close();
+							ackLines = SendMessageTLS(tcpConnection, message);
 						}
 						else {
-                        	NetworkStream tcpStream = tcpConnection.GetStream();
-							// get the message text with MLLP framing
-							Byte[] writeBuffer = new Byte[4096];
-							writeBuffer = encoder.GetBytes(message.GetMLLPFramedMessage());
-							tcpStream.Write(writeBuffer, 0, writeBuffer.Length);
-							tcpStream.Flush();
-							WriteVerbose("Message sent");
-
-							// wait for ack unless the -NoACK switch was set
-							
-							if (!this.noACK) {
-								WriteVerbose("Waiting for ACK ...");
-								Byte[] readBuffer = new Byte[4096];
-								int bytesRead = tcpStream.Read(readBuffer, 0, 4096);
-								string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
-								// look for the start of the MLLP frame (VT control character)
-								int start = ackMessage.IndexOf((char)0x0B);
-								if (start >= 0) {
-									// Search for the end of the MLLP frame (FS control character)
-									int end = ackMessage.IndexOf((char)0x1C);
-									if (end > start) {
-										// split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
-										// remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
-										string ackString = ackMessage.Substring(start + 1, end - 1);
-										if (ackString[ackString.Length - 1] == (char)0x0D) {
-											ackString = ackString.Substring(0, ackString.Length - 1);
-										}
-										ackLines = ackString.Split((char)0x0D);
-									}
-								}
-								else {
-									WriteDebug($"Issue with ACK. Remote server response:`n{ackMessage}");
-								}
-                        	}
-                        tcpStream.Close();
+                        	ackLines = SendMessage(tcpConnection, message);
 						}
 
                         // stop timing the operation, output the result object
@@ -312,10 +235,11 @@ namespace HL7Tools
                         WriteVerbose("Closing TCP session\n");
                     }
                     // if the file does not start with a MSH segment, the constructor will throw an exception. 
-                    catch (ArgumentException) {
+                    catch (ArgumentException ae) {
                         ArgumentException argException = new ArgumentException("The file does not appear to be a valid HL7 v2 message", filePath);
                         ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
                         WriteError(fileNotFoundError);
+						WriteDebug($"Exception: {ae}");
                         return;
                     }
                     // catch failed TCP connections
@@ -335,7 +259,100 @@ namespace HL7Tools
                 }
             }
         }
-    }
+	
+
+		/// <summary>
+    	/// Send the message via MLLP using a TLS secured connection
+    	/// </summary>
+		private string[] SendMessageTLS(TcpClient Connection, HL7Message Message) {
+			// set the text encoding
+			Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+			WriteVerbose("Encoding: " + encoder.EncodingName);
+			
+			// get the ssl stream. Use hostname as SNI name.
+			WriteVerbose("Using TLS");
+			SslStream sslStream = new SslStream(Connection.GetStream());
+			sslStream.AuthenticateAsClient(this.hostname); 
+			
+			// get the message text with MLLP framing
+			Byte[] writeBuffer = new Byte[4096];
+			writeBuffer = encoder.GetBytes(Message.GetMLLPFramedMessage());
+			sslStream.Write(writeBuffer, 0, writeBuffer.Length);
+			sslStream.Flush();
+			WriteVerbose("Message sent");
+			
+			// wait for ack unless the -NoACK switch was set
+			string[] ackLines = null;
+			if (!this.noACK) {
+				WriteVerbose("Waiting for ACK ...");
+				Byte[] readBuffer = new Byte[4096];
+				int bytesRead = sslStream.Read(readBuffer, 0, 4096);
+				string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
+				ackLines = StripMLLPFrame(ackMessage);
+            }
+			sslStream.Close();
+			return ackLines;
+		}
+    
+
+		/// <summary>
+    	/// Send the message via MLLP
+    	/// </summary>
+		private string[] SendMessage(TcpClient Connection, HL7Message Message) {
+			// set the text encoding
+			Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
+			WriteVerbose("Encoding: " + encoder.EncodingName);
+
+			NetworkStream tcpStream = Connection.GetStream();
+			
+			// get the message text with MLLP framing
+			Byte[] writeBuffer = new Byte[4096];
+			writeBuffer = encoder.GetBytes(Message.GetMLLPFramedMessage());
+			tcpStream.Write(writeBuffer, 0, writeBuffer.Length);
+			tcpStream.Flush();
+			WriteVerbose("Message sent");
+			
+			// wait for ack unless the -NoACK switch was set
+			string[] ackLines = null;
+			if (!this.noACK) {
+				WriteVerbose("Waiting for ACK ...");
+				Byte[] readBuffer = new Byte[4096];
+				int bytesRead = tcpStream.Read(readBuffer, 0, 4096);
+				string ackMessage = encoder.GetString(readBuffer, 0, bytesRead);
+				ackLines = StripMLLPFrame(ackMessage);
+            }
+        	tcpStream.Close();
+			return ackLines;
+		}
+	
+
+		/// <summary>
+    	/// Strip the MLLP framing from the message string
+    	/// </summary>
+		private string[] StripMLLPFrame(string MLLPFramedMessage) {
+			string[] ackLines = null;
+			// look for the start of the MLLP frame (VT control character)
+			int start = MLLPFramedMessage.IndexOf((char)0x0B);
+			if (start >= 0) {
+				// Search for the end of the MLLP frame (FS control character)
+				int end = MLLPFramedMessage.IndexOf((char)0x1C);
+				if (end > start) {
+					// split the ACK message on <CR> character (segment delimiter), output each segment of the ACK on a new line
+					// remove the last <CR> character if present, otherwise the final element in the array will be empty when splitting the string
+					string ackString = MLLPFramedMessage.Substring(start + 1, end - 1);
+					if (ackString[ackString.Length - 1] == (char)0x0D) {
+						ackString = ackString.Substring(0, ackString.Length - 1);
+					}
+					ackLines = ackString.Split((char)0x0D);
+				}
+			}
+			else {
+				WriteDebug($"Issue with ACK. Remote server response:`n{MLLPFramedMessage}");
+			}
+			return ackLines;
+		}
+
+	}
 
     /// <summary>
     /// An object containing the results to be returned to the pipeline
@@ -426,7 +443,6 @@ namespace HL7Tools
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="ItemValue"></param>
         public SendHL7MessageResult(string Status, string[] Ack = null, DateTime? SendTime = null, string[] HL7Message = null, string RemoteHost = null, int? Port = null, string Filename = null, double? ElapsedSeconds = null)
         {
             // null-coalescing operator. Uses the SentTime value, unless it is null in which case DateTime.Now is assigned as the value.
@@ -439,5 +455,6 @@ namespace HL7Tools
             this.filename = Filename;
             this.elapsedSeconds = ElapsedSeconds ?? 0;
         }
-    }
+    }		
+		
 }
