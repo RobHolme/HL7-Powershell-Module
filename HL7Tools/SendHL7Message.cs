@@ -346,9 +346,6 @@ namespace HL7Tools
 					messageLines = ackString.Split((char)0x0D);
 				}
 			}
-			else {
-				WriteDebug($"Issue with ACK. Remote server response:`n{MLLPFramedMessage}");
-			}
 			return messageLines;
 		}
 
