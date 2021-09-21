@@ -120,7 +120,7 @@ __-Delay \<int\>__: The delay (in seconds) between sending each message.
 
 __-Encoding \<string\>__: Specify the character encoding used when sending the message. Supports "UTF-8" or "ISO-8859-1" (Western European). Defaults to "UTF-8" if parameter not supplied.
 
-__-UseTLS__: Secure the connection to the remote host via TLS. Requires the remote host to support TLS.
+__-UseTLS__: Secure the connection to the remote host via TLS. Requires the remote host to support TLS. Experimetal, not widely tested.
 
 ## Remove-HL7Identifiers
 Removes names, addresses and other personally identifiable details from a HL7 v2.x Message.  
