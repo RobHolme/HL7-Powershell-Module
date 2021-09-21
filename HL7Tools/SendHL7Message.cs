@@ -135,7 +135,6 @@ namespace HL7Tools
 
 		[Parameter(
 			Mandatory=false,
-			Position = 5,
 			HelpMessage = "Use TLS to secure the conneciton (if supported by server)"
 		)]
 		public SwitchParameter UseTLS
