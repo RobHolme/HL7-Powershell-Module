@@ -20,6 +20,7 @@ namespace HL7Tools
     using System.IO;
     using System.Management.Automation;
     using System.Collections.Generic;
+	using System.Dynamic;
 
     // CmdLet: Select-HL7Item
     // Returns a specific item from the message based on the location
@@ -228,7 +229,11 @@ namespace HL7Tools
 
                             //  items were returned
                             else {
-                                SelectHL7ItemResult result = new SelectHL7ItemResult(hl7Items, filePath);
+								dynamic result = new ExpandoObject();
+								
+								result[this.itemPosition.ToString()] = hl7Items;
+								result.Filepath = filePath;
+                                //SelectHL7ItemResult result = new SelectHL7ItemResult(hl7Items, filePath);
                                 WriteObject(result);
                             }
                         }
