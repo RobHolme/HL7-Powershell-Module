@@ -13,6 +13,7 @@
   
   
   <ItemGroup>
+  	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0"/>
     <Compile Include="..\hl7tools\**\*.cs"> 
       <Link>notimportant</Link>
