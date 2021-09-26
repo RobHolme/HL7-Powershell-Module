@@ -16,7 +16,6 @@
 namespace HL7Tools
 {
 	using System;
-	using System.Collections;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Management.Automation;
@@ -252,22 +251,12 @@ namespace HL7Tools
 							//  items were returned
 							else
 							{
-								//SelectHL7ItemResult result = new SelectHL7ItemResult();
-								Hashtable resultHash = new Hashtable();
-								resultHash.Add(this.itemPosition.ToString(), hl7Items);
-								resultHash.Add("FilePath", filePath);
-								var result = new PSObject(resultHash);
+								// create a PSObject, dynamically add propertynames based on the HL7 item(s) being returned								
+								PSObject result = new PSObject();
+								result.Properties.Add(new PSNoteProperty("FilePath", filePath));
+								result.Properties.Add(new PSNoteProperty(this.itemPosition.ToString(), hl7Items));
+								//result.Properties.Add(new PSNoteProperty("OBX-3", hl7Items));
 
-								//string name = this.itemPosition.ToString();
-								//riteVerbose(name);
-								//result.AddProperty<string[]>(name, hl7Items);
-								//esult.AddProperty<string[]>("test", hl7Items);
-								//	Hashtable result = new Hashtable();
-								//dynamic result = new ExpandoObject();
-								//		[PSCustomObject] result = @{name = "test",test = 1}
-								//		result[this.itemPosition.ToString()] = hl7Items;
-								//		result.Filepath = filePath;
-								//SelectHL7ItemResult result = new SelectHL7ItemResult(hl7Items, filePath);
 								WriteObject(result);
 							}
 						}
@@ -286,95 +275,5 @@ namespace HL7Tools
 		}
 	}
 
-	public class SelectHL7ItemResult : Hashtable
-	{
-	}
 
-	/*
-		/// <summary>
-		/// An object containing the results to be returned to the pipeline
-		/// </summary>
-		public class SelectHL7ItemResult : DynamicObject
-		{
-			//private string[] hl7Itemvalue;
-			private string filename;
-			Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-			public int Count
-			{
-				get { return dictionary.Count; }
-			}
-
-			public override bool TryGetMember(GetMemberBinder binder, out object result)
-			{
-				string name = binder.Name;
-				return dictionary.TryGetValue(name, out result);
-			}
-
-			public override bool TrySetMember(SetMemberBinder binder, object value)
-			{
-				dictionary[binder.Name] = value;
-				return true;
-			}
-
-			public void AddProperty<TTValue>(string key, TTValue value = default(TTValue))
-			{
-				dictionary[key] = value;
-			}
-
-			public void AddProperty(string typeName, string key, object value = null)
-			{
-				Type type = Type.GetType(typeName);
-				dictionary[key] = Convert.ChangeType(value, type);
-			}
-
-			/// <summary>
-			/// The value of the HL7 item
-			/// </summary>
-			//public string[] ItemValue
-			//{
-			//   get { return this.hl7Itemvalue; }
-			//    set { this.hl7Itemvalue = value; }
-			// }
-
-			/// <summary>
-			/// The filename containing the item returned
-			/// </summary>
-			public string Filename
-			{
-				get { return this.filename; }
-				set { this.filename = value; }
-			}
-
-
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="ItemValue"></param>
-			public SelectHL7ItemResult(string Filename)
-			{
-				this.filename = Filename;
-			}
-
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="ItemValue"></param>
-			//public SelectHL7ItemResult(string[] ItemValue)
-			//{
-			//    this.hl7Itemvalue = ItemValue;
-			//}
-
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="ItemValue"></param>
-			/// <param name="Filename"></param>
-			//public SelectHL7ItemResult(string[] ItemValue, string Filename)
-			//{
-			//   this.hl7Itemvalue = ItemValue;
-			//    this.filename = Filename;
-			//}
-		}
-		*/
 }
