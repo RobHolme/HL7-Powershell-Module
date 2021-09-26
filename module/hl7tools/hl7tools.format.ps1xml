@@ -5,7 +5,7 @@
 	<View> 
 		<Name>SelectHL7ItemResult</Name>
 		<ViewSelectedBy>
-			<TypeName>HL7Tools.SelectHL7ItemResult</TypeName>
+			<TypeName>HL7Tools.SelectHL7ItemResult.old</TypeName>
 		</ViewSelectedBy>
 
 		<TableControl>
@@ -35,7 +35,7 @@
 	<View> 
 		<Name>SelectHL7ItemResultList</Name>
 		<ViewSelectedBy>
-			<TypeName>HL7Tools.SelectHL7ItemResult</TypeName>
+			<TypeName>HL7Tools.SelectHL7ItemResult.old</TypeName>
 		</ViewSelectedBy>
 		<ListControl>
 			<ListEntries>
