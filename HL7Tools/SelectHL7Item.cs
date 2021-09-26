@@ -17,8 +17,8 @@ namespace HL7Tools
 {
 	using System;
 	using System.Collections;
-	using System.IO;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Management.Automation;
 	using System.Text;
 
@@ -252,9 +252,11 @@ namespace HL7Tools
 							//  items were returned
 							else
 							{
-								SelectHL7ItemResult result = new SelectHL7ItemResult();
-								result.Add(this.itemPosition.ToString(), hl7Items);
-								result.Add("FilePath", filePath);
+								//SelectHL7ItemResult result = new SelectHL7ItemResult();
+								Hashtable resultHash = new Hashtable();
+								resultHash.Add(this.itemPosition.ToString(), hl7Items);
+								resultHash.Add("FilePath", filePath);
+								var result = new PSObject(resultHash);
 
 								//string name = this.itemPosition.ToString();
 								//riteVerbose(name);
