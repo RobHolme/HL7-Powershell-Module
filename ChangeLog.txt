@@ -1,2 +1,3 @@
 
 v1.7.5 (18/09/2021)	- Added -UseTLS switch to support connections to endpoints requiring TLS.
+v1.7.6 (26/09/2021)	- Supports a list of values for the -ItemPosition parameter. 
