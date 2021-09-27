@@ -946,7 +946,7 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
 				<maml:name>ItemPosition</maml:name>
 				<maml:description>
-					<maml:para>A string identifying the location of the item in the HL7 message you wish to retrieve the value for. e.g.</maml:para>
+					<maml:para>A string, or list of strings, identifying the location of the item(s) in the HL7 message you wish to retrieve the value for. e.g.</maml:para>
 					<maml:para>PID            Identifies the PID Segment
 PID-3          Identifies the PID-3 Field
 PID-3.1        Identifies the PID-3.1 Component
@@ -954,7 +954,7 @@ PID-3.1.1      Identifies the PID-3.1.1 Subcomponent
 PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID-3 Field
 </maml:para>
 				</maml:description>
-				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="false" position="2">
 				<maml:name>Filter</maml:name>
@@ -999,7 +999,7 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 			<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
 				<maml:name>ItemPosition</maml:name>
 				<maml:description>
-					<maml:para>A string identifying the location of the item in the HL7 message you wish to retrieve the value for. e.g.</maml:para>
+					<maml:para>A string, or list of strings, identifying the location of the item(s) in the HL7 message you wish to retrieve the value for. e.g.</maml:para>
 					<maml:para>PID            Identifies the PID Segment
 PID-3          Identifies the PID-3 Field
 PID-3.1        Identifies the PID-3.1 Component
@@ -1007,7 +1007,7 @@ PID-3.1.1      Identifies the PID-3.1.1 Subcomponent
 PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID-3 Field
 </maml:para>
 				</maml:description>
-				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+				<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="true" globbing="false" pipelineInput="false" position="2">
 				<maml:name>Filter</maml:name>
@@ -1057,7 +1057,7 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 		<command:parameter required="true" variableLength="false" globbing="false" pipelineInput="false" position="1">
 			<maml:name>ItemPosition</maml:name>
 			<maml:description>
-				<maml:para>A string identifying the location of the item in the HL7 message you wish to retrieve the value for. e.g.</maml:para>
+				<maml:para>A string, or list of strings, identifying the location of the item(s) in the HL7 message you wish to retrieve the value for. e.g.</maml:para>
 				<maml:para>PID            Identifies the PID Segment
 PID-3          Identifies the PID-3 Field
 PID-3.1        Identifies the PID-3.1 Component
@@ -1065,9 +1065,9 @@ PID-3.1.1      Identifies the PID-3.1.1 Subcomponent
 PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID-3 Field
 </maml:para>
 			</maml:description>
-			<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+			<command:parameterValue required="true" variableLength="false">String[]</command:parameterValue>
 			<dev:type>
-				<maml:name>String</maml:name>
+				<maml:name>String[]</maml:name>
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
@@ -1193,9 +1193,9 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 			<maml:introduction>
 				<maml:paragraph>PS C:\&gt;</maml:paragraph>
 			</maml:introduction>
-			<dev:code>get-childitem *.hl7 | Select-HL7Item -ItemPosition PID-3.1</dev:code>
+			<dev:code>get-childitem *.hl7 | Select-HL7Item -ItemPosition PID-3.1,PID-5</dev:code>
 			<dev:remarks>
-				<maml:para>Pipe all files with .hl7 extensions to the CmdLet, return Patient ID values.</maml:para>
+				<maml:para>Pipe all files with .hl7 extensions to the CmdLet, return Patient ID values (PID-3.1) and Patient Names (PID-5).</maml:para>
 				<maml:para />
 				<maml:para />
 				<maml:para></maml:para>
@@ -1319,13 +1319,6 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
-				<maml:name>UseTLS</maml:name>
-				<maml:description>
-					<maml:para>Use TLS to secure the conneciton (if supported by server)</maml:para>
-				</maml:description>
-				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-			</command:parameter>
-			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
 				<maml:description>
 					<maml:para />
@@ -1383,13 +1376,6 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 					<maml:para>Set the text encoding. Supports &quot;UTF-8&quot; or &quot;ISO-8859-1&quot; (Western European). Defaults to &quot;UTF-8&quot; if parameter not supplied.</maml:para>
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">String</command:parameterValue>
-			</command:parameter>
-			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
-				<maml:name>UseTLS</maml:name>
-				<maml:description>
-					<maml:para>TUse TLS to secure the conneciton (if supported by server).</maml:para>
-				</maml:description>
-				<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
 			</command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
@@ -1479,18 +1465,6 @@ PID-3[2].1     Identifies the PID-3.1 Component for second occurrence of the PID
 				<maml:uri/>
 			</dev:type>
 			<dev:defaultValue>UTF-8</dev:defaultValue>
-		</command:parameter>
-		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
-			<maml:name>UseTLS</maml:name>
-			<maml:description>
-				<maml:para>Use TLS to secure the conneciton (if supported by server).</maml:para>
-			</maml:description>
-			<command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
-			<dev:type>
-				<maml:name>SwitchParameter</maml:name>
-				<maml:uri/>
-			</dev:type>
-			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
 		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 			<maml:name>InformationAction</maml:name>
