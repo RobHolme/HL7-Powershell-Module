@@ -34,7 +34,7 @@ namespace HL7Tools {
 
 		// Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
 		// A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
-		// to use the literaral file name instead of treating it as a wildcard search.
+		// to use the literal file name instead of treating it as a wildcard search.
 		[Parameter(
 			Mandatory = true,
 			ValueFromPipeline = false,
@@ -69,7 +69,7 @@ namespace HL7Tools {
 		[Parameter(
 			Mandatory = true,
 			Position = 1,
-			HelpMessage = "Position of the item to return, e.g. PID-3.1"
+			HelpMessage = "Position of the item(s) to return, e.g. PID-3.1"
 		)]
 		[Alias("Item")]
 		public string[] ItemPosition {
@@ -99,7 +99,7 @@ namespace HL7Tools {
 		}
 
 		/// <summary>
-		/// Powershell BeginProcessing 
+		/// Powershell BeginProcessing. Validate paremeters are formatted correctly.
 		/// </summary>		
 		protected override void BeginProcessing() {
 			base.BeginProcessing();
@@ -192,16 +192,6 @@ namespace HL7Tools {
 						return;
 					}
 
-					/*
-										// if the ItemPosition parameter is not in the correct format display an error and return
-										if (!Common.IsItemLocationValid(this.itemPosition))
-										{
-											ArgumentException argException = new ArgumentException("The -ItemPosition parameter does not appear to be in the correct format.", this.itemPosition);
-											ErrorRecord parameterError = new ErrorRecord(argException, "ParameterNotValid", ErrorCategory.InvalidArgument, this.itemPosition);
-											WriteError(parameterError);
-											return;
-										}
-					*/
 					// process the message
 					try {
 						// assume the filter is true, until a failed match is found
@@ -234,16 +224,13 @@ namespace HL7Tools {
 						if (filterConditionsMet) {
 							// create a PSObject								
 							PSObject result = new PSObject();
-							result.Properties.Add(new PSNoteProperty("FilePath", filePath));
-
 							foreach (string hl7ItemPossition in itemPosition) {
 								string[] hl7Items = message.GetHL7ItemValue(hl7ItemPossition);
-								// if the hl7Items array is  empty, the item was not found in the message
+								// if the hl7Items array is  empty, the item was not found in the message. Write null property otherwise powershell will omit columns in output if firest value does nto include all properties
 								if (hl7Items.Length == 0) {
-									WriteWarning("Item " + hl7ItemPossition + " not found in the message " + filePath);
 									result.Properties.Add(new PSNoteProperty(hl7ItemPossition.ToString(), null));
+									WriteVerbose("Item " + hl7ItemPossition + " not found in the message " + filePath);
 								}
-
 								//  items were returned, add properties to PSObject
 								else {
 									// if only a single value returned, save it as a string, not a string[]
@@ -255,6 +242,7 @@ namespace HL7Tools {
 									}
 								}
 							}
+							result.Properties.Add(new PSNoteProperty("Filename", filePath));
 							WriteObject(result);
 						}
 					}
