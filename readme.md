@@ -47,9 +47,9 @@ This CmdLet returns the values of specific HL7 items from a file (or group of fi
 Output can be piped to other powershell CmdLets to refine the results. e.g. returning only the unique values across a range of files:
 
 ```
-Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [[-Encoding] <String>] [<CommonParameters>]
+Select-HL7Item [-LiteralPath] <string[]> [-ItemPosition] <string[]> [-Filter <string[]>] [[-Encoding] <String>] [<CommonParameters>]
 
-Select-HL7Item [-Path] <string[]> [-ItemPosition] <string> [-Filter <string[]>] [[-Encoding] <String>] [<CommonParameters>]
+Select-HL7Item [-Path] <string[]> [-ItemPosition] <string[]> [-Filter <string[]>] [[-Encoding] <String>] [<CommonParameters>]
 ```
 Example:
 
@@ -61,13 +61,15 @@ Pipe all files with .hl7 extentions to the CmdLet, return Patient ID values
 Display all PID-5 values where the value of PV1-2 is INPATIENT
 * `(Select-HL7Item -Path c:\test -ItemPosition PID-3.1).ItemValue | Sort-Object -Unique` 
 Only return unique values
+* `Select-HL7Item -Path c:\test\*.hl7 -ItemPosition PID-3.1,PID-5` 
+Display the Patient ID and Patient Name values for all hl7 files in c:\test
 
 ### Parameters
 __-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't identified as a HL7 v2.x file. This parameter accepts a list of files, separate each file file with a ','
 
 __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
 
-__-ItemPosition \<string\>__: A string identifying the location of the item in the HL7 message you wish to retrieve the value for.
+__-ItemPosition \<string[]\>__: A string, or list of strings, identifying the location of the item(s) in the HL7 message you wish to retrieve the value for.
 
 ItemPosition Examples:
 * `-ItemPosition PID`  All PID segments
@@ -76,6 +78,7 @@ ItemPosition Examples:
 * `-ItemPosition PID-3.1`  The value for the 1st component of the PID-3 field. If the component belongs  to a list  of fields, all PID-3.1 components will be returned. 
 * `-ItemPosition PID-3[2].1` The value for the 1st component of the second occurrence of the PID-3 field (assuming the field is a list).
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
+* `-ItemPosition PID-3.1,PID-5` The value for the 1st component of the PID-3 field, and the value of the PID-5 field.
 
 __-Filter <string[]>__: Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match all conditions to be included. 
 
