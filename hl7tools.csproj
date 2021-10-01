@@ -5,12 +5,12 @@
 	<EnableDefaultItems>true</EnableDefaultItems>
 	<PlatformTarget>x64</PlatformTarget>
 	<Authors>Rob Holme</Authors>
-	<Product>HL7Tools Module for Powershell Core</Product>
+	<Product>HL7Tools PowerShell Module</Product>
     <Description>Powershell module for working with HL7 2.x files</Description>
 	<Version>1.7.7</Version>
     <FileVersion>1.7.7.0</FileVersion>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
-    <PostBuildEvent>XCOPY /Y "$(TargetDir)hl7tools.dll" "$(ProjectDir)..\..\..\module\lib\$(TargetFramework)"</PostBuildEvent>
+    <PostBuildEvent>XCOPY /Y "$(TargetDir)hl7tools.dll" "$(ProjectDir)..\..\..\module\hl7tools\lib\$(TargetFramework)"</PostBuildEvent>
   </PropertyGroup>
   
   
