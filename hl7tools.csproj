@@ -1,22 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-	<Version>1.7.6</Version>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+	<EnableDefaultItems>true</EnableDefaultItems>
+	<PlatformTarget>x64</PlatformTarget>
 	<Authors>Rob Holme</Authors>
 	<Product>HL7Tools Module for Powershell Core</Product>
-    <FileVersion>1.7.6.0</FileVersion>
-    <Description>Powershell Core module for working with HL7 2.x files</Description>
+    <Description>Powershell module for working with HL7 2.x files</Description>
+	<Version>1.7.7</Version>
+    <FileVersion>1.7.7.0</FileVersion>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
-    <PostBuildEvent>XCOPY /Y "$(TargetDir)hl7tools.dll" "$(ProjectDir)..\..\..\..\module\hl7tools\netcore\"</PostBuildEvent>
+    <PostBuildEvent>XCOPY /Y "$(TargetDir)hl7tools.dll" "$(ProjectDir)..\..\..\module\lib\$(TargetFramework)"</PostBuildEvent>
   </PropertyGroup>
   
   
-  <ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0"/>
-    <Compile Include="..\hl7tools\**\*.cs"> 
-      <Link>notimportant</Link>
-    </Compile>
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net45'))" >
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
