@@ -10,35 +10,31 @@ This PowerShell module is a small collection of CmdLets to manipulate HL7 v2.x f
 * __Receive-HL7Message__: Receive a HL7 v2.x message via a TCP connection
 * __Show-HL7MessageTimeline__: List messages chronologically based on the header timestamp (MSH-7)
 
-# Installation Instructions for prebuilt releases
-### Install from Powershell Gallery
-```
+# Installation Instructions
+You may install the module from existing build releases, from the Powershell Gallery, or build from source. 
+## Install from Powershell Gallery
+From a powershell console, run:
+
+```Powershell
 Install-Module -Name hl7tools
 ```
-### Install from GitHub releases
+## Install from GitHub releases
 Follow these instructions if you plan on installing the module from a prebuilt release instead of building from source.
-1.  Download the zip file from https://github.com/RobHolme/HL7-Powershell-Module/releases. Recent releases support both Powershell Core and Windows Powershell. 
+1.  Download the zip file from the latest release from: https://github.com/RobHolme/HL7-Powershell-Module/releases. 
 2.  Extract the 'hl7tools' folder from the archive to your PowerShell modules folder. You can confirm the location of your modules folder by running `$env:PSModulePath` from a PowerShell console. 
 2.  Run the PowerShell command `Unblock-File` against all files extracted from the download.
 3.  Open a powershell console, the module will be imported when the console opens and the CmdLets available to use. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
 
-# Build instructions
-Follow these instructions to build and install the module. Alternatively you can install from pre-built releases.
-## .NET Core / Powershell v6+ (Windows, MacOS, Linux)
-This requires Powershell Core v6 or later to be installed. 
+## Build from source
+The solution will build versions for .Net Standard 2.0 (Microsoft Powershell 6+) and .Net Framework 4.5 (Windows Powershell 5.1). The powershell module will load the relevant dll based on the Powershell environment it is run from.
 1. Install the .Net Core 3.1 SDK. The build files expect v3.1.412 of the .Net Core SDK. If using a different version of the SDK, update the version reference in `\dotnetcore\global.json` accordingly. Install instructions for the SDK for each platform are available from:
 * Linux: https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x
 * Windows: https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x
 * MacOS: https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x
-2. Open a command console, navigate to the `\dotnetcore` folder. Run the following build command:
+2. Open a command console, navigate to the root folder of this solution (containing hl7tools.csproj). Run the following build command:
 `dotnet build --configuration Release`
-3. Copy `\dotnetcore\bin\Release\netstandard2.0\hl7tools.dll` to `Manifest\netcore\`. Copy the contents of the `\Manifest` folder to a new folder named `hl7tools`.
-4. Move this folder to the Powershell Module Path (query the path from the environment variable by running `$env:PSModulePath` from a powershell console). Restart powershell. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
-## .NET Framework / Windows Powershell v4 - v5.1 (Windows Only)
-This requires Windows Powershell v4, v5, or v5.1 to be installed.
-1. Open the `\dotnetframework\hl7tools.sln` solution with Visual Studio. Build the release configuration.
-2. Copy `\dotnetframework\bin\Release\hl7tools.dll` to `\Manifest\netframework`. Copy contents of the folder `\Manifest` to a new folder named `hl7tools`.
-4. Move this folder to the Powershell Module Path (query the path from the environment variable by running `$env:PSModulePath` from a powershell console). Restart powershell. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
+3. The build process will copy each version of hl7tools.dll to subfolders of `module\hl7tools\lib\`. The contents of the `\module\hl7tools` folder will contain the Powershell Module.
+4. Move the `\module\hl7tools` folder to your Powershell Module Path (query the path from the environment variable by running `$env:PSModulePath` from a powershell console). Restart powershell. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
 
 # CmdLet Usage 
 ## Select-HL7Item
