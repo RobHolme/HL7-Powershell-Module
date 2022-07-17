@@ -34,10 +34,11 @@ namespace HL7Tools
         private bool expandWildcards = false;
 		private string encoding = "UTF-8";
 		private bool useTls;
+		private bool skipCertificateCheck = false;
 
         // Parameter set for the -Path and -LiteralPath parameters. A parameter set ensures these options are mutually exclusive.
         // A LiteralPath is used in situations where the filename actually contains wild card characters (eg File[1-10].txt) and you want
-        // to use the literaral file name instead of treating it as a wildcard search.
+        // to use the literal file name instead of treating it as a wildcard search.
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = false,
@@ -133,6 +134,7 @@ namespace HL7Tools
             set { this.encoding = value; }
         }
 
+		// secure the connection to the server using TLS
 		[Parameter(
 			Mandatory=false,
 			HelpMessage = "Use TLS to secure the conneciton (if supported by server)"
@@ -141,6 +143,17 @@ namespace HL7Tools
 		{
 			get { return this.useTls; }
 			set { this.useTls = value; }
+		}
+		
+		// ignore TLS certificate errors, connect regardless of trust or validity errors.
+		[Parameter(
+			Mandatory=false,
+			HelpMessage = "Ignore TLS certificate errors"
+		)]
+		public SwitchParameter SkipCertificateCheck
+		{
+			get { return this.skipCertificateCheck; }
+			set { this.skipCertificateCheck = value; }
 		}
 		
 
@@ -221,7 +234,7 @@ namespace HL7Tools
 						string[] ackLines = null;					
 						// connect using TLS if -UseTLS switch supplied, otherwise use plain text
 						if (this.useTls) {
-							ackLines = SendMessageTLS(tcpConnection, message);
+							ackLines = SendMessageTLS(tcpConnection, message, this.skipCertificateCheck);
 						}
 						else {
                         	ackLines = SendMessage(tcpConnection, message);
@@ -263,14 +276,22 @@ namespace HL7Tools
 		/// <summary>
     	/// Send the message via MLLP using a TLS secured connection
     	/// </summary>
-		private string[] SendMessageTLS(TcpClient Connection, HL7Message Message) {
+		private string[] SendMessageTLS(TcpClient Connection, HL7Message Message, bool SkipCertCheck) {
 			// set the text encoding
 			Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
 			WriteVerbose("Encoding: " + encoder.EncodingName);
 			
-			// get the ssl stream. Use hostname as SNI name.
+			// get the ssl stream. Use hostname as SNI name. Ignore cert errors if -SkipCertificateCheck is set
 			WriteVerbose("Using TLS");
-			SslStream sslStream = new SslStream(Connection.GetStream());
+			SslStream sslStream;
+			if (!SkipCertCheck) {
+				WriteVerbose("Enforcing certificate validation");
+				sslStream = new SslStream(Connection.GetStream());
+			}
+			else {
+				WriteVerbose("Ignoring certificate validation errors");
+				sslStream = new SslStream(Connection.GetStream(), false, new RemoteCertificateValidationCallback(SkipServerCertificateValidation), null);
+			}
 			sslStream.AuthenticateAsClient(this.hostname); 
 			
 			// get the message text with MLLP framing
@@ -347,6 +368,14 @@ namespace HL7Tools
 			}
 			return messageLines;
 		}
+
+		/// <summary>
+    	/// The following method is invoked by the RemoteCertificateValidationDelegate.
+		/// Always return true, to ignore 
+    	/// </summary>
+        public static bool SkipServerCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+			return true;
+        }
 
 	}
 
