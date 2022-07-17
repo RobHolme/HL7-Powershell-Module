@@ -7,8 +7,8 @@
 	<Authors>Rob Holme</Authors>
 	<Product>HL7Tools PowerShell Module</Product>
     <Description>Powershell module for working with HL7 2.x files</Description>
-	<Version>1.7.7</Version>
-    <FileVersion>1.7.7.0</FileVersion>
+	<Version>1.7.8</Version>
+    <FileVersion>1.7.8.0</FileVersion>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
     <PostBuildEvent>XCOPY /Y "$(TargetDir)hl7tools.dll" "$(ProjectDir)..\..\..\module\hl7tools\lib\$(TargetFramework)"</PostBuildEvent>
   </PropertyGroup>
