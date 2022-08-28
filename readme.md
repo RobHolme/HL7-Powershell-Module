@@ -31,10 +31,16 @@ The solution will build versions for .Net Standard 2.0 (Microsoft Powershell 6+)
 * Linux: https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x
 * Windows: https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x
 * MacOS: https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x
-1. Open a command console, navigate to the root folder of this solution (containing hl7tools.csproj). Run the following build command:
-`dotnet build --configuration Release`
-3. The build process will copy each version of hl7tools.dll to subfolders of `module\hl7tools\lib\`. The contents of the `\module\hl7tools` folder will contain the Powershell Module.
-4. Move the `\module\hl7tools` folder to your Powershell Module Path (query the path from the environment variable by running `$env:PSModulePath` from a powershell console). Restart powershell. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
+1. Open a command console, navigate to the root folder of this solution (containing hl7tools.csproj). Run the following commands to build the release and publish to the /module/lib folder:
+   
+`dotnet publish --configuration release --framework netstandard2.0 --output .\module\hl7tools\lib\netstandard2.0\`
+
+`dotnet publish --configuration release --framework net48 --output .\module\hl7tools\lib\net48\`
+
+(or run the .\publish.cmd batch file)
+
+2. The build process will copy each version of hl7tools.dll to subfolders of `module\hl7tools\lib\`. The contents of the `\module\hl7tools` folder will contain the Powershell Module.
+3. Move the `\module\hl7tools` folder to your Powershell Module Path (query the path from the environment variable by running `$env:PSModulePath` from a powershell console). Restart powershell. Alternatively, if you don't wish to load the module with all new powershell sessions, run `import-module .\hl7tools\hl7tools.psd1` to use the module for the current session only.
 
 # CmdLet Usage 
 ## Select-HL7Item
