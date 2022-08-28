@@ -21,6 +21,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+module/hl7tools/lib/
 
 # Visual Studio 2015 cache/options directory
 .vs/
