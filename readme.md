@@ -82,9 +82,11 @@ ItemPosition Examples:
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
 * `-ItemPosition PID-3.1,PID-5` The value for the 1st component of the PID-3 field, and the value of the PID-5 field.
 
-__-Filter <string[]>__: Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match all conditions to be included. 
+__-Filter <string[]>__: Only includes messages where a HL7 item equals a specific value. The format is: HL7Item=value. The HL7Item part of the filter is of the same format as the -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match all conditions to be included. 
 
 If a filter references a repeating element, then a match is returned as successful if any of the repeats match the condition. A position within the repeating element can be nominated if the order is known. 
+
+>The filter is intended to filter at the message/file level when querying a large number of files (to include/exclude the messages from the results). It will not filter on individual repeating segments or fields within a message - the results will still include __all__ fields requested from the messages matched by the filter condition. e.g. if you filter on OBX-3=NM, all OBX-3 values from all OBX segments will be returned, but only for messages queried that contain at least 1 OBX-3 value equal to 'NM'. Message not matching the filter condition are excluded from the results.
 
 Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
@@ -210,6 +212,8 @@ __-AppendToExistingValue__: The value supplied by the '-Value' parameter is appe
 
 __-Filter <string[]>__ Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
 
+>The filter is intended to filter at the message/file level when querying a large number of files (to include/exclude the messages from the results). It will not filter on individual repeating segments or fields within a message - the results will still include __all__ fields requested from the messages matched by the filter condition. e.g. if you filter on OBX-3=NM, all OBX-3 values from all OBX segments will be returned, but only for messages queried that contain at least 1 OBX-3 value equal to 'NM'. Message not matching the filter condition are excluded from the results.
+
 Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 * `-Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT` This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT" 
@@ -245,6 +249,8 @@ ItemPosition Examples:
 * `-ItemPosition PID-3.1.1` The value for the first sub-component of the first component of the 3rd field of the PID segment. 
 
 __-Filter <string[]>__ Only includes messages where a HL7 item equals a  specific value.  The format is: HL7Item=value. The HL7Item part  of the filter is of  the  same  format as the  -ItemPosition parameter. The -Filter parameter accepts a list of filters (separated by a comma). If a list of filters is provided then a message must match +all+ conditions to be included. 
+
+>The filter is intended to filter at the message/file level when querying a large number of files (to include/exclude the messages from the results). It will not filter on individual repeating segments or fields within a message - the results will still include __all__ fields requested from the messages matched by the filter condition. e.g. if you filter on OBX-3=NM, all OBX-3 values from all OBX segments will be returned, but only for messages queried that contain at least 1 OBX-3 value equal to 'NM'. Message not matching the filter condition are excluded from the results.
 
 Filter Examples:
 * `-Filter MSH-9=ADT^A05` This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
