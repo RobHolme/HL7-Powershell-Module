@@ -224,21 +224,21 @@ namespace HL7Tools {
 						if (filterConditionsMet) {
 							// create a PSObject								
 							PSObject result = new PSObject();
-							foreach (string hl7ItemPossition in itemPosition) {
-								string[] hl7Items = message.GetHL7ItemValue(hl7ItemPossition);
+							foreach (string hl7ItemPosition in itemPosition) {
+								string[] hl7Items = message.GetHL7ItemValue(hl7ItemPosition);
 								// if the hl7Items array is  empty, the item was not found in the message. Write null property otherwise powershell will omit columns in output if firest value does nto include all properties
 								if (hl7Items.Length == 0) {
-									result.Properties.Add(new PSNoteProperty(hl7ItemPossition.ToString(), null));
-									WriteVerbose("Item " + hl7ItemPossition + " not found in the message " + filePath);
+									result.Properties.Add(new PSNoteProperty(hl7ItemPosition.ToString(), null));
+									WriteVerbose("Item " + hl7ItemPosition + " not found in the message " + filePath);
 								}
 								//  items were returned, add properties to PSObject
 								else {
 									// if only a single value returned, save it as a string, not a string[]
 									if (hl7Items.Length == 1) {
-										result.Properties.Add(new PSNoteProperty(hl7ItemPossition.ToString(), hl7Items[0]));
+										result.Properties.Add(new PSNoteProperty(hl7ItemPosition.ToString(), hl7Items[0]));
 									}
 									else {
-										result.Properties.Add(new PSNoteProperty(hl7ItemPossition.ToString(), hl7Items));
+										result.Properties.Add(new PSNoteProperty(hl7ItemPosition.ToString(), hl7Items));
 									}
 								}
 							}
