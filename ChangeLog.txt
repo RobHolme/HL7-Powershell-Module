@@ -3,3 +3,7 @@ v1.7.5 (18/09/2021)	- Added -UseTLS switch to support connections to endpoints r
 v1.7.6 (26/09/2021)	- Supports a list of values for the -ItemPosition parameter. 
 v1.7.7 (01/10/2021) - merged NetFramework and NetStandard builds into single project. No chang to functionality.
 v1.7.8 (17/07/2022) - Added -SkipCertificateCheck to ignore TLS certificate errors.
+v1.7.10 (28/08/2022) - Updated build to use .net framework 4.8
+v1.7.11 (03/09/2022) - Select-HL7Item now returns an empty value for items not found in the message. This predominately applies to repeating items, such as repeating segments.
+Now the number of values returned should equal the number of segments present in the message. Previously non existant items were omitted from the array of results returned.
+		
