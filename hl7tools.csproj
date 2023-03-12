@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net48</TargetFrameworks>
+    <TargetFrameworks>net6.0;net48</TargetFrameworks>
 	<EnableDefaultItems>true</EnableDefaultItems>
 	<PlatformTarget>x64</PlatformTarget>
 	<Authors>Rob Holme</Authors>
 	<Product>HL7Tools PowerShell Module</Product>
     <Description>Powershell module for working with HL7 2.x files</Description>
-	<Version>1.7.11</Version>
-    <FileVersion>1.7.11.0</FileVersion>
+	<Version>1.7.12</Version>
+    <FileVersion>1.7.12.0</FileVersion>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
   </PropertyGroup>
   
   
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net6'))">
     <PackageReference Include="PowerShellStandard.Library" Version="5.1.0"/>
   </ItemGroup>
 
