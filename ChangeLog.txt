@@ -6,4 +6,5 @@ v1.7.8 (17/07/2022) - Added -SkipCertificateCheck to ignore TLS certificate erro
 v1.7.10 (28/08/2022) - Updated build to use .net framework 4.8
 v1.7.11 (03/09/2022) - Select-HL7Item now returns an empty value for items not found in the message. This predominately applies to repeating items, such as repeating segments.
 Now the number of values returned should equal the number of segments present in the message. Previously non existant items were omitted from the array of results returned.
-v1.7.12 (12/03/2023) - Update build to target .Net 6.0 instead of .Net Standard 2.0. No functional changes.		
+v1.7.12 (12/03/2023) - Update build to target .Net 6.0 instead of .Net Standard 2.0. No functional changes.	
+v1.7.13 (22/03/2023) - Added option to gracefully exit Receive-HL7Message	
