@@ -10,6 +10,7 @@
 
 namespace HL7Tools
 {
+	using System;
     using System.IO;
     using System.Management.Automation;
     using System.Threading;
@@ -119,7 +120,7 @@ namespace HL7Tools
             if (abortProcessing) {
                 return;
             }
-            WriteWarning("Listening for MLLP framed messages on port " + this.port + ". Close powershell console to exit.");
+            WriteWarning("Listening for MLLP framed messages on port " + this.port + ". Press 'ESC' key to exit.");
             
             // create a new instance of HL7TCPListener. Set optional properties to return ACKs, passthru messages, archive location. Start the listener.
             HL7TCPListener listener = new HL7TCPListener(port, ref objectQueue, ref warningQueue, ref verboseQueue, this.timeout, this.encoding);
@@ -153,6 +154,16 @@ namespace HL7Tools
                     while (verboseQueue.TryDequeue(out tempVerbose)) {
                         WriteVerbose(tempVerbose);
                     }
+					
+					// check to see if the user has exited
+					if (Console.KeyAvailable) {
+						ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+						if (keyInfo.Key == ConsoleKey.Escape) {
+							WriteWarning("Exiting.");
+							listener.RequestStop();
+							return;
+						}
+					}
                     // sleep before checking the queues again
                     Thread.Sleep(1000);
                 }
