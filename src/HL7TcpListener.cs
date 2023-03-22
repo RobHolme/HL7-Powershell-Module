@@ -57,6 +57,8 @@ namespace HL7Tools
         public void RequestStop()
         {
             this.runThread = false;
+			this.tcpListener.Stop();
+			
         }
 
         /// <summary>
@@ -106,7 +108,7 @@ namespace HL7Tools
 			// set the text encoding
 			Encoding encoder = System.Text.Encoding.GetEncoding(this.encoding);
 			
-            while (true) {
+            while (this.IsRunning() == true) {
                 bytesRead = 0;
                 try {
                     // Wait until a client application submits a message
