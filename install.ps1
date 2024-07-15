@@ -4,13 +4,13 @@
 .DESCRIPTION
     Copy the module files from the current folder to the PowerShell module home. Ignore dot folders (such as .git).
 .PARAMETER Scope
-    Install the module to either the current user module path or the all users module path
+    Install the module to either the current user module path, the all users module path, or prompt the user to select a path from the PSModulePath environment variable.
 .EXAMPLE
-    Install-Module -Scope CurrentUser
+    ./Install.ps1 -Scope CurrentUser
 .EXAMPLE
-    Install-Module -Scope AllUsers 
+    ./Install.ps1 -Scope AllUsers    
 .EXAMPLE
-    ./Install.ps1  -PromptForModulePath       
+    ./Install.ps1 -Scope PromptForModulePath    
 #>
 
 [CmdletBinding()]
@@ -18,19 +18,11 @@ param (
     [Parameter(
         Position = 0,
         Mandatory = $False,
-        ValueFromPipeline = $false,
+        ValueFromPipeline = $False,
         ValueFromPipelineByPropertyName = $True
     )]
-    [ValidateSet("CurrentUser", "AllUsers")]
-    [string] $Scope = "CurrentUser",
-    
-    [Parameter(
-        Position = 0,
-        Mandatory = $False,
-        ValueFromPipeline = $False,
-        ValueFromPipelineByPropertyName = $False
-    )]
-    [switch] $PromptForModulePath 
+    [ValidateSet("CurrentUser", "AllUsers", "PromptForModulePath")]
+    [string] $Scope = "CurrentUser"
 )
 
 # Get the module version number from the module manifest file.
@@ -164,22 +156,23 @@ function Get-ModuleName {
     return $null
 }
 
+
 # run the build script to generate the module dlls
 ./publish.cmd
 
 # The module manaifest (and module) is located in the 'module\hl7tools' folder 
 cd module\hl7tools
 
-# Prompt user to select modile if -PromptForModulePath swtich provided, otherwise use AllUsers or CurrentUser path based on supplied parameter 
-# Defaults to CurrentUser if no prameters supplied
-if($PromptForModulePath) {
+
+# Prompt user to select modile if "PromptForModulePath" provided as the -Scope parameter, otherwise use AllUsers or CurrentUser path based on the parameter 
+# Note: -Scope defaults to CurrentUser if no paramter value provided. 
+if($scope = "PromptForModulePath") {
     $moduleRootPath = Select-PSModulePath
 }
 else {
     $moduleRootPath = Join-Path -Path (Get-PSModulePath -moduleScope $Scope) -ChildPath "Modules"
 }
 
-# Obtain the module name, version, and root modules path - all needed to construct the desitination path
 $moduleVersion = Get-ModuleVersion
 $moduleName = Get-ModuleName
 Write-Verbose "Module name:`t`t $($moduleName)"
@@ -213,7 +206,3 @@ if (($null -ne $moduleVersion) -and ($null -ne $moduleRootPath) -and ($null -ne 
     }
 }
     
-
-
-
-
