@@ -8,7 +8,9 @@
 .EXAMPLE
     Install-Module -Scope CurrentUser
 .EXAMPLE
-    Install-Module -Scope AllUsers    
+    Install-Module -Scope AllUsers 
+.EXAMPLE
+    ./Install.ps1  -PromptForModulePath       
 #>
 
 [CmdletBinding()]
@@ -20,7 +22,15 @@ param (
         ValueFromPipelineByPropertyName = $True
     )]
     [ValidateSet("CurrentUser", "AllUsers")]
-    [string] $Scope = "CurrentUser"
+    [string] $Scope = "CurrentUser",
+    
+    [Parameter(
+        Position = 0,
+        Mandatory = $False,
+        ValueFromPipeline = $False,
+        ValueFromPipelineByPropertyName = $False
+    )]
+    [switch] $PromptForModulePath 
 )
 
 # Get the module version number from the module manifest file.
@@ -107,6 +117,32 @@ function Get-PSModulePath {
     
 }
 
+# Prompt user to select the module path from existing paths in the PSModulePath environment variable
+function Select-PSModulePath {
+    $allModules = $env:PSModulePath -Split ';'
+    for ($i = 1; $i -le $allModules.Count; $i++) {
+        Write-Host "`t($i) .... $($allModules[$i-1])"
+    }
+    
+
+    # confirm the repsonse is valid, if not return null.
+    try {
+        [Int32]$selection = Read-Host -Prompt "Select install path for module (1 to $($allModules.Count))"
+        
+        if (($selection -gt 0) -and ($selection -le $allModules.Count)) {
+            return $allModules[$selection - 1]
+        }
+        else {
+            Write-Warning "Selection is out of range. Select from 1 to $($allModules.Count)."
+            return $null
+        }
+    }
+    catch {
+        Write-Warning "Select a number corresponding to the host to connect to (from 1 to $($allModules.Count))."
+        return $null
+    }
+}
+
 # Helper function to get home directory
 function Get-HomeFolder {
     $envHome = [System.Environment]::GetEnvironmentVariable("HOME") ?? $null
@@ -128,13 +164,23 @@ function Get-ModuleName {
     return $null
 }
 
+# run the build script to generate the module dlls
+./publish.cmd
 
 # The module manaifest (and module) is located in the 'module\hl7tools' folder 
 cd module\hl7tools
 
+# Prompt user to select modile if -PromptForModulePath swtich provided, otherwise use AllUsers or CurrentUser path based on supplied parameter 
+# Defaults to CurrentUser if no prameters supplied
+if($PromptForModulePath) {
+    $moduleRootPath = Select-PSModulePath
+}
+else {
+    $moduleRootPath = Join-Path -Path (Get-PSModulePath -moduleScope $Scope) -ChildPath "Modules"
+}
+
 # Obtain the module name, version, and root modules path - all needed to construct the desitination path
 $moduleVersion = Get-ModuleVersion
-$moduleRootPath = Join-Path -Path (Get-PSModulePath -moduleScope $Scope) -ChildPath "Modules"
 $moduleName = Get-ModuleName
 Write-Verbose "Module name:`t`t $($moduleName)"
 Write-Verbose "Module path:`t`t $($moduleRootPath)"
