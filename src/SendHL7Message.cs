@@ -228,8 +228,6 @@ namespace HL7Tools
                 // At this point, we have a list of paths on the filesystem, send each file to the remote endpoint
                 foreach (string filePath in filePaths)
                 {
-                    System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-
                     // confirm the file exists
                     if (!File.Exists(filePath))
                     {
@@ -245,6 +243,7 @@ namespace HL7Tools
                     tcpConnection.ReceiveTimeout = 10000;
                     try
                     {
+                        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
                         // get the contents of the file
                         string fileContents = File.ReadAllText(filePath);
 
@@ -258,12 +257,10 @@ namespace HL7Tools
 
                         string[] ackLines = null;
                         // connect using TLS if -UseTLS switch supplied, otherwise use plain text
-                        if (this.useTls)
-                        {
+                        if (this.useTls) {
                             ackLines = SendMessageTLS(tcpConnection, message, this.skipCertificateCheck);
                         }
-                        else
-                        {
+                        else {
                             ackLines = SendMessage(tcpConnection, message);
                         }
 
