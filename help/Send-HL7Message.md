@@ -14,16 +14,17 @@ Send a HL7 file to a remote host via TCP (MLLP).
 
 ### Literal
 ```
-Send-HL7Message -LiteralPath <String[]> [-HostName] <String> [-Port] <Int32> [-NoACK] [[-Delay] <Int32>]
- [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [<CommonParameters>]
+Send-HL7Message -LiteralPath <string[]> [-HostName] <string> [-Port] <int> [[-Delay] <int>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
 ```
 
 ### Path
 ```
-Send-HL7Message [-Path] <String[]> [-HostName] <String> [-Port] <Int32> [-NoACK] [[-Delay] <Int32>]
- [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [<CommonParameters>]
+Send-HL7Message [-Path] <string[]> [-HostName] <string> [-Port] <int> [[-Delay] <int>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
+```
+
+### MessageString
+```
+Send-HL7Message [-MessageString] <string[]> [-HostName] <string> [-Port] <int> [[-Delay] <int>] [[-Encoding] {UTF-8| ISO-8859-1} ] [-NoACK] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -141,6 +142,19 @@ Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByPropertyName)
+Accept wildcard characters: False
+```
+### -MessageString
+Provide the message contents (as a string) instead of a file.
+```yaml
+type: String[]
+Parameter Sets: MessageString
+Aliases:
+
+Required: True
+Possition: 0
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

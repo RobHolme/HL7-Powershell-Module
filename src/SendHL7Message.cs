@@ -32,7 +32,7 @@ namespace HL7Tools
         private bool noACK;
         private string[] paths;
         private bool expandWildcards = false;
-        private string messageString;
+        private string[] messageString;
         private string encoding = "UTF-8";
         private bool useTls;
         private bool skipCertificateCheck = false;
@@ -79,7 +79,7 @@ namespace HL7Tools
 
         ]
         [ValidateNotNullOrEmpty]
-        public string MessageString
+        public string[] MessageString
         {
             get { return this.messageString; }
             set { this.messageString = value; }
@@ -178,7 +178,18 @@ namespace HL7Tools
         /// </summary>
         protected override void ProcessRecord()
         {
+            // if the -MessageString parameter is supplied just send the message and return
+            if (MessageString != null) {
+                // convert to string with lines delimited by <CR>
+                string message = "";
+                foreach (string line in MessageString) {
+                    message += line + (char)0x0D;
+                }
+                SendMessageHelper(message);
+                return;
+            }
 
+            // otherwise assume -Path or -LiteralPath parameter used to identify the file to send. Read in the matching file(s) content.
             foreach (string path in paths)
             {
                 // This will hold information about the provider containing the items that this path string might resolve to.                
@@ -237,15 +248,30 @@ namespace HL7Tools
                         return;
                     }
 
-                    // send the file to the endpoint using MLLP framing
+                    // get the contents of the file
+                    try 
+                    {
+                        string fileContents = File.ReadAllText(filePath);
+                        // Send the file
+                        SendMessageHelper(fileContents, filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        ArgumentException argException = new ArgumentException("Unable to open file.", filePath);
+                        ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
+                        WriteError(fileNotFoundError);
+                        WriteDebug($"Exception: {ex}");
+                        return;
+                    }
+
+
+                    /* // send the file to the endpoint using MLLP framing
                     TcpClient tcpConnection = new TcpClient();
                     tcpConnection.SendTimeout = 10000;
                     tcpConnection.ReceiveTimeout = 10000;
                     try
                     {
                         System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-                        // get the contents of the file
-                        string fileContents = File.ReadAllText(filePath);
 
                         // save the string as a HL7Message, this will validate the file is a HL7 v2 message.
                         HL7Message message = new HL7Message(fileContents);
@@ -289,7 +315,7 @@ namespace HL7Tools
                     finally
                     {
                         tcpConnection.Close();
-                    }
+                    } */
 
                     // delay between sending messages
                     if (this.delayBetweenMessages > 0)
@@ -300,6 +326,69 @@ namespace HL7Tools
             }
         }
 
+    /// <summary>
+    /// Prepare the HL7 Message for sending
+    /// </summary>
+    private void SendMessageHelper(string MessageContent, string filePath = null) {
+        // send the file to the endpoint using MLLP framing
+        TcpClient tcpConnection = new TcpClient();
+        tcpConnection.SendTimeout = 10000;
+        tcpConnection.ReceiveTimeout = 10000;
+        try
+        {
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+
+            // save the string as a HL7Message, this will validate the file is a HL7 v2 message.
+            HL7Message message = new HL7Message(MessageContent);
+            WriteVerbose("Connecting to " + this.hostname + ":" + this.port);
+
+            // create a TCP socket connection to the receiver, start timing the elapsed time to deliver the message and receive the ACK
+            timer.Start();
+            tcpConnection.Connect(this.hostname, this.port);
+
+            string[] ackLines = null;
+            // connect using TLS if -UseTLS switch supplied, otherwise use plain text
+            if (this.useTls) {
+                ackLines = SendMessageTLS(tcpConnection, message, this.skipCertificateCheck);
+            }
+            else {
+                ackLines = SendMessage(tcpConnection, message);
+            }
+
+            // stop timing the operation, output the result object
+            timer.Stop();
+            SendHL7MessageResult result = new SendHL7MessageResult("Successful", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath, timer.Elapsed.TotalMilliseconds / 1000);
+            WriteObject(result);
+            WriteVerbose("Closing TCP session\n");
+        }
+        // if the file does not start with a MSH segment, the constructor will throw an exception. 
+        catch (ArgumentException ae)
+        {
+            if (filePath != null) {
+                ArgumentException argException = new ArgumentException("The file not appear to be a valid HL7 v2 message", filePath);
+                ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
+                WriteError(fileNotFoundError);
+            }
+            else {
+                ArgumentException argException = new ArgumentException("The -MessageString value does not appear to be a valid HL7 v2 message", "");
+                ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, "");
+                WriteError(fileNotFoundError);
+            }
+            WriteDebug($"Exception: {ae}");
+            return;
+        }
+        // catch failed TCP connections
+        catch (SocketException se)
+        {
+            ErrorRecord SocketError = new ErrorRecord(se, "ConnectionError", ErrorCategory.ConnectionError, this.hostname + ":" + this.port);
+            WriteError(SocketError);
+            return;
+        }
+        finally
+        {
+            tcpConnection.Close();
+        }
+    }
 
         /// <summary>
         /// Send the message via MLLP using a TLS secured connection
