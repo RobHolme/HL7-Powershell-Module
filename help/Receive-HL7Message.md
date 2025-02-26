@@ -1,7 +1,7 @@
 ﻿---
 external help file: hl7tools.dll-Help.xml
 Module Name: hl7tools
-online version: https://github.com/RobHolme/HL7-Powershell-Module#receive-hl7message
+online version:
 schema: 2.0.0
 ---
 
@@ -14,20 +14,20 @@ Receive HL7 v2.x messages via a TCP connection (MLLP).
 
 ```
 Receive-HL7Message [-Path] <String> [-Port] <Int32> [[-Timeout] <Int32>] [[-Encoding] <String>] [-NoACK]
- [-InformationAction <ActionPreference>] [-InformationVariable <String>] [<CommonParameters>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Receives a HL7 v2.x message via a TCP connection (MLLP framing).
+Receives a HL7 v2.x message via a TCP connection (MLLP framing). Pres 'esc' to close the listener.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Receive-HL7Message -Path c:\hl7 -Port 5000
 ```
 
-{{ Add example description here }}
+Start a MLLP listener on port 5000. Save received files to c:\hl7\ 
 
 ## PARAMETERS
 
@@ -40,39 +40,10 @@ Defaults to "UTF-8" if parameter not supplied.
 Type: String
 Parameter Sets: (All)
 Aliases:
+Accepted values: UTF-8, ISO-8859-1
 
 Required: False
 Position: 3
-Default value: UTF-8
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationAction
-@{Text=}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: infa
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationVariable
-@{Text=}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: iv
-
-Required: False
-Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -94,8 +65,7 @@ Accept wildcard characters: False
 ```
 
 ### -Path
-The path to store the messages received.
-Must be a literal Path.
+The path to save received messages to.
 
 ```yaml
 Type: String
@@ -110,7 +80,7 @@ Accept wildcard characters: False
 ```
 
 ### -Port
-The the TCP port to listen for messages on.
+The TCP port to listen on.
 
 ```yaml
 Type: Int32
@@ -125,7 +95,7 @@ Accept wildcard characters: False
 ```
 
 ### -Timeout
-The timeout in seconds before idle connections are dropped (defaults to 60 seconds if not specified).
+The timeout to end idle TCP connections in seconds.
 
 ```yaml
 Type: Int32
@@ -134,7 +104,22 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: 60
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -144,11 +129,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### None
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
 
 [Online Help](https://github.com/RobHolme/HL7-Powershell-Module#receive-hl7message)
-

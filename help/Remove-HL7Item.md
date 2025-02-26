@@ -1,7 +1,7 @@
-﻿---
+---
 external help file: hl7tools.dll-Help.xml
 Module Name: hl7tools
-online version: https://github.com/RobHolme/HL7-Powershell-Module#remove-hl7item
+online version:
 schema: 2.0.0
 ---
 
@@ -15,36 +15,65 @@ Delete the value for a nominated item in the HL7 message.
 ### Literal
 ```
 Remove-HL7Item -LiteralPath <String[]> [-ItemPosition] <String[]> [[-Filter] <String[]>] [-RemoveAllRepeats]
- [[-Encoding] <String>] [-InformationAction <ActionPreference>] [-InformationVariable <String>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+ [[-Encoding] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Path
 ```
 Remove-HL7Item [-Path] <String[]> [-ItemPosition] <String[]> [[-Filter] <String[]>] [-RemoveAllRepeats]
- [[-Encoding] <String>] [-InformationAction <ActionPreference>] [-InformationVariable <String>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+ [[-Encoding] <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Deletes the value of specified items from the HL7 message.
 A list of items, or single item can be specified.
 
+## EXAMPLES
+
+### Example 1
+```powershell
+PS C:\> Remove-HL7Item -Path c:\hl7\test.hl7 -ItemPosition PID-3.1
+```
+
+remove the PID-3.1 component
+
+### Example 2
+
+```powershell
+PS C:\> Remove-HL7Item -Path c:\hl7\test.hl7 -ItemPosition PID-3.1 -Filter "MSH-9.2=ADT^A01"
+```
+
+remove the PID-3.1 component for all ADT^A01 messages
+
 ## PARAMETERS
 
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Encoding
-Specify the character encoding.
-Supports "UTF-8" or "ISO-8859-1" (Western European).
-Defaults to "UTF-8" if parameter not supplied.
+Text encoding ('UTF-8' | 'ISO-8859-1'). Defaults to "UTF-8".
 
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
+Accepted values: UTF-8, ISO-8859-1
 
 Required: False
 Position: 3
-Default value: UTF-8
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -55,11 +84,12 @@ The format is: HL7Item=value.
 The HL7Item part of the filter is of the same format as the -ItemPosition parameter.
 The -Filter parameter accepts a list of filters (separated by a comma).
 If a list of filters is provided then a message must match all conditions to be included.
-e.g.
+e.g. 
 
 -Filter MSH-9=ADT^A05   This filter would only include messages that had "ADT^A05" as the value for the MSH-9 field.
 
 -Filter MSH-9=ADT^A05,PV1-2=OUTPATIENT   This filter would only include messages where both the MSH-9 field contained "ADT^A04" and the PV1-2 field contained "OUTPATIENT"
+
 
 ```yaml
 Type: String[]
@@ -68,36 +98,6 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationAction
-@{Text=}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: infa
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationVariable
-@{Text=}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: iv
-
-Required: False
-Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -175,23 +175,9 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Confirm
-@{Text=}
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -WhatIf
-@{Text=}
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
 
 ```yaml
 Type: SwitchParameter
@@ -205,16 +191,33 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
+### System.String[]
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
 
 [Online Help](https://github.com/RobHolme/HL7-Powershell-Module#remove-hl7item)
-

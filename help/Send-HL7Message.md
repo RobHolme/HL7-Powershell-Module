@@ -1,7 +1,7 @@
-﻿---
+---
 external help file: hl7tools.dll-Help.xml
 Module Name: hl7tools
-online version: https://github.com/RobHolme/HL7-Powershell-Module#send-hl7message
+online version:
 schema: 2.0.0
 ---
 
@@ -14,17 +14,23 @@ Send a HL7 file to a remote host via TCP (MLLP).
 
 ### Literal
 ```
-Send-HL7Message -LiteralPath <string[]> [-HostName] <string> [-Port] <int> [[-Delay] <int>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
+Send-HL7Message [-LiteralPath] <String[]> [-HostName] <String> [-Port] <Int32> [-NoACK] [[-Delay] <Int32>]
+ [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### Path
 ```
-Send-HL7Message [-Path] <string[]> [-HostName] <string> [-Port] <int> [[-Delay] <int>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
+Send-HL7Message [-Path] <String[]> [-HostName] <String> [-Port] <Int32> [-NoACK] [[-Delay] <Int32>]
+ [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### MessageString
 ```
-Send-HL7Message [-MessageString] <string[]> [-HostName] <string> [-Port] <int> [[-Delay] <int>] [[-Encoding] {UTF-8| ISO-8859-1} ] [-NoACK] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
+Send-HL7Message [-MessageString] <String[]> [-HostName] <String> [-Port] <Int32> [-NoACK] [[-Delay] <Int32>]
+ [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -34,21 +40,24 @@ Messages are framed using MLLP (Minimal Lower Layer Protocol).
 ## EXAMPLES
 
 ### Example 1
-@{paragraph=PS C:\\\>}
-
-```
-Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\message1.hl7
+```powershell
+PS C:\> Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\message1.hl7
 ```
 
 ### Example 2
-@{paragraph=PS C:\\\>}
-
-```
+```powershell
+PS C:\> 
 Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -Path c:\HL7Files\*.hl7 -Encoding ISO-8859-1
 ```
 
-Send all .hl7 files in the c:\HL7Files folder.
-Use ISO-8859-1 (Wester European) text encoding.
+Send all .hl7 files in the c:\HL7Files folder. Use ISO-8859-1 (Wester European) text encoding.
+
+### Example 3
+```powershell
+PS C:\> $msg = get-content c:\hl7\test.hl7; Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -MessageString $msg
+```
+
+Supply the message contents as a parameter. Accepts a string array [string[]] (one one segment per array item) or a single string value [string] (with Carriage Returns between each segment.) 
 
 ## PARAMETERS
 
@@ -72,14 +81,16 @@ Set the text encoding.
 Supports "UTF-8" or "ISO-8859-1" (Western European).
 Defaults to "UTF-8" if parameter not supplied.
 
+
 ```yaml
 Type: String
 Parameter Sets: (All)
 Aliases:
+Accepted values: UTF-8, ISO-8859-1
 
 Required: False
 Position: 4
-Default value: UTF-8
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -99,36 +110,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -InformationAction
-@{Text=}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: infa
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationVariable
-@{Text=}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: iv
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -LiteralPath
 Same as -Path, only wildcards are not expanded.
 Use this if the literal path includes a wildcard character you do not intent to expand.
@@ -139,20 +120,22 @@ Parameter Sets: Literal
 Aliases: PSPath, Name, Filename
 
 Required: True
-Position: Named
+Position: 0
 Default value: None
 Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
+
 ### -MessageString
-Provide the message contents (as a string) instead of a file.
+Supply the message contents as a string value instead of a filename. Accepts either a string[] array [string[]] (one one segment per array item) or a single [string] value (with Carriage Returns between each segment in a single string.) 
+
 ```yaml
-type: String[]
+Type: String[]
 Parameter Sets: MessageString
 Aliases:
 
 Required: True
-Possition: 0
+Position: 0
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -237,16 +220,33 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
+### System.String[]
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
 
 [Online Help](https://github.com/RobHolme/HL7-Powershell-Module#send-hl7message)
-

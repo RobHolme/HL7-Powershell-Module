@@ -1,7 +1,7 @@
 ﻿---
 external help file: hl7tools.dll-Help.xml
 Module Name: hl7tools
-online version: https://github.com/RobHolme/HL7-Powershell-Module#set-hl7item
+online version:
 schema: 2.0.0
 ---
 
@@ -15,15 +15,15 @@ Sets the value of an existing item within a HL7 file.
 ### Literal
 ```
 Set-HL7Item -LiteralPath <String[]> [-ItemPosition] <String> [-Value] <String> [[-Filter] <String[]>]
- [[-Encoding] <String>] [-UpdateAllRepeats] [-AppendToExistingValue] [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [[-Encoding] <String>] [-UpdateAllRepeats] [-AppendToExistingValue] [-ProgressAction <ActionPreference>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### Path
 ```
 Set-HL7Item [-Path] <String[]> [-ItemPosition] <String> [-Value] <String> [[-Filter] <String[]>]
- [[-Encoding] <String>] [-UpdateAllRepeats] [-AppendToExistingValue] [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [[-Encoding] <String>] [-UpdateAllRepeats] [-AppendToExistingValue] [-ProgressAction <ActionPreference>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -36,17 +36,13 @@ To suppress the warning messages use the "-WarningAction Ignore" common paramete
 ## EXAMPLES
 
 ### Example 1
-@{paragraph=PS C:\\\>}
-
-```
-Set-HL7Item -Path c:\hl7files\hl7file.txt -ItemPosition PID-3.1 -Value A1234567
+```powershell
+PS C:\> Set-HL7Item -Path c:\hl7files\hl7file.txt -ItemPosition PID-3.1 -Value A1234567
 ```
 
 ### Example 2
-@{paragraph=PS C:\\\>}
-
-```
-Set-HL7Item -Path c:\hl7files\*.hl7 -ItemPosition PV1-3.1 -Value A1234567 -Filter PV1-2=INPATIENT
+```powershell
+PS C:\> Set-HL7Item -Path c:\hl7files\*.hl7 -ItemPosition PV1-3.1 -Value A1234567 -Filter PV1-2=INPATIENT
 ```
 
 ## PARAMETERS
@@ -66,6 +62,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Encoding
 Specify the character encoding.
 Supports "UTF-8" or "ISO-8859-1" (Western European).
@@ -75,10 +86,11 @@ Defaults to "UTF-8" if parameter not supplied.
 Type: String
 Parameter Sets: (All)
 Aliases:
+Accepted values: UTF-8, ISO-8859-1
 
 Required: False
 Position: 4
-Default value: UTF-8
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -102,36 +114,6 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationAction
-@{Text=}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: infa
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationVariable
-@{Text=}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: iv
-
-Required: False
-Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -195,7 +177,7 @@ Accept wildcard characters: False
 ```
 
 ### -UpdateAllRepeats
-Update all occurrences identified by -ItemPosition
+Update all repeating fields identified by -ItemPosition
 
 ```yaml
 Type: SwitchParameter
@@ -224,23 +206,9 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Confirm
-@{Text=}
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -WhatIf
-@{Text=}
+Shows what would happen if the cmdlet runs.
+The cmdlet is not run.
 
 ```yaml
 Type: SwitchParameter
@@ -254,16 +222,33 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
+### System.String[]
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
 
 [Online Help](https://github.com/RobHolme/HL7-Powershell-Module#set-hl7item)
-

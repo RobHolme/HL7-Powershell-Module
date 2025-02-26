@@ -1,7 +1,7 @@
 ﻿---
 external help file: hl7tools.dll-Help.xml
 Module Name: hl7tools
-online version: https://github.com/RobHolme/HL7-Powershell-Module#show-hl7messagetimeline
+online version:
 schema: 2.0.0
 ---
 
@@ -14,18 +14,27 @@ List messages chronologically based on the header timestamp (MSH-7).
 
 ### Literal
 ```
-Show-HL7MessageTimeline -LiteralPath <String[]> [-Descending] [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [<CommonParameters>]
+Show-HL7MessageTimeline -LiteralPath <String[]> [-Descending] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### Path
 ```
-Show-HL7MessageTimeline [-Path] <String[]> [-Descending] [-InformationAction <ActionPreference>]
- [-InformationVariable <String>] [<CommonParameters>]
+Show-HL7MessageTimeline [-Path] <String[]> [-Descending] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 Lists messages chronologically based on the message header receive date/time field (MSH-7).
+
+## EXAMPLES
+
+### Example 1
+```powershell
+PS C:\> {{ Add example code here }}
+```
+
+{{ Add example description here }}
 
 ## PARAMETERS
 
@@ -44,39 +53,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -InformationAction
-@{Text=}
-
-```yaml
-Type: ActionPreference
-Parameter Sets: (All)
-Aliases: infa
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -InformationVariable
-@{Text=}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases: iv
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -LiteralPath
-Same as -Path, only wildcards are not expanded.
-Use this if the literal path includes a wildcard character you do not intent to expand.
+{{ Fill LiteralPath Description }}
 
 ```yaml
 Type: String[]
@@ -97,6 +75,7 @@ If a directory is provided, all files within the directory will be examined.
 Exceptions will be raised if a file isn't identified as a HL7 v2.x file.
 This parameter accepts a list of files, separate each file file with a ','.
 
+
 ```yaml
 Type: String[]
 Parameter Sets: Path
@@ -109,16 +88,33 @@ Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
+### System.String[]
+
 ## OUTPUTS
 
+### System.Object
 ## NOTES
 
 ## RELATED LINKS
 
 [Online Help](https://github.com/RobHolme/HL7-Powershell-Module#show-hl7messagetimeline)
-
