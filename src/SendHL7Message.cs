@@ -40,6 +40,7 @@ namespace HL7Tools
 
         // Parameter set for the -LiteralPath parameter. This is the path to the file to send.
         [Parameter(
+            Position = 0,
             Mandatory = true,
             ValueFromPipeline = false,
             ValueFromPipelineByPropertyName = true,
@@ -264,58 +265,6 @@ namespace HL7Tools
                         return;
                     }
 
-
-                    /* // send the file to the endpoint using MLLP framing
-                    TcpClient tcpConnection = new TcpClient();
-                    tcpConnection.SendTimeout = 10000;
-                    tcpConnection.ReceiveTimeout = 10000;
-                    try
-                    {
-                        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-
-                        // save the string as a HL7Message, this will validate the file is a HL7 v2 message.
-                        HL7Message message = new HL7Message(fileContents);
-                        WriteVerbose("Connecting to " + this.hostname + ":" + this.port);
-
-                        // create a TCP socket connection to the receiver, start timing the elapsed time to deliver the message and receive the ACK
-                        timer.Start();
-                        tcpConnection.Connect(this.hostname, this.port);
-
-                        string[] ackLines = null;
-                        // connect using TLS if -UseTLS switch supplied, otherwise use plain text
-                        if (this.useTls) {
-                            ackLines = SendMessageTLS(tcpConnection, message, this.skipCertificateCheck);
-                        }
-                        else {
-                            ackLines = SendMessage(tcpConnection, message);
-                        }
-
-                        // stop timing the operation, output the result object
-                        timer.Stop();
-                        SendHL7MessageResult result = new SendHL7MessageResult("Successful", ackLines, DateTime.Now, message.ToString().Split((char)0x0D), this.hostname, this.port, filePath, timer.Elapsed.TotalMilliseconds / 1000);
-                        WriteObject(result);
-                        WriteVerbose("Closing TCP session\n");
-                    }
-                    // if the file does not start with a MSH segment, the constructor will throw an exception. 
-                    catch (ArgumentException ae)
-                    {
-                        ArgumentException argException = new ArgumentException("The file does not appear to be a valid HL7 v2 message", filePath);
-                        ErrorRecord fileNotFoundError = new ErrorRecord(argException, "FileNotValid", ErrorCategory.InvalidData, filePath);
-                        WriteError(fileNotFoundError);
-                        WriteDebug($"Exception: {ae}");
-                        return;
-                    }
-                    // catch failed TCP connections
-                    catch (SocketException se)
-                    {
-                        ErrorRecord SocketError = new ErrorRecord(se, "ConnectionError", ErrorCategory.ConnectionError, this.hostname + ":" + this.port);
-                        WriteError(SocketError);
-                        return;
-                    }
-                    finally
-                    {
-                        tcpConnection.Close();
-                    } */
 
                     // delay between sending messages
                     if (this.delayBetweenMessages > 0)
