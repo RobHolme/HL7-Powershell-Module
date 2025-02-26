@@ -7,8 +7,8 @@
 	<Authors>Rob Holme</Authors>
 	<Product>HL7Tools PowerShell Module</Product>
     <Description>Powershell module for working with HL7 2.x files</Description>
-	<Version>1.7.13</Version>
-    <FileVersion>1.7.13.0</FileVersion>
+	<Version>1.7.14</Version>
+    <FileVersion>1.7.14.0</FileVersion>
 	<RepositoryUrl>https://github.com/RobHolme/HL7-Powershell-Module</RepositoryUrl>
   </PropertyGroup>
   

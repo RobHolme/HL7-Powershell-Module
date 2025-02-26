@@ -102,9 +102,11 @@ __-Encoding \<string\>__: Specify the character encoding. Supports "UTF-8" or "I
 Send a HL7 v2.x message from a file (or list of files) via TCP to a remote endpoint. Messages are framed using MLLP (Minimal Lower Layer Protocol).
 
 ```
-Send-HL7Message [-HostName] <string> [-Port] <int> [-LiteralPath] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
+    Send-HL7Message [-LiteralPath] <String[]> [-HostName] <String> [-Port] <Int32> [[-Delay] <Int32>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-SkipCertificateCheck] [-UseTLS] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 
-Send-HL7Message [-HostName] <string> [-Port] <int> [-Path] <string[]> [-NoACK] [-Delay] <int> [[-Encoding] <String>] [-UseTLS] [-SkipCertificateCheck] [<CommonParameters>]
+    Send-HL7Message [-MessageString] <String[]> [-HostName] <String> [-Port] <Int32> [[-Delay] <Int32>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-SkipCertificateCheck] [-UseTLS] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+
+    Send-HL7Message [-Path] <String[]> [-HostName] <String> [-Port] <Int32> [[-Delay] <Int32>] [[-Encoding] {UTF-8 | ISO-8859-1}] [-NoACK] [-SkipCertificateCheck] [-UseTLS] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 example:
 
@@ -114,6 +116,8 @@ example:
 
 `Send-Hl7Message -Hostname secure-hl7.company.com -Port 5000 -Path c:\HL7Files\*.hl7 -Encoding UTF-8 -UseTLS`
 
+`$msg = get-content c:\hl7\test.hl7; Send-Hl7Message -Hostname 192.168.0.10 -Port 1234 -MessageString $msg`
+
 ### Parameters
 __-Hostname \<string\>__:  The  IP Address or host name of the remote host to send the HL7 message to
 
@@ -122,6 +126,8 @@ __-Port \<int\>__: The TCP port of the listener on the remote host to send the H
 __-Path <string[]>__: The full or relative path a single HL7 file or directory. This may include wildcards in the path name. If a directory is provide, all files within the directory will be examined. Exceptions will be raised if a file isn't  identified as  a HL7 v2.x file. This parameter accepts a list of files, separate each file  file with a ',' (no spaces). 
 
 __-LiteralPath <string[]>__: Same as -Path, only wildcards are not expanded. Use this if the literal path includes a wildcard character you do not intent to expand.
+
+__-MessageString <String[]>__: Supply the message contents as a string value instead of a filename. Accepts either a string[] array [string[]] (one one segment per array item) or a single [string] value (with Carriage Returns between each         segment in a single string.)
 
 __-NoACK__: This switch instructs the CmdLet not to wait for an ACK response from the remote host.
 
