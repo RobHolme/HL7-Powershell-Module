@@ -8,3 +8,4 @@ v1.7.11 (03/09/2022) - Select-HL7Item now returns an empty value for items not f
 Now the number of values returned should equal the number of segments present in the message. Previously non existant items were omitted from the array of results returned.
 v1.7.12 (12/03/2023) - Update build to target .Net 6.0 instead of .Net Standard 2.0. No functional changes.	
 v1.7.13 (22/03/2023) - Added option to gracefully exit Receive-HL7Message	
+v1.7.14 (26/02/2025) - Added -MessageString parameter to Send-HL7Message. This accepts the message as a string, instead of a file.	
