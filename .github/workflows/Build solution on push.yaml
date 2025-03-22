@@ -1,0 +1,24 @@
+name: Build solution on push
+on:
+    # triggered on push to main branch
+    push:
+       branches: [ "main" ]
+    pull_request:
+       branches: [ "main" ]
+    # manual trigger   
+    workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # build solution
+      - name: Build solution
+        run: |
+          dotnet publish --configuration release --framework net6.0 --output .\module\hl7tools\lib\net6.0\
+          dotnet publish --configuration release --framework net48 --output .\module\hl7tools\lib\net48\
