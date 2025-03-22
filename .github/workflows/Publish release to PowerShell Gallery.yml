@@ -30,4 +30,4 @@ jobs:
         env:
           NUGET_KEY: ${{ secrets.PS_GALLERY_KEY }}
         shell: pwsh
-        run: Publish-Module -path ./module/hl7tools -NuGetApiKey $env:PS_GALLERY_KEY -Verbose
+        run: Publish-Module -path .\module\hl7tools -NuGetApiKey $env:NUGET_KEY -Verbose
