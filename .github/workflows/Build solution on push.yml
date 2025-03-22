@@ -1,4 +1,5 @@
 name: Build solution on push
+
 on:
     # triggered on push to main branch
     push:
