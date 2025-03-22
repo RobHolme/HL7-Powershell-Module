@@ -6,6 +6,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+hl7-powershell-module.sln
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
