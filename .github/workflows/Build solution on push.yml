@@ -1,13 +1,13 @@
 name: Build solution on push
 
 on:
-    # triggered on push to main branch
-    push:
-       branches: [ "main" ]
-    pull_request:
-       branches: [ "main" ]
-    # manual trigger   
-    workflow_dispatch:
+  # triggered on push to main branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # manual trigger   
+  workflow_dispatch:
 
 jobs:
   publish:
