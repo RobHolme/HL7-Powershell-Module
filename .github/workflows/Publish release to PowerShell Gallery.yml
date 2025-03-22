@@ -8,18 +8,20 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       # checkout repo
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # build solution
-      - name: Build solution
-        run: |
-          dotnet publish --configuration release --framework net6.0 --output .\module\hl7tools\lib\net6.0\
-          dotnet publish --configuration release --framework net48 --output .\module\hl7tools\lib\net48\
+      # build .Net Core solution
+      - name: Build .net core 6.0 solution
+        run: dotnet publish --configuration release --framework net6.0 --output .\module\hl7tools\lib\net6.0\
+       
+      # build .Net Framework solution  
+      - name: Build .net framework 4.8 solution
+        run: dotnet publish --configuration release --framework net48 --output .\module\hl7tools\lib\net48\
 
       # publish to powershellgallery.com
       # secrets.PS_GALLERY_KEY is the API key for the PowerShell Gallery.
@@ -28,5 +30,4 @@ jobs:
         env:
           NUGET_KEY: ${{ secrets.PS_GALLERY_KEY }}
         shell: pwsh
-        run: |
-          Publish-Module -path ./module/hl7tools -NuGetApiKey $env:PS_GALLERY_KEY -Verbose
+        run: Publish-Module -path ./module/hl7tools -NuGetApiKey $env:PS_GALLERY_KEY -Verbose
