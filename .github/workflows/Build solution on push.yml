@@ -3,9 +3,9 @@ name: Build solution on push
 on:
   # triggered on push to main branch
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
   # manual trigger   
   workflow_dispatch:
 
