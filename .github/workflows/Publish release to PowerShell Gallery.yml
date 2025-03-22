@@ -1,0 +1,22 @@
+name: Publish release to PowerShell Gallery
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # publish to powershellgallery.com
+      - name: Publish module 
+        env:
+          NUGET_KEY: ${{ secrets.PS_GALLERY_KEY }}
+        shell: pwsh
+        run: |
+          Publish-Module -path ./module/hl7tools -NuGetApiKey $env:PS_GALLERY_KEY -Verbose
