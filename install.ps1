@@ -111,7 +111,8 @@ function Get-PSModulePath {
 
 # Prompt user to select the module path from existing paths in the PSModulePath environment variable
 function Select-PSModulePath {
-    $allModules = $env:PSModulePath -Split ';'
+    $pathSeperator = [System.IO.Path]::PathSeparator # windows = ';'  linux/mac = ':'
+    $allModules = $env:PSModulePath -Split $pathSeperator
     for ($i = 1; $i -le $allModules.Count; $i++) {
         Write-Host "`t($i) .... $($allModules[$i-1])"
     }
