@@ -16,8 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       # build .Net Core solution
-      - name: Build .net core 6.0 solution
-        run: dotnet publish --configuration release --framework net6.0 --output .\module\hl7tools\lib\net6.0\
+      - name: Build .net core 10.0 solution
+        run: dotnet publish --configuration release --framework net10.0 --output .\module\hl7tools\lib\net10.0\
        
       # build .Net Framework solution  
       - name: Build .net framework 4.8 solution
