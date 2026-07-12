@@ -15,9 +15,12 @@ You may install the module from existing build releases, from the Powershell Gal
 ## Install from Powershell Gallery
 From a powershell console, run:
 
-```Powershell
-Install-Module -Name hl7tools
-```
+```Install-Module -Name hl7tools```
+
+or
+
+```Install-PSResource -Name hl7tools```
+
 ## Install from GitHub releases
 Follow these instructions if you plan on installing the module from a prebuilt release instead of building from source.
 1.  Download the zip file from the latest release from: https://github.com/RobHolme/HL7-Powershell-Module/releases. 
